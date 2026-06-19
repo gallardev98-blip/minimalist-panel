@@ -1,6 +1,8 @@
-﻿# Publicar `panel/minimalist` en Packagist
+﻿# Publicar `gallardev/minimalist` en Packagist
 
-Guía para instalar con `composer require panel/minimalist` sin path repository.
+Guía para instalar con `composer require gallardev/minimalist` sin path repository.
+
+> **Vendor Packagist:** usamos `gallardev/minimalist` porque el namespace `panel` ya está reclamado por otro mantenedor ([panel/operation-log](https://packagist.org/packages/panel/operation-log)). El namespace PHP sigue siendo `Panel\Minimalist`.
 
 ## Requisitos previos
 
@@ -33,7 +35,7 @@ git push origin v0.9.0 v0.10.0
 
 1. Inicia sesión en [packagist.org](https://packagist.org)
 2. **Submit** → URL del repo: `https://github.com/gallardev98-blip/minimalist-panel`
-3. Packagist detecta `panel/minimalist` desde `composer.json`
+3. Packagist detecta `gallardev/minimalist` desde `composer.json`
 
 ## 3. Auto-update (recomendado)
 
@@ -42,7 +44,7 @@ Packagist → tu paquete → **Settings** → activa **GitHub Service Hook**.
 ## 4. Instalar en un proyecto Laravel
 
 ```bash
-composer require panel/minimalist:^0.10
+composer require gallardev/minimalist:^0.10
 php artisan panel:install
 ```
 
@@ -60,4 +62,4 @@ php artisan panel:install
 - [ ] `composer test` pasa
 - [ ] Tags `v0.9.0` y `v0.10.0` pusheados
 - [ ] Paquete enviado en Packagist
-- [ ] `panel-demo` probado con `composer require panel/minimalist:^0.10`
+- [ ] `panel-demo` probado con `composer require gallardev/minimalist:^0.10`

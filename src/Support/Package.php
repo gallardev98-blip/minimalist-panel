@@ -6,7 +6,7 @@ namespace Panel\Minimalist\Support;
 
 final class Package
 {
-    public const NAME = 'panel/minimalist';
+    public const NAME = 'gallardev/minimalist';
 
     public const DISPLAY_NAME = 'Minimalist';
 

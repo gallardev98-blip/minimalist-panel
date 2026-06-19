@@ -1,8 +1,8 @@
-﻿# AGENTS — Minimalist (`panel/minimalist`)
+﻿# AGENTS — Minimalist (`gallardev/minimalist`)
 
 ## Estado actual
 
-**Paquete Composer:** `panel/minimalist` — `composer require panel/minimalist` (namespace PHP: `Panel\Minimalist`).
+**Paquete Composer:** `gallardev/minimalist` — `composer require gallardev/minimalist` (namespace PHP: `Panel\Minimalist`).
 
 **Fase 9** (2026-06-18): páginas custom (`Page`, `panel:make-page`, ruta `pages/{slug}`) e integración opcional de permisos Spatie/Gate (`PanelPermission`, filtrado de navegación).
 

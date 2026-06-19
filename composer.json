@@ -1,5 +1,5 @@
 {
-    "name": "panel/minimalist",
+    "name": "gallardev/minimalist",
     "description": "Minimalist — declarative monochrome admin panel for Laravel with Livewire and Tailwind",
     "type": "library",
     "license": "MIT",

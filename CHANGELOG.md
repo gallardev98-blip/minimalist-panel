@@ -1,10 +1,16 @@
 # Changelog
 
-All notable changes to `panel/minimalist` are documented in this file.
+All notable changes to `gallardev/minimalist` are documented in this file.
 
 ## [Unreleased]
 
-## [0.10.0] - 2026-06-19
+## [0.10.1] - 2026-06-19
+
+### Changed
+
+- **Packagist:** nombre del paquete `panel/minimalist` → `gallardev/minimalist` (el vendor `panel` ya estaba reclamado en Packagist)
+- Namespace PHP sin cambios: `Panel\Minimalist`
+
 
 ### Added
 
@@ -37,7 +43,7 @@ All notable changes to `panel/minimalist` are documented in this file.
 
 ### Changed
 
-- **Breaking:** namespace PHP `Alberto\Panel` renombrado a `Panel\Minimalist` (alineado con el paquete `panel/minimalist`)
+- **Breaking:** namespace PHP `Alberto\Panel` renombrado a `Panel\Minimalist` (alineado con el paquete `gallardev/minimalist`)
 
 ## [0.8.0] - 2026-06-18
 

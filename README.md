@@ -3,7 +3,7 @@
 Panel de administración declarativo y monocromático para Laravel. Alternativa moderna a AdminLTE, basado en **Livewire 3**, **Tailwind CSS** y una API de **Resources** al estilo Filament/Nova.
 
 ```bash
-composer require panel/minimalist
+composer require gallardev/minimalist
 ```
 
 ## Requisitos
@@ -18,7 +18,7 @@ composer require panel/minimalist
 ### 1. Composer
 
 ```bash
-composer require panel/minimalist
+composer require gallardev/minimalist
 ```
 
 Repositorio local (desarrollo):
@@ -29,7 +29,7 @@ Repositorio local (desarrollo):
     { "type": "path", "url": "../minimalist-panel-library" }
   ],
   "require": {
-    "panel/minimalist": "@dev"
+    "gallardev/minimalist": "@dev"
   }
 }
 ```
@@ -59,7 +59,7 @@ Incluye las vistas del paquete en `tailwind.config.js`:
 ```js
 content: [
   './resources/views/**/*.blade.php',
-  './vendor/panel/minimalist/resources/views/**/*.blade.php',
+  './vendor/gallardev/minimalist/resources/views/**/*.blade.php',
 ],
 ```
 
