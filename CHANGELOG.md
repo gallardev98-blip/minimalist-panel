@@ -4,6 +4,12 @@ All notable changes to `gallardev/minimalist` are documented in this file.
 
 ## [Unreleased]
 
+## [0.11.2] - 2026-06-19
+
+### Fixed
+
+- Inputs auth (login/reset): icono invisible con autofill/focus en modo oscuro — override `-webkit-autofill` y color de icono `--panel-text`
+
 ## [0.11.1] - 2026-06-19
 
 ### Fixed

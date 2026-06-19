@@ -1408,10 +1408,35 @@
         outline: none;
         border-color: rgb(var(--panel-primary));
         box-shadow: 0 0 0 3px rgb(var(--panel-ring) / 0.18);
+        background-color: rgb(var(--panel-input-bg));
+    }
+
+    .panel-auth-input:-webkit-autofill,
+    .panel-auth-input:-webkit-autofill:hover,
+    .panel-auth-input:-webkit-autofill:focus,
+    .panel-auth-input:-webkit-autofill:active {
+        -webkit-text-fill-color: rgb(var(--panel-heading)) !important;
+        caret-color: rgb(var(--panel-heading));
+        box-shadow: 0 0 0 1000px rgb(var(--panel-input-bg)) inset !important;
+        border-color: rgb(var(--panel-input-border));
+        transition: background-color 99999s ease-out 0s;
+    }
+
+    .panel-auth-input:-webkit-autofill:focus {
+        border-color: rgb(var(--panel-primary));
+        box-shadow:
+            0 0 0 1000px rgb(var(--panel-input-bg)) inset,
+            0 0 0 3px rgb(var(--panel-ring) / 0.18) !important;
+    }
+
+    .panel-auth-input:autofill {
+        box-shadow: 0 0 0 1000px rgb(var(--panel-input-bg)) inset;
+        -webkit-text-fill-color: rgb(var(--panel-heading));
+        caret-color: rgb(var(--panel-heading));
     }
 
     .panel-auth-input-wrap:focus-within .panel-auth-input-icon {
-        color: rgb(var(--panel-heading));
+        color: rgb(var(--panel-text));
     }
 
     .panel-auth-error {
