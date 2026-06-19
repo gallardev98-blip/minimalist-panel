@@ -19,8 +19,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/TU_USUARIO/minimalist-panel-library/issues",
-        "source": "https://github.com/TU_USUARIO/minimalist-panel-library"
+        "issues": "https://github.com/gallardev98-blip/minimalist-panel/issues",
+        "source": "https://github.com/gallardev98-blip/minimalist-panel"
     },
     "require": {
         "php": "^8.2",
