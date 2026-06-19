@@ -23,6 +23,17 @@
                 return document.getElementById('panel-main');
             }
 
+            function lockScroll() {
+                document.documentElement.classList.add('panel-scroll-lock');
+                document.body.classList.add('panel-scroll-lock');
+                window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+            }
+
+            function unlockScroll() {
+                document.documentElement.classList.remove('panel-scroll-lock');
+                document.body.classList.remove('panel-scroll-lock');
+            }
+
             function showLoader() {
                 const element = loader();
                 const mainEl = main();
@@ -35,6 +46,7 @@
                 clearTimeout(exitTimer);
 
                 shownAt = Date.now();
+                lockScroll();
                 element.setAttribute('aria-hidden', 'false');
                 element.setAttribute('aria-busy', 'true');
                 mainEl?.classList.add('panel-navigating');
@@ -65,6 +77,7 @@
                     exitTimer = setTimeout(() => {
                         element.setAttribute('aria-hidden', 'true');
                         mainEl?.classList.remove('panel-navigating');
+                        unlockScroll();
                     }, EXIT_MS);
                 }, delay);
             }

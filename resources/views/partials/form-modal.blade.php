@@ -1,14 +1,14 @@
 @if ($showFormModal ?? false)
     <div
-        class="fixed inset-0 z-[60] flex items-center justify-center px-4 py-6"
+        class="panel-modal-root"
         role="dialog"
         aria-modal="true"
         aria-labelledby="panel-form-modal-title"
     >
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" wire:click="cancelFormModal"></div>
+        <div class="panel-modal-backdrop" wire:click="cancelFormModal"></div>
 
-        <div class="panel-card relative flex max-h-[min(90vh,48rem)] w-full max-w-2xl flex-col shadow-2xl">
-            <div class="panel-border flex shrink-0 items-center justify-between border-b px-6 py-4">
+        <div class="panel-card panel-modal-dialog">
+            <div class="panel-modal-header">
                 <h2 id="panel-form-modal-title" class="panel-heading text-lg font-semibold">
                     {{ ($formRecordId ?? null) ? __('panel::panel.edit') : __('panel::panel.create') }}
                     {{ $resourceLabel }}
@@ -23,15 +23,15 @@
                 </button>
             </div>
 
-            <form wire:submit="saveFormModal" class="flex min-h-0 flex-1 flex-col">
-                <div class="min-h-0 flex-1 overflow-y-auto px-6 py-5">
+            <form wire:submit="saveFormModal" class="panel-modal-form">
+                <div class="panel-modal-body">
                     @include('panel::partials.form-schema', [
                         'formSchema' => $formSchema,
                         'hasTabs' => $hasTabs ?? false,
                     ])
                 </div>
 
-                <div class="panel-border flex shrink-0 items-center justify-end gap-2 border-t px-6 py-4">
+                <div class="panel-modal-footer">
                     <button type="button" wire:click="cancelFormModal" class="panel-btn panel-btn-ghost">
                         {{ __('panel::panel.cancel') }}
                     </button>

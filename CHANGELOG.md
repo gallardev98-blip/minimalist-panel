@@ -4,6 +4,14 @@ All notable changes to `gallardev/minimalist` are documented in this file.
 
 ## [Unreleased]
 
+## [0.12.1] - 2026-06-19
+
+### Fixed
+
+- Modales crear/editar y confirmación usan clases CSS propias (`.panel-modal-*`) — no dependen solo de Tailwind
+- Menú lateral: alineación explícita de grupos desplegables y subenlaces
+- SPA loader: bloquea scroll (`panel-scroll-lock`) y resetea posición al navegar
+
 ## [0.12.0] - 2026-06-19
 
 ### Added

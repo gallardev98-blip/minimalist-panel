@@ -10,7 +10,9 @@
 
 **Fase 11** (2026-06-19): recuperar contraseña (`ForgotPassword`, `ResetPassword`) y `RolesField`/`RolesColumn` para Spatie.
 
-**Config-first** (2026-06-19): `config/panel.php` sin `env('PANEL_*')` por defecto — editar el archivo publicado; opcional envolver con `env()` en el host.
+**Fase 12** (2026-06-19): perfil de usuario — `/admin/profile` (nombre, email, contraseña); enlace en sidebar y header.
+
+**Config-first** (2026-06-19): `config/panel.php` sin `env('PANEL_*')` por defecto.
 
 **Fase 8** (2026-06-18): Policies de Laravel (`ResourcePolicy`, `panel:make-policy`, auto-registro).
 

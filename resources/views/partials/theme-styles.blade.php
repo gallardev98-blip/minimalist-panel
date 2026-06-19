@@ -217,12 +217,17 @@
         display: flex;
         width: 100%;
         align-items: center;
+        justify-content: flex-start;
         gap: 0.75rem;
         padding: 0.5rem 0.75rem;
+        border: none;
         border-radius: 0.5rem;
+        background: transparent;
         font-size: 0.875rem;
         font-weight: 600;
+        text-align: left;
         color: rgb(var(--panel-heading));
+        cursor: pointer;
         transition: all 0.15s ease;
     }
 
@@ -247,6 +252,7 @@
         margin-top: 0.125rem;
         margin-bottom: 0.25rem;
         padding: 0.125rem 0 0.125rem 2.25rem;
+        text-align: left;
     }
 
     .panel-nav-scroll {
@@ -264,7 +270,11 @@
     }
 
     .panel-nav-sublink {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        width: 100%;
+        text-align: left;
         padding: 0.375rem 0.75rem;
         border-radius: 0.375rem;
         font-size: 0.8125rem;
@@ -1082,6 +1092,88 @@
 
     .panel-main.panel-navigating .panel-main-content {
         pointer-events: none;
+    }
+
+    html.panel-scroll-lock,
+    body.panel-scroll-lock {
+        overflow: hidden !important;
+        overscroll-behavior: none;
+    }
+
+    .panel-modal-root {
+        position: fixed;
+        inset: 0;
+        z-index: 60;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 1rem 1.5rem;
+    }
+
+    .panel-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background-color: rgb(0 0 0 / 0.5);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+
+    .panel-modal-dialog {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        width: 100%;
+        max-width: 42rem;
+        max-height: min(90vh, 48rem);
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: var(--panel-shadow-lg);
+    }
+
+    .panel-modal-dialog--compact {
+        max-width: 28rem;
+        padding: 1.5rem;
+    }
+
+    .panel-modal-header {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid rgb(var(--panel-border));
+    }
+
+    .panel-modal-body {
+        min-height: 0;
+        flex: 1 1 auto;
+        overflow-y: auto;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .panel-modal-footer {
+        display: flex;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid rgb(var(--panel-border));
+    }
+
+    .panel-modal-form {
+        display: flex;
+        min-height: 0;
+        flex: 1 1 auto;
+        flex-direction: column;
+    }
+
+    .panel-modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        margin-top: 1.5rem;
     }
 
     .panel-spa-loader {

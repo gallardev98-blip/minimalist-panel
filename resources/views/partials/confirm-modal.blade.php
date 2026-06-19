@@ -1,19 +1,19 @@
 @if ($showConfirm ?? false)
     <div
-        class="fixed inset-0 z-[60] flex items-center justify-center px-4"
+        class="panel-modal-root"
         role="dialog"
         aria-modal="true"
         aria-labelledby="panel-confirm-title"
     >
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" wire:click="cancelConfirm"></div>
+        <div class="panel-modal-backdrop" wire:click="cancelConfirm"></div>
 
-        <div class="panel-card relative w-full max-w-md p-6 shadow-2xl">
+        <div class="panel-card panel-modal-dialog panel-modal-dialog--compact">
             <h2 id="panel-confirm-title" class="panel-heading text-lg font-semibold">
                 {{ __('panel::panel.confirm_title') }}
             </h2>
             <p class="panel-muted mt-2 text-sm">{{ $confirmMessage }}</p>
 
-            <div class="mt-6 flex justify-end gap-2">
+            <div class="panel-modal-actions">
                 <button type="button" wire:click="cancelConfirm" class="panel-btn panel-btn-ghost">
                     {{ __('panel::panel.cancel') }}
                 </button>
