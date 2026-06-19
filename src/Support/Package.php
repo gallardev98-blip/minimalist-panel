@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Panel\Minimalist\Support;
+
+final class Package
+{
+    public const NAME = 'panel/minimalist';
+
+    public const DISPLAY_NAME = 'Minimalist';
+
+    public static function vendorPath(): string
+    {
+        return 'vendor/'.self::NAME;
+    }
+}

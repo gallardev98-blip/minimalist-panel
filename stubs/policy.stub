@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+use Panel\Minimalist\Policies\ResourcePolicy;
+use {{ modelFqn }};
+
+final class {{ policyClass }} extends ResourcePolicy
+{
+    public function viewAny($user): bool
+    {
+        return true;
+    }
+
+    public function view($user, $record): bool
+    {
+        return true;
+    }
+
+    public function create($user): bool
+    {
+        return true;
+    }
+
+    public function update($user, $record): bool
+    {
+        return true;
+    }
+
+    public function delete($user, $record): bool
+    {
+        return true;
+    }
+}

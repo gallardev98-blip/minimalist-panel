@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Panel\Pages;
+
+use Panel\Minimalist\Pages\Page;
+
+final class {{ pageClass }} extends Page
+{
+    protected static ?string $label = '{{ label }}';
+
+    protected static ?string $icon = 'file-text';
+
+    protected static ?string $slug = '{{ slug }}';
+
+    // protected static ?string $permission = 'view reports';
+
+    public static function view(): string
+    {
+        return '{{ view }}';
+    }
+}

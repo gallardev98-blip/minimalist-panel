@@ -1,0 +1,60 @@
+{
+    "name": "panel/minimalist",
+    "description": "Minimalist — declarative monochrome admin panel for Laravel with Livewire and Tailwind",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "admin",
+        "panel",
+        "livewire",
+        "tailwind",
+        "minimalist",
+        "monochrome"
+    ],
+    "authors": [
+        {
+            "name": "Alberto Gallardo Morales",
+            "email": "gallardev.98@gmail.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/TU_USUARIO/laravel-panel/issues",
+        "source": "https://github.com/TU_USUARIO/laravel-panel"
+    },
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^11.0|^12.0|^13.0",
+        "dompdf/dompdf": "^3.0",
+        "livewire/livewire": "^3.5",
+        "phpoffice/phpspreadsheet": "^2.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^9.0|^10.0",
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Panel\\Minimalist\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Panel\\Minimalist\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Panel\\Minimalist\\PanelServiceProvider"
+            ],
+            "aliases": {
+                "Panel": "Panel\\Minimalist\\Facades\\Panel"
+            }
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "prefer-stable": true
+}

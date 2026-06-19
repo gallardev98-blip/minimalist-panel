@@ -1,0 +1,52 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Panel\Resources;
+
+use Panel\Minimalist\Columns\DateTimeColumn;
+use Panel\Minimalist\Columns\TextColumn;
+use Panel\Minimalist\Fields\EmailField;
+use Panel\Minimalist\Fields\TextField;
+use Panel\Minimalist\Resources\Resource;
+use App\Models\{{ modelClass }};
+
+final class {{ resourceClass }} extends Resource
+{
+    protected static string $model = {{ modelClass }}::class;
+
+    protected static ?string $label = '{{ modelClass }}s';
+
+    protected static ?string $icon = 'layers';
+
+    public static function form(): array
+    {
+        return [
+            TextField::make('name')
+                ->label('Nombre')
+                ->required(),
+
+            EmailField::make('email')
+                ->label('Email')
+                ->required(),
+        ];
+    }
+
+    public static function table(): array
+    {
+        return [
+            TextColumn::make('name')
+                ->label('Nombre')
+                ->searchable()
+                ->sortable(),
+
+            TextColumn::make('email')
+                ->label('Email')
+                ->searchable(),
+
+            DateTimeColumn::make('created_at')
+                ->label('Creado')
+                ->sortable(),
+        ];
+    }
+}
