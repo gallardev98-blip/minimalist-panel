@@ -72,6 +72,20 @@ final class BreadcrumbsTest extends TestCase
         $this->assertNull($crumbs[1]['url']);
     }
 
+    public function test_it_builds_profile_crumbs(): void
+    {
+        app()->setLocale('es');
+
+        $this->app['router']->get('/admin/profile', fn () => '')->name('panel.profile');
+
+        $request = $this->makeRequest('/admin/profile');
+        $crumbs = Breadcrumbs::resolve($request);
+
+        $this->assertCount(2, $crumbs);
+        $this->assertSame('Mi perfil', $crumbs[1]['label']);
+        $this->assertNull($crumbs[1]['url']);
+    }
+
     private function makeRequest(string $uri): \Illuminate\Http\Request
     {
         $request = \Illuminate\Http\Request::create($uri, 'GET');

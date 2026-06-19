@@ -39,6 +39,15 @@ final class Breadcrumbs
             return $crumbs;
         }
 
+        if ($name === 'panel.profile') {
+            $crumbs[] = [
+                'label' => __('panel::panel.profile.title'),
+                'url' => null,
+            ];
+
+            return $crumbs;
+        }
+
         if ($name === 'panel.pages.show') {
             return self::resolvePageCrumbs($crumbs, $route);
         }

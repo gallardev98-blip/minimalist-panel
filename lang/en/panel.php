@@ -99,6 +99,17 @@ return [
         'navigation' => 'Navigation',
         'records' => 'Records',
     ],
+    'profile' => [
+        'title' => 'My profile',
+        'subtitle' => 'Update your name, email and password.',
+        'account_section' => 'Account',
+        'security_section' => 'Security',
+        'security_hint' => 'Leave password blank if you do not want to change it.',
+        'current_password' => 'Current password',
+        'new_password' => 'New password',
+        'saved' => 'Profile updated successfully.',
+        'unsupported_user' => 'The user model is not compatible with profile.',
+    ],
     'breadcrumbs' => [
         'dashboard' => 'Dashboard',
         'create' => 'Create',

@@ -22,8 +22,20 @@
                     $initial = strtoupper(substr($user?->name ?? $user?->email ?? '?', 0, 1));
                 @endphp
                 <div class="hidden items-center gap-2 sm:flex">
-                    <span class="panel-user-avatar">{{ $initial }}</span>
-                    <span class="panel-text max-w-[10rem] truncate text-sm">{{ $user?->name ?? $user?->email }}</span>
+                    @if (\Panel\Minimalist\Support\PanelAuth::profileEnabled())
+                        <a
+                            href="{{ route('panel.profile') }}"
+                            wire:navigate
+                            wire:navigate.hover
+                            class="panel-header-user-link"
+                        >
+                            <span class="panel-user-avatar">{{ $initial }}</span>
+                            <span class="panel-text max-w-[10rem] truncate text-sm">{{ $user?->name ?? $user?->email }}</span>
+                        </a>
+                    @else
+                        <span class="panel-user-avatar">{{ $initial }}</span>
+                        <span class="panel-text max-w-[10rem] truncate text-sm">{{ $user?->name ?? $user?->email }}</span>
+                    @endif
                 </div>
             @endauth
         </div>

@@ -794,6 +794,50 @@
         color: rgb(var(--panel-primary));
         font-size: 0.75rem;
         font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .panel-profile-link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 0.625rem 0.75rem;
+        border-radius: calc(var(--panel-radius) - 0.125rem);
+        border: 1px solid rgb(var(--panel-border));
+        background-color: rgb(var(--panel-elevated) / 0.35);
+        text-decoration: none;
+        transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .panel-profile-link:hover {
+        border-color: rgb(var(--panel-muted) / 0.45);
+        background-color: rgb(var(--panel-elevated) / 0.65);
+    }
+
+    .panel-profile-link-icon {
+        color: rgb(var(--panel-muted));
+    }
+
+    .panel-header-user-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        border-radius: 9999px;
+        padding: 0.125rem 0.375rem 0.125rem 0.125rem;
+        transition: background-color 0.15s ease;
+    }
+
+    .panel-header-user-link:hover {
+        background-color: rgb(var(--panel-elevated) / 0.65);
+    }
+
+    .panel-profile-section-title {
+        font-size: 0.875rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: rgb(var(--panel-heading));
     }
 
     .panel-page-hero {

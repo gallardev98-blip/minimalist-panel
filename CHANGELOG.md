@@ -4,6 +4,15 @@ All notable changes to `gallardev/minimalist` are documented in this file.
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-06-19
+
+### Added
+
+- **Perfil de usuario** — `/admin/profile` para editar nombre, email y contraseña
+- Enlace al perfil en sidebar y header (avatar + nombre)
+- Config `panel.profile.enabled` (default `true`)
+- `PanelAuth::user()` y `PanelAuth::profileEnabled()`
+
 ## [0.11.2] - 2026-06-19
 
 ### Fixed

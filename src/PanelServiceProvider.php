@@ -14,6 +14,7 @@ use Panel\Minimalist\Livewire\Auth\Register as PanelRegister;
 use Panel\Minimalist\Livewire\Auth\ResetPassword;
 use Panel\Minimalist\Livewire\Dashboard;
 use Panel\Minimalist\Livewire\PanelPage;
+use Panel\Minimalist\Livewire\Profile;
 use Panel\Minimalist\Livewire\GlobalSearchModal;
 use Panel\Minimalist\Livewire\RelationPanel;
 use Panel\Minimalist\Livewire\ResourceForm;
@@ -128,6 +129,7 @@ final class PanelServiceProvider extends ServiceProvider
         Livewire::component('panel.forgot-password', ForgotPassword::class);
         Livewire::component('panel.reset-password', ResetPassword::class);
         Livewire::component('panel.dashboard', Dashboard::class);
+        Livewire::component('panel.profile', Profile::class);
         Livewire::component('panel.page', PanelPage::class);
         Livewire::component('panel.resource-index', ResourceIndex::class);
         Livewire::component('panel.resource-form', ResourceForm::class);

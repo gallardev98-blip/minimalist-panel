@@ -99,6 +99,17 @@ return [
         'navigation' => 'Navegación',
         'records' => 'Registros',
     ],
+    'profile' => [
+        'title' => 'Mi perfil',
+        'subtitle' => 'Actualiza tu nombre, correo y contraseña.',
+        'account_section' => 'Cuenta',
+        'security_section' => 'Seguridad',
+        'security_hint' => 'Deja la contraseña en blanco si no quieres cambiarla.',
+        'current_password' => 'Contraseña actual',
+        'new_password' => 'Nueva contraseña',
+        'saved' => 'Perfil actualizado correctamente.',
+        'unsupported_user' => 'El modelo de usuario no es compatible con el perfil.',
+    ],
     'breadcrumbs' => [
         'dashboard' => 'Dashboard',
         'create' => 'Crear',

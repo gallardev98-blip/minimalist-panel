@@ -41,6 +41,30 @@
 
     <div class="panel-border space-y-3 border-t p-4">
         @auth(config('panel.guard'))
+            @php
+                $user = auth(config('panel.guard'))->user();
+                $initial = strtoupper(substr($user?->name ?? $user?->email ?? '?', 0, 1));
+            @endphp
+
+            @if (\Panel\Minimalist\Support\PanelAuth::profileEnabled())
+                <a
+                    href="{{ route('panel.profile') }}"
+                    wire:navigate
+                    wire:navigate.hover
+                    class="panel-profile-link"
+                    aria-label="{{ __('panel::panel.profile.title') }}"
+                >
+                    <span class="panel-user-avatar">{{ $initial }}</span>
+                    <span class="min-w-0 flex-1">
+                        <span class="panel-heading block truncate text-sm font-semibold">{{ $user?->name ?? $user?->email }}</span>
+                        @if ($user?->name && $user?->email)
+                            <span class="panel-muted block truncate text-xs">{{ $user->email }}</span>
+                        @endif
+                    </span>
+                    <x-panel::icon name="chevron-right" class="panel-profile-link-icon h-4 w-4 shrink-0" />
+                </a>
+            @endif
+
             <form method="POST" action="{{ route(\Panel\Minimalist\Support\PanelAuth::logoutRouteName()) }}">
                 @csrf
                 <button type="submit" class="panel-btn panel-btn-danger w-full justify-center text-sm">

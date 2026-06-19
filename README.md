@@ -63,6 +63,18 @@ Recuperar contraseña (activo por defecto):
 ],
 ```
 
+### Perfil de usuario
+
+Ruta `/admin/profile` — el usuario logueado edita su cuenta:
+
+```php
+'profile' => [
+    'enabled' => true,
+],
+```
+
+Desactivar con `'enabled' => false` si no lo necesitas.
+
 ### 3. Tailwind (app host)
 
 Incluye las vistas del paquete en `tailwind.config.js`:

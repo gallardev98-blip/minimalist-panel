@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', Dashboard::class)->name('dashboard');
 
+if (config('panel.profile.enabled', true)) {
+    Route::get('/profile', \Panel\Minimalist\Livewire\Profile::class)->name('profile');
+}
+
 Route::get('/pages/{page}', PanelPage::class)->name('pages.show');
 
 Route::prefix('resources/{resource}')->group(function (): void {

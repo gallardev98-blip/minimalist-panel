@@ -25,6 +25,23 @@ final class PanelAuth
         return static::enabled() && (bool) config('panel.auth.password_reset', true);
     }
 
+    public static function profileEnabled(): bool
+    {
+        return (bool) config('panel.profile.enabled', true);
+    }
+
+    public static function profileRouteName(): string
+    {
+        return 'panel.profile';
+    }
+
+    public static function user(): ?Authenticatable
+    {
+        $user = Auth::guard(static::guard())->user();
+
+        return $user instanceof Authenticatable ? $user : null;
+    }
+
     /** @return class-string<Model&Authenticatable> */
     public static function userModel(): string
     {
