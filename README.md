@@ -44,13 +44,16 @@ Esto publica `config/panel.php`, registra rutas en `/admin` y prepara la estruct
 
 El panel incluye **login y registro** en `/admin/login` y `/admin/register` usando la tabla `users` de Laravel. No necesitas Breeze salvo que quieras auth separada.
 
-```env
-PANEL_AUTH_ENABLED=true
-PANEL_AUTH_REGISTER=true
-PANEL_AUTH_REGISTER_ROLE=viewer   # opcional, con Spatie HasRoles
+```php
+// config/panel.php
+'auth' => [
+    'enabled' => true,
+    'register' => true,
+    'register_role' => 'viewer', // opcional, con Spatie HasRoles
+],
 ```
 
-Con auth externa: `PANEL_AUTH_ENABLED=false` y `PANEL_LOGIN_ROUTE=login`.
+Con auth externa: `'enabled' => false` y `'login_route' => 'login'`.
 
 ### 3. Tailwind (app host)
 
@@ -181,17 +184,29 @@ return [
 - Iconos: nombres Lucide soportados en `resources/views/components/icon.blade.php`.
 - **No uses `route()` al cargar el config**; usa la clave `route` para enlaces nombrados.
 
-### Variables de entorno
+### Configuración (`config/panel.php`)
 
-```env
-PANEL_PATH=admin
-PANEL_BRAND_NAME="Mi Panel"
-PANEL_BRAND_LOGO="/images/logo.svg"
-PANEL_THEME=dark
-PANEL_COLOR_PRIMARY=#000000
-PANEL_COLOR_PRIMARY_DARK=#ffffff
-PANEL_COLOR_ACCENT=#525252
+Tras `panel:install`, edita `config/panel.php`. **No hace falta usar variables `.env`** — todo vive en el archivo de config (buena práctica Laravel; compatible con `config:cache`).
+
+```php
+'path' => 'admin',
+
+'brand' => [
+    'name' => 'Mi Panel',
+    'logo' => '/images/logo.svg',
+],
+
+'theme' => [
+    'default' => 'dark',
+    'colors' => [
+        'primary' => '#000000',
+        'primary_dark' => '#ffffff',
+        'accent' => '#525252',
+    ],
+],
 ```
+
+Si prefieres `.env`, puedes envolver valores en el config publicado: `'path' => env('PANEL_PATH', 'admin')`.
 
 ---
 
@@ -325,9 +340,12 @@ Disponibles: `layout-dashboard`, `package`, `folder`, `users`, `plus`, `pencil`,
 composer require spatie/laravel-permission
 ```
 
-```env
-PANEL_PERMISSIONS_ENABLED=true
-PANEL_PERMISSION_ACCESS="access panel"
+```php
+// config/panel.php
+'permissions' => [
+    'enabled' => true,
+    'panel_access' => 'access panel',
+],
 ```
 
 - `EnsurePanelAccess` exige el permiso `panel_access` para entrar al panel
@@ -613,13 +631,9 @@ Traducciones en `lang/es/panel.php` y `lang/en/panel.php` (namespace `panel::pan
 
 Por defecto, crear y editar se abren en un modal sobre el listado sin salir de la página:
 
-```env
-PANEL_FORMS_IN_MODAL=true
-```
-
 ```php
 // config/panel.php
-'forms_in_modal' => env('PANEL_FORMS_IN_MODAL', true),
+'forms_in_modal' => true,
 ```
 
 Con `false`, se usan las rutas de página completa (`panel.resources.create` / `edit`).

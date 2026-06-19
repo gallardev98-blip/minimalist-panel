@@ -8,6 +8,8 @@
 
 **Fase 10** (2026-06-19): autenticación integrada — login/registro/logout en `{panel.path}/login` con layout guest y modelo `users` de Laravel.
 
+**Config-first** (2026-06-19): `config/panel.php` sin `env('PANEL_*')` por defecto — editar el archivo publicado; opcional envolver con `env()` en el host.
+
 **Fase 8** (2026-06-18): Policies de Laravel (`ResourcePolicy`, `panel:make-policy`, auto-registro).
 
 **v0.7.1** (2026-06-18): pulido UI interiores (show, form, relation-panel, dashboard), toolbar exports, `PUBLISHING.md`.
@@ -85,7 +87,7 @@ Resource::recordTitle($record);
 
 ### Formularios en modal
 
-- Config: `panel.forms_in_modal` (`PANEL_FORMS_IN_MODAL`, default `true`)
+- Config: `panel.forms_in_modal` (default `true` en `config/panel.php`)
 - Trait `ManagesResourceFormModal` en `ResourceIndex` (+ `WithFileUploads`)
 - Partial `partials/form-modal.blade.php`
 - Crear: `wire:click="openCreateFormModal"` | Editar: `openEditFormModal($id)` en row actions
@@ -136,7 +138,7 @@ Tab::make('General', [
 - Estilos auth solo en `body.panel-auth-body` — nunca `overflow: hidden` en `html` (rompe el grid al navegar)
 - **BOM UTF-8** en `theme-styles.blade.php` rompe el layout del admin; guardar siempre UTF-8 sin BOM
 - Config: `panel.auth.enabled`, `register`, `register_role` (Spatie)
-- Desactivar con `PANEL_AUTH_ENABLED=false` para usar Breeze/Fortify
+- Desactivar con `'enabled' => false` en `config/panel.php` para usar Breeze/Fortify
 
 ## Fase 9 — Páginas custom y permisos (v0.9.0)
 
@@ -153,9 +155,12 @@ php artisan panel:make-page Settings
 
 ### Permisos (Spatie opcional)
 
-```env
-PANEL_PERMISSIONS_ENABLED=true
-PANEL_PERMISSION_ACCESS="access panel"
+```php
+// config/panel.php
+'permissions' => [
+    'enabled' => true,
+    'panel_access' => 'access panel',
+],
 ```
 
 - `Panel\Minimalist\Support\PanelPermission` — `check()`, `panelAccessGranted()`

@@ -4,6 +4,12 @@ All notable changes to `gallardev/minimalist` are documented in this file.
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-06-19
+
+### Changed
+
+- **Config-first:** `config/panel.php` usa valores directos en lugar de `env('PANEL_*')`. Edita el archivo tras `panel:install`; compatible con `config:cache`. Opcional: envolver valores con `env()` en el config publicado del host.
+
 ## [0.10.1] - 2026-06-19
 
 ### Changed
