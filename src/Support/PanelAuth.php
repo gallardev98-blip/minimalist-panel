@@ -20,6 +20,11 @@ final class PanelAuth
         return static::enabled() && (bool) config('panel.auth.register', true);
     }
 
+    public static function passwordResetEnabled(): bool
+    {
+        return static::enabled() && (bool) config('panel.auth.password_reset', true);
+    }
+
     /** @return class-string<Model&Authenticatable> */
     public static function userModel(): string
     {

@@ -9,6 +9,18 @@
         </span>
         @break
 
+    @case('roles')
+        @if (is_array($value) && count($value) > 0)
+            <div class="flex flex-wrap gap-1">
+                @foreach ($value as $role)
+                    <span class="panel-badge panel-badge-primary">{{ $role }}</span>
+                @endforeach
+            </div>
+        @else
+            <span class="panel-muted">—</span>
+        @endif
+        @break
+
     @case('badge')
         @php
             $badgeColor = is_array($value) ? ($value['color'] ?? 'gray') : 'gray';

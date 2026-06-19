@@ -8,6 +8,8 @@
 
 **Fase 10** (2026-06-19): autenticación integrada — login/registro/logout en `{panel.path}/login` con layout guest y modelo `users` de Laravel.
 
+**Fase 11** (2026-06-19): recuperar contraseña (`ForgotPassword`, `ResetPassword`) y `RolesField`/`RolesColumn` para Spatie.
+
 **Config-first** (2026-06-19): `config/panel.php` sin `env('PANEL_*')` por defecto — editar el archivo publicado; opcional envolver con `env()` en el host.
 
 **Fase 8** (2026-06-18): Policies de Laravel (`ResourcePolicy`, `panel:make-policy`, auto-registro).

@@ -4,6 +4,20 @@ All notable changes to `gallardev/minimalist` are documented in this file.
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-06-19
+
+### Added
+
+- **Recuperar contraseña** — `/admin/forgot-password` y `/reset-password/{token}` con layout guest
+- **`RolesField`** — asignación de roles Spatie en formularios (`syncRoles` tras guardar)
+- **`RolesColumn`** — badges de roles en listados
+- **`Field::afterSave()`** + `FieldPayload::persistAfterSave()` para campos relacionales
+- Config `panel.auth.password_reset` (default `true`)
+
+### Changed
+
+- Login incluye enlace «¿Olvidaste tu contraseña?» cuando reset está activo
+
 ## [0.10.2] - 2026-06-19
 
 ### Changed

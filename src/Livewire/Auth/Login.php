@@ -46,6 +46,7 @@ final class Login extends Component
     {
         return view('panel::livewire.auth.login', [
             'registrationEnabled' => PanelAuth::registrationEnabled(),
+            'passwordResetEnabled' => PanelAuth::passwordResetEnabled(),
         ])->title(__('panel::panel.auth.login_title'));
     }
 }

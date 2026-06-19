@@ -22,6 +22,14 @@
             'autocomplete' => 'current-password',
         ])
 
+        @if ($passwordResetEnabled)
+            <div class="panel-auth-forgot">
+                <a href="{{ route('panel.password.request') }}" class="panel-auth-forgot-link" wire:navigate>
+                    {{ __('panel::panel.auth.forgot_password') }}
+                </a>
+            </div>
+        @endif
+
         <label class="panel-auth-remember">
             <input type="checkbox" wire:model="remember" class="panel-checkbox panel-auth-checkbox" />
             <span>{{ __('panel::panel.auth.remember') }}</span>

@@ -57,6 +57,7 @@ return [
         'redirect_after_login' => null,
         'redirect_after_register' => null,
         'register_role' => null,
+        'password_reset' => true,
     ],
 
     /*

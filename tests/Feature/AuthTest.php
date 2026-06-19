@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Panel\Minimalist\Tests\Feature;
 
+use Panel\Minimalist\Livewire\Auth\ForgotPassword;
 use Panel\Minimalist\Livewire\Auth\Login;
 use Panel\Minimalist\Livewire\Auth\Register;
+use Panel\Minimalist\Livewire\Auth\ResetPassword;
 use Panel\Minimalist\Tests\Fixtures\PanelUser;
 use Panel\Minimalist\Tests\TestCase;
-use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 use Livewire\Livewire;
 
 final class AuthTest extends TestCase
@@ -22,6 +27,7 @@ final class AuthTest extends TestCase
         $app['config']->set('auth.providers.users.model', PanelUser::class);
         $app['config']->set('panel.auth.enabled', true);
         $app['config']->set('panel.auth.register', true);
+        $app['config']->set('panel.auth.password_reset', true);
         $app['config']->set('panel.permissions.enabled', false);
     }
 
@@ -34,6 +40,12 @@ final class AuthTest extends TestCase
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+        });
+
+        Schema::create('password_reset_tokens', function (Blueprint $table): void {
+            $table->string('email')->primary();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
         });
     }
 
@@ -106,5 +118,52 @@ final class AuthTest extends TestCase
             ->assertRedirect(route('panel.login'));
 
         $this->assertGuest();
+    }
+
+    public function test_forgot_password_sends_notification(): void
+    {
+        Notification::fake();
+
+        $user = PanelUser::query()->create([
+            'name' => 'Admin',
+            'email' => 'admin@test.com',
+            'password' => Hash::make('password'),
+        ]);
+
+        Livewire::test(ForgotPassword::class)
+            ->set('email', 'admin@test.com')
+            ->call('sendResetLink')
+            ->assertSet('statusMessage', __('passwords.sent'));
+
+        Notification::assertSentTo($user, ResetPasswordNotification::class);
+    }
+
+    public function test_reset_password_updates_credentials(): void
+    {
+        PanelUser::query()->create([
+            'name' => 'Admin',
+            'email' => 'admin@test.com',
+            'password' => Hash::make('old-password'),
+        ]);
+
+        $token = Password::createToken(
+            PanelUser::query()->where('email', 'admin@test.com')->first(),
+        );
+
+        Livewire::test(ResetPassword::class, ['token' => $token])
+            ->set('email', 'admin@test.com')
+            ->set('password', 'new-password-123')
+            ->set('password_confirmation', 'new-password-123')
+            ->call('resetPassword')
+            ->assertRedirect(route('panel.login'));
+
+        $user = PanelUser::query()->where('email', 'admin@test.com')->first();
+
+        $this->assertTrue(Hash::check('new-password-123', $user->password));
+    }
+
+    public function test_forgot_password_page_is_available(): void
+    {
+        $this->get('/admin/forgot-password')->assertOk();
     }
 }

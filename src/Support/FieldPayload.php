@@ -32,6 +32,17 @@ final class FieldPayload
 
     /**
      * @param array<int, Field> $fields
+     * @param array<string, mixed> $validated
+     */
+    public static function persistAfterSave(array $fields, array $validated, Model $record): void
+    {
+        foreach ($fields as $field) {
+            $field->afterSave($record, $validated[$field->getName()] ?? null);
+        }
+    }
+
+    /**
+     * @param array<int, Field> $fields
      * @return array<string, mixed>
      */
     public static function initialState(array $fields, ?Model $record = null): array

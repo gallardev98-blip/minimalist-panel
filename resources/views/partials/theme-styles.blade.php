@@ -1469,6 +1469,35 @@
         cursor: wait;
     }
 
+    .panel-auth-forgot {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: -0.25rem;
+    }
+
+    .panel-auth-forgot-link {
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: rgb(var(--panel-muted));
+        text-decoration: none;
+        transition: color 0.15s ease;
+    }
+
+    .panel-auth-forgot-link:hover {
+        color: rgb(var(--panel-heading));
+    }
+
+    .panel-auth-status {
+        margin-bottom: 1rem;
+        padding: 0.75rem 1rem;
+        border-radius: var(--panel-radius, 0.75rem);
+        border: 1px solid rgb(var(--panel-success) / 0.35);
+        background: rgb(var(--panel-success) / 0.08);
+        color: rgb(var(--panel-heading));
+        font-size: 0.875rem;
+        line-height: 1.45;
+    }
+
     .panel-auth-footer {
         display: flex;
         flex-shrink: 0;

@@ -70,12 +70,14 @@ trait ManagesResourceFormModal
         if ($record === null) {
             abort_unless($this->resourceClass::authorize('create'), 403);
 
-            $this->resourceClass::modelClass()::query()->create($payload);
+            $record = $this->resourceClass::modelClass()::query()->create($payload);
+            FieldPayload::persistAfterSave($fields, $validated['form'], $record);
             $message = __('panel::panel.record_created');
         } else {
             abort_unless($this->resourceClass::authorize('update', $record), 403);
 
             $record->update($payload);
+            FieldPayload::persistAfterSave($fields, $validated['form'], $record);
             $message = __('panel::panel.record_updated');
         }
 

@@ -119,5 +119,13 @@ return [
         'no_account' => '¿No tienes cuenta?',
         'has_account' => '¿Ya tienes cuenta?',
         'failed' => 'Credenciales incorrectas.',
+        'forgot_password' => '¿Olvidaste tu contraseña?',
+        'forgot_title' => 'Recuperar contraseña',
+        'forgot_subtitle' => 'Te enviaremos un enlace para restablecer tu contraseña.',
+        'send_reset_link' => 'Enviar enlace',
+        'reset_title' => 'Nueva contraseña',
+        'reset_subtitle' => 'Elige una contraseña segura para tu cuenta.',
+        'reset_action' => 'Restablecer contraseña',
+        'back_to_login' => 'Volver al inicio de sesión',
     ],
 ];

@@ -126,13 +126,17 @@ final class ResourceForm extends Component
 
         if ($this->record === null) {
 
-            $resourceClass::modelClass()::query()->create($payload);
+            $record = $resourceClass::modelClass()::query()->create($payload);
+
+            FieldPayload::persistAfterSave($fields, $validated['form'], $record);
 
             $message = __('panel::panel.record_created');
 
         } else {
 
             $this->record->update($payload);
+
+            FieldPayload::persistAfterSave($fields, $validated['form'], $this->record);
 
             $message = __('panel::panel.record_updated');
 

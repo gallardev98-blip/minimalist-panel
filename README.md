@@ -55,6 +55,14 @@ El panel incluye **login y registro** en `/admin/login` y `/admin/register` usan
 
 Con auth externa: `'enabled' => false` y `'login_route' => 'login'`.
 
+Recuperar contraseña (activo por defecto):
+
+```php
+'auth' => [
+    'password_reset' => true, // /admin/forgot-password
+],
+```
+
 ### 3. Tailwind (app host)
 
 Incluye las vistas del paquete en `tailwind.config.js`:
@@ -354,6 +362,20 @@ composer require spatie/laravel-permission
 - Resources y Pages en el menú se ocultan si el usuario no tiene acceso
 
 Usa Spatie en tus Policies: `$user->can('manage products')`.
+
+### Roles en usuarios
+
+Con Spatie instalado y `HasRoles` en tu modelo `User`:
+
+```php
+use Panel\Minimalist\Fields\RolesField;
+use Panel\Minimalist\Columns\RolesColumn;
+
+RolesField::make('roles')->label('Roles'),
+RolesColumn::make('roles')->label('Roles'),
+```
+
+Los roles se sincronizan con `syncRoles()` al crear o editar (no van en `$fillable`).
 
 ---
 

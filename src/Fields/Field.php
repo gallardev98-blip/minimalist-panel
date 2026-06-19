@@ -174,6 +174,10 @@ abstract class Field
         ];
     }
 
+    public function afterSave(Model $record, mixed $value): void
+    {
+    }
+
     abstract public function getType(): string;
 
     /** @return array<string, mixed> */

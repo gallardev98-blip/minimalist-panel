@@ -119,5 +119,13 @@ return [
         'no_account' => "Don't have an account?",
         'has_account' => 'Already have an account?',
         'failed' => 'These credentials do not match our records.',
+        'forgot_password' => 'Forgot your password?',
+        'forgot_title' => 'Reset password',
+        'forgot_subtitle' => 'We will email you a link to reset your password.',
+        'send_reset_link' => 'Send reset link',
+        'reset_title' => 'New password',
+        'reset_subtitle' => 'Choose a secure password for your account.',
+        'reset_action' => 'Reset password',
+        'back_to_login' => 'Back to sign in',
     ],
 ];
