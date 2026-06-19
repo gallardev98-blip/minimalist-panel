@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Panel\Minimalist\Livewire\Auth;
 
 use Panel\Minimalist\Support\PanelAuth;
+use Panel\Minimalist\Support\PanelAuthMessages;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules\Password as PasswordRule;
@@ -53,7 +54,7 @@ final class ResetPassword extends Component
 
         if ($status !== Password::PASSWORD_RESET) {
             throw ValidationException::withMessages([
-                'email' => __($status),
+                'email' => PanelAuthMessages::passwordStatus($status),
             ]);
         }
 

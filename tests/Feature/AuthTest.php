@@ -8,6 +8,7 @@ use Panel\Minimalist\Livewire\Auth\ForgotPassword;
 use Panel\Minimalist\Livewire\Auth\Login;
 use Panel\Minimalist\Livewire\Auth\Register;
 use Panel\Minimalist\Livewire\Auth\ResetPassword;
+use Panel\Minimalist\Support\PanelAuthMessages;
 use Panel\Minimalist\Tests\Fixtures\PanelUser;
 use Panel\Minimalist\Tests\TestCase;
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
@@ -28,6 +29,7 @@ final class AuthTest extends TestCase
         $app['config']->set('panel.auth.enabled', true);
         $app['config']->set('panel.auth.register', true);
         $app['config']->set('panel.auth.password_reset', true);
+        $app['config']->set('panel.locale', 'es');
         $app['config']->set('panel.permissions.enabled', false);
     }
 
@@ -133,7 +135,7 @@ final class AuthTest extends TestCase
         Livewire::test(ForgotPassword::class)
             ->set('email', 'admin@test.com')
             ->call('sendResetLink')
-            ->assertSet('statusMessage', __('passwords.sent'));
+            ->assertSet('statusMessage', PanelAuthMessages::passwordStatus(Password::RESET_LINK_SENT));
 
         Notification::assertSentTo($user, ResetPasswordNotification::class);
     }
@@ -160,6 +162,15 @@ final class AuthTest extends TestCase
         $user = PanelUser::query()->where('email', 'admin@test.com')->first();
 
         $this->assertTrue(Hash::check('new-password-123', $user->password));
+    }
+
+    public function test_forgot_password_unknown_email_shows_spanish_error(): void
+    {
+        Livewire::test(ForgotPassword::class)
+            ->set('email', 'missing@test.com')
+            ->call('sendResetLink')
+            ->assertHasErrors(['email'])
+            ->assertSee('No encontramos ningún usuario con ese correo electrónico');
     }
 
     public function test_forgot_password_page_is_available(): void

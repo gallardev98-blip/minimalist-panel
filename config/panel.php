@@ -25,8 +25,21 @@ return [
 
     'path' => 'admin',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Idioma del panel
+    |--------------------------------------------------------------------------
+    |
+    | null — usa el locale de la app (config/app.php).
+    | 'es' / 'en' — fuerza el idioma en rutas del panel y auth.
+    |
+    */
+
+    'locale' => 'es',
+
     'middleware' => [
         'web',
+        Panel\Minimalist\Http\Middleware\SetPanelLocale::class,
         Panel\Minimalist\Http\Middleware\EnsurePanelAccess::class,
     ],
 

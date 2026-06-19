@@ -127,5 +127,12 @@ return [
         'reset_subtitle' => 'Choose a secure password for your account.',
         'reset_action' => 'Reset password',
         'back_to_login' => 'Back to sign in',
+        'passwords' => [
+            'sent' => 'We have emailed your password reset link.',
+            'user' => "We can't find a user with that email address.",
+            'token' => 'This password reset token is invalid.',
+            'throttled' => 'Please wait before retrying.',
+            'reset' => 'Your password has been reset.',
+        ],
     ],
 ];

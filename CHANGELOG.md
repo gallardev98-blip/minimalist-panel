@@ -4,6 +4,12 @@ All notable changes to `gallardev/minimalist` are documented in this file.
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-06-19
+
+### Fixed
+
+- Mensajes de recuperar contraseña en español (`panel.auth.passwords.*`) con `panel.locale` (default `es`)
+
 ## [0.11.0] - 2026-06-19
 
 ### Added

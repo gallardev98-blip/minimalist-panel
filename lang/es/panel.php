@@ -127,5 +127,12 @@ return [
         'reset_subtitle' => 'Elige una contraseña segura para tu cuenta.',
         'reset_action' => 'Restablecer contraseña',
         'back_to_login' => 'Volver al inicio de sesión',
+        'passwords' => [
+            'sent' => 'Te hemos enviado por correo el enlace para restablecer tu contraseña.',
+            'user' => 'No encontramos ningún usuario con ese correo electrónico.',
+            'token' => 'Este enlace de restablecimiento no es válido o ha caducado.',
+            'throttled' => 'Demasiados intentos. Espera un momento antes de volver a intentarlo.',
+            'reset' => 'Tu contraseña se ha restablecido correctamente.',
+        ],
     ],
 ];

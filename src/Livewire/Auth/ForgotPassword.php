@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Panel\Minimalist\Livewire\Auth;
 
+use Panel\Minimalist\Support\PanelAuthMessages;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
@@ -26,11 +27,11 @@ final class ForgotPassword extends Component
 
         if ($status !== Password::RESET_LINK_SENT) {
             throw ValidationException::withMessages([
-                'email' => __($status),
+                'email' => PanelAuthMessages::passwordStatus($status),
             ]);
         }
 
-        $this->statusMessage = __($status);
+        $this->statusMessage = PanelAuthMessages::passwordStatus($status);
         $this->reset('email');
     }
 
