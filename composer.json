@@ -19,8 +19,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/TU_USUARIO/laravel-panel/issues",
-        "source": "https://github.com/TU_USUARIO/laravel-panel"
+        "issues": "https://github.com/TU_USUARIO/minimalist-panel-library/issues",
+        "source": "https://github.com/TU_USUARIO/minimalist-panel-library"
     },
     "require": {
         "php": "^8.2",

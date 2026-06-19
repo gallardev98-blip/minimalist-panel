@@ -171,7 +171,7 @@ PANEL_PERMISSION_ACCESS="access panel"
 
 ### Publicación
 
-- Repo Git inicializado en `laravel-panel/` con tags `v0.9.0` y `v0.10.0`
+- Repo Git inicializado en `minimalist-panel-library/` con tags `v0.9.0` y `v0.10.0`
 - Ver `PUBLISHING.md` para push a GitHub y registro en Packagist
 
 ## Fase 8 — Policies (v0.8.0)

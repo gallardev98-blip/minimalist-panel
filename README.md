@@ -26,7 +26,7 @@ Repositorio local (desarrollo):
 ```json
 {
   "repositories": [
-    { "type": "path", "url": "../laravel-panel" }
+    { "type": "path", "url": "../minimalist-panel-library" }
   ],
   "require": {
     "panel/minimalist": "@dev"
@@ -662,7 +662,7 @@ Automáticos en el header según la ruta (`Dashboard / Productos / Editar`).
 ## Tests
 
 ```bash
-cd laravel-panel
+cd minimalist-panel-library
 composer test
 ```
 

@@ -11,7 +11,7 @@ Guía para instalar con `composer require panel/minimalist` sin path repository.
 ## 1. Repositorio y tags
 
 ```bash
-cd laravel-panel
+cd minimalist-panel-library
 composer test
 
 git init
@@ -22,7 +22,7 @@ git tag -a v0.9.0 -m "v0.9.0 — custom pages and Spatie permissions"
 git tag -a v0.10.0 -m "v0.10.0 — integrated auth (login/register)"
 
 git branch -M main
-git remote add origin https://github.com/TU_USUARIO/laravel-panel.git
+git remote add origin https://github.com/TU_USUARIO/minimalist-panel-library.git
 git push -u origin main
 git push origin v0.9.0 v0.10.0
 ```
@@ -32,7 +32,7 @@ git push origin v0.9.0 v0.10.0
 ## 2. Registrar en Packagist
 
 1. Inicia sesión en [packagist.org](https://packagist.org)
-2. **Submit** → URL del repo: `https://github.com/TU_USUARIO/laravel-panel`
+2. **Submit** → URL del repo: `https://github.com/TU_USUARIO/minimalist-panel-library`
 3. Packagist detecta `panel/minimalist` desde `composer.json`
 
 ## 3. Auto-update (recomendado)
