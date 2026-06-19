@@ -47,8 +47,30 @@ final class ResourceRegistry
     {
         $configured = config('panel.resources', []);
         $discovered = app(ResourceDiscovery::class)->discover();
+        $builtIn = SpatieResourceRegistrar::resources();
 
-        return $this->normalize(array_merge($discovered, $configured));
+        $hostResources = $this->normalize(array_merge($discovered, $configured));
+        $seenSlugs = [];
+        $resources = [];
+
+        foreach ($hostResources as $resourceClass) {
+            $slug = $resourceClass::slug();
+            $seenSlugs[$slug] = true;
+            $resources[] = $resourceClass;
+        }
+
+        foreach ($this->normalize($builtIn) as $resourceClass) {
+            $slug = $resourceClass::slug();
+
+            if (isset($seenSlugs[$slug])) {
+                continue;
+            }
+
+            $seenSlugs[$slug] = true;
+            $resources[] = $resourceClass;
+        }
+
+        return $resources;
     }
 
     /** @param array<int, class-string<Resource>> $resources */

@@ -61,10 +61,10 @@ final class MakePageCommand extends Command
     {
         return <<<BLADE
 <div>
-    <div class="panel-page-hero mb-8">
+    <x-panel::page-header class="mb-8">
         <h1>{{ \$pageClass::label() }}</h1>
         <p class="panel-muted mt-1 text-sm">Página custom del panel.</p>
-    </div>
+    </x-panel::page-header>
 
     <div class="panel-card p-6">
         <p class="panel-muted text-sm">Edita esta vista en resources/views.</p>

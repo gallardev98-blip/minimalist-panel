@@ -29,10 +29,6 @@
             'brandName' => $brandName ?? config('panel.brand.name'),
         ])
 
-        @include('panel::partials.header', [
-            'brandName' => $brandName ?? config('panel.brand.name'),
-        ])
-
         <main id="panel-main" class="panel-main p-6 lg:p-8">
             <div class="panel-main-content">
                 {{ $slot }}

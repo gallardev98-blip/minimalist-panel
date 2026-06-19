@@ -1,8 +1,10 @@
 @php
+    use Panel\Minimalist\Support\Package;
     use Panel\Minimalist\Support\ResourceRegistry;
 
     $panelPath = config('panel.path', 'admin');
     $navigation = app(ResourceRegistry::class)->navigation();
+    $panelVersion = config('panel.version') ?? ('v'.Package::VERSION);
 
     $openGroupIndex = null;
 
@@ -39,7 +41,7 @@
         ])
     </nav>
 
-    <div class="panel-border space-y-3 border-t p-4">
+    <div class="panel-border panel-sidebar-footer border-t p-4">
         @auth(config('panel.guard'))
             @php
                 $user = auth(config('panel.guard'))->user();
@@ -65,31 +67,35 @@
                 </a>
             @endif
 
-            <form method="POST" action="{{ route(\Panel\Minimalist\Support\PanelAuth::logoutRouteName()) }}">
-                @csrf
-                <button type="submit" class="panel-btn panel-btn-danger w-full justify-center text-sm">
-                    <x-panel::icon name="log-out" class="h-4 w-4" />
-                    {{ __('panel::panel.logout') }}
+            <div class="panel-sidebar-toolbar">
+                <button
+                    type="button"
+                    @click="toggleTheme()"
+                    class="panel-btn-icon panel-sidebar-toolbar-btn"
+                    aria-label="{{ __('panel::panel.theme_toggle') }}"
+                >
+                    <span x-show="theme === 'dark'">
+                        <x-panel::icon name="sun" class="h-4 w-4" />
+                    </span>
+                    <span x-show="theme === 'light'" x-cloak>
+                        <x-panel::icon name="moon" class="h-4 w-4" />
+                    </span>
                 </button>
-            </form>
+
+                <span class="panel-sidebar-version panel-muted">{{ $panelVersion }}</span>
+
+                <form method="POST" action="{{ route(\Panel\Minimalist\Support\PanelAuth::logoutRouteName()) }}" class="panel-sidebar-logout-form">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="panel-btn-icon panel-sidebar-toolbar-btn panel-sidebar-logout-btn"
+                        aria-label="{{ __('panel::panel.logout') }}"
+                        title="{{ __('panel::panel.logout') }}"
+                    >
+                        <x-panel::icon name="log-out" class="h-4 w-4" />
+                    </button>
+                </form>
+            </div>
         @endauth
-
-        <div class="mt-4 flex items-center justify-between gap-3">
-            <button
-                type="button"
-                @click="toggleTheme()"
-                class="panel-btn-icon"
-                aria-label="{{ __('panel::panel.theme_toggle') }}"
-            >
-                <span x-show="theme === 'dark'">
-                    <x-panel::icon name="sun" class="h-4 w-4" />
-                </span>
-                <span x-show="theme === 'light'" x-cloak>
-                    <x-panel::icon name="moon" class="h-4 w-4" />
-                </span>
-            </button>
-
-            <p class="panel-muted text-xs">v1</p>
-        </div>
     </div>
 </aside>

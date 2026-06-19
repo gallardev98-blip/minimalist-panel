@@ -14,12 +14,12 @@
         ])
     @endif
 
-    <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-        <div class="panel-page-hero mb-0">
-            <h1>{{ $resourceLabel }}</h1>
-            <p class="panel-muted mt-1 text-sm">{{ __('panel::panel.records_list') }}</p>
-        </div>
+    <x-panel::page-header class="mb-4">
+        <h1>{{ $resourceLabel }}</h1>
+        <p class="panel-muted mt-1 text-sm">{{ __('panel::panel.records_list') }}</p>
+    </x-panel::page-header>
 
+    <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-end">
         <div class="panel-toolbar">
             @if ($selectedCount > 0)
                 <div class="panel-toolbar-group">

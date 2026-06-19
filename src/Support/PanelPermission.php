@@ -60,4 +60,9 @@ final class PanelPermission
 
         return static::check($permission);
     }
+
+    public static function manageAccessPermission(): string
+    {
+        return (string) config('panel.permissions.manage_permission', 'manage users');
+    }
 }

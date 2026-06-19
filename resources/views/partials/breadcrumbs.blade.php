@@ -4,19 +4,19 @@
 
 @if (count($crumbs) > 0)
     <nav class="panel-breadcrumbs" aria-label="Breadcrumb">
-        <ol class="flex flex-wrap items-center gap-1.5 text-sm">
+        <ol class="panel-breadcrumbs-list">
             @foreach ($crumbs as $crumb)
-                <li class="flex items-center gap-1.5">
+                <li class="panel-breadcrumbs-item">
                     @if (! $loop->first)
-                        <span class="panel-muted" aria-hidden="true">/</span>
+                        <span class="panel-breadcrumbs-separator panel-muted" aria-hidden="true">/</span>
                     @endif
 
                     @if ($crumb['url'])
-                        <a href="{{ $crumb['url'] }}" class="panel-muted hover:panel-heading transition" wire:navigate wire:navigate.hover>
+                        <a href="{{ $crumb['url'] }}" class="panel-breadcrumbs-link panel-muted" wire:navigate wire:navigate.hover>
                             {{ $crumb['label'] }}
                         </a>
                     @else
-                        <span class="panel-heading font-medium">{{ $crumb['label'] }}</span>
+                        <span class="panel-breadcrumbs-current panel-heading">{{ $crumb['label'] }}</span>
                     @endif
                 </li>
             @endforeach

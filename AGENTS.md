@@ -10,7 +10,11 @@
 
 **Fase 11** (2026-06-19): recuperar contraseña (`ForgotPassword`, `ResetPassword`) y `RolesField`/`RolesColumn` para Spatie.
 
-**Fase 12** (2026-06-19): perfil de usuario — `/admin/profile` (nombre, email, contraseña); enlace en sidebar y header.
+**Fase 12** (2026-06-19): perfil de usuario — `/admin/profile` (nombre, email, contraseña); enlace en sidebar.
+
+**v0.13.0** (2026-06-19): layout sin header — `<x-panel::page-header>` (título + breadcrumbs en la misma fila); footer del sidebar con tema / versión / logout; loader SPA con `%`.
+
+**v0.14.0** (2026-06-19): resources Spatie integrados — `RoleResource`, `PermissionResource`, `PermissionsField`/`PermissionsColumn`; auto-registro cuando `permissions.enabled` + Spatie instalado.
 
 **Config-first** (2026-06-19): `config/panel.php` sin `env('PANEL_*')` por defecto.
 
@@ -127,10 +131,12 @@ Tab::make('General', [
 
 ### Layout shell
 
-- `.panel-shell` — CSS Grid en desktop (`sidebar | header` / `sidebar | main`)
-- Header altura fija `4rem` con `.panel-header-inner` (sin `min-h-16` + `py-3` que desbordaba)
+- `.panel-shell` — CSS Grid en desktop (`sidebar | main`, sin header global)
+- Breadcrumbs en `<x-panel::page-header>` — misma fila que el título (título izq., miga de pan der.)
+- Sidebar footer: perfil arriba; fila inferior con tema (izq.), versión (centro) y logout (der.)
 - Sidebar `fixed` en móvil, `relative` en grid desktop
-- Limpieza de nodos huérfanos `[x-persist="panel-header"]` tras `wire:navigate`
+- SPA loader (`partials/spa-loader.blade.php` + `spa-navigation.blade.php`): porcentaje entero en el anillo (`0%`→`100%`); progreso simulado (Livewire no expone % real de fetch); si `event.detail.cached`, salta a `100%`
+- Livewire: desactivar `config/livewire.php` → `navigate.show_progress_bar = false` (lo hace `panel:install`); evita barra superior duplicada
 - **BOM UTF-8** — las vistas no deben guardarse con BOM (PowerShell `Set-Content` lo añade); un BOM dentro de `.panel-shell` rompe el CSS Grid y crea hueco superior
 
 ## Fase 10 — Autenticación integrada (v0.10.0)
@@ -164,10 +170,15 @@ php artisan panel:make-page Settings
 'permissions' => [
     'enabled' => true,
     'panel_access' => 'access panel',
+    'resources' => true,
+    'manage_permission' => 'manage users',
 ],
 ```
 
-- `Panel\Minimalist\Support\PanelPermission` — `check()`, `panelAccessGranted()`
+- `Panel\Minimalist\Support\PanelPermission` — `check()`, `panelAccessGranted()`, `manageAccessPermission()`
+- `SpatieResourceRegistrar` — `RoleResource` + `PermissionResource` cuando `enabled` + Spatie + `resources => true`
+- Slugs: `roles`, `permissions` — el host puede sobreescribir con su propio Resource del mismo slug
+- `PermissionsField` / `PermissionsColumn` — `syncPermissions()` en roles (como `RolesField` en usuarios)
 - `EnsurePanelAccess` — exige `panel.permissions.panel_access` si `enabled`
 - Pages: `protected static ?string $permission = 'view reports'`
 - Nav: clave `permission` en enlaces manuales; filtra resources (`viewAny`) y pages (`canAccess`)
@@ -210,7 +221,7 @@ Ver `CHANGELOG.md` — versionado semántico desde v0.6.0.
 - Crear/editar en modal (`forms_in_modal`)
 - Tabs en formularios (`Tab::make`)
 - Export PDF (listado y selección bulk)
-- Publicación Packagist — ver `PUBLISHING.md` (pendiente operativo: crear repo + tag)
+- Publicación Packagist — `gallardev/minimalist` en Packagist (ver `PUBLISHING.md`)
 
 ## Fases anteriores
 

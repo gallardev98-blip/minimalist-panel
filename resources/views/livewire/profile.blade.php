@@ -1,8 +1,8 @@
 <div>
-    <div class="panel-page-hero">
+    <x-panel::page-header class="mb-6">
         <h1>{{ __('panel::panel.profile.title') }}</h1>
         <p class="panel-muted mt-1 text-sm">{{ __('panel::panel.profile.subtitle') }}</p>
-    </div>
+    </x-panel::page-header>
 
     <form wire:submit="save" class="panel-form-card">
         <div class="panel-form-card-body space-y-6">

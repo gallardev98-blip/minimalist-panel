@@ -110,6 +110,12 @@ return [
         'saved' => 'Profile updated successfully.',
         'unsupported_user' => 'The user model is not compatible with profile.',
     ],
+    'permissions' => [
+        'roles' => 'Roles',
+        'permissions' => 'Permissions',
+        'name' => 'Name',
+        'guard' => 'Guard',
+    ],
     'breadcrumbs' => [
         'dashboard' => 'Dashboard',
         'create' => 'Create',

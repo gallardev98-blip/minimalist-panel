@@ -1,8 +1,8 @@
 <div>
-    <div class="panel-page-hero mb-8">
+    <x-panel::page-header class="mb-8">
         <h1>{{ __('panel::panel.breadcrumbs.dashboard') }}</h1>
         <p class="panel-muted mt-1 text-sm">{{ __('panel::panel.welcome') }}</p>
-    </div>
+    </x-panel::page-header>
 
     @if ($widgets !== [])
         <section class="mb-10">

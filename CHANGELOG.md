@@ -4,6 +4,43 @@ All notable changes to `gallardev/minimalist` are documented in this file.
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-06-19
+
+### Added
+
+- **`RoleResource`** y **`PermissionResource`** integrados (Spatie) — `/admin/resources/roles` y `/admin/resources/permissions`
+- **`PermissionsField`** / **`PermissionsColumn`** — asignación de permisos en roles (`syncPermissions`)
+- **`SpatiePermissions`**, **`SpatieResourceRegistrar`**
+- Config `panel.permissions.resources` (default `true`) y `panel.permissions.manage_permission` (default `manage users`)
+- Tests: `PermissionsFieldTest`, `SpatieResourceRegistrarTest`, `ResourceRegistrySpatieTest`
+
+### Changed
+
+- `ResourceRegistry` — registra built-ins solo si el host no define el mismo slug
+- **panel-demo** — elimina resources duplicados; usa los integrados de la librería
+
+## [0.13.0] - 2026-06-19
+
+### Added
+
+- **`SpaLoaderTest`** — comprueba markup del loader con `%`, script de progreso y `page-header` en el layout
+
+### Changed
+
+- **Layout sin barra superior** — se elimina el header global; cada vista usa `<x-panel::page-header>` (título + miga de pan)
+- Cabecera de página unificada — título (izq.) y miga de pan (der.) en la misma fila
+- **Sidebar footer** — tema (izq.), versión (centro) y cerrar sesión (der.); el perfil queda encima de esa fila
+- Grid del shell: `sidebar | main` (sin fila de header)
+- SPA loader — porcentaje entero (`0%`–`100%`) en el anillo; cubre desde `top: 0`
+- **`panel:install`** — publica `config/livewire.php` si falta y desactiva `navigate.show_progress_bar`
+- Config `panel.version` (null = versión del paquete con prefijo `v`)
+- **README** y **AGENTS** — layout, SPA, breadcrumbs, roadmap fases 9–13
+- **panel-demo** — páginas custom migradas a `<x-panel::page-header>`; `show_progress_bar => false`
+
+### Removed
+
+- `partials/header.blade.php`
+
 ## [0.12.1] - 2026-06-19
 
 ### Fixed
@@ -17,7 +54,7 @@ All notable changes to `gallardev/minimalist` are documented in this file.
 ### Added
 
 - **Perfil de usuario** — `/admin/profile` para editar nombre, email y contraseña
-- Enlace al perfil en sidebar y header (avatar + nombre)
+- Enlace al perfil en sidebar (avatar + nombre)
 - Config `panel.profile.enabled` (default `true`)
 - `PanelAuth::user()` y `PanelAuth::profileEnabled()`
 

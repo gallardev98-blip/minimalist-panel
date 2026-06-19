@@ -78,6 +78,7 @@
 
         @case('multi-select')
         @case('roles')
+        @case('permissions')
             <select
                 id="field-{{ $name }}"
                 wire:model="form.{{ $name }}"

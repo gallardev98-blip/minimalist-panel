@@ -75,11 +75,6 @@
             min-height: 100dvh;
         }
 
-        .panel-header {
-            position: sticky;
-            top: 0;
-        }
-
         .panel-main {
             flex: 1 1 auto;
         }
@@ -89,10 +84,8 @@
         .panel-shell {
             display: grid;
             grid-template-columns: var(--panel-sidebar-width) minmax(0, 1fr);
-            grid-template-rows: var(--panel-header-height) minmax(0, 1fr);
-            grid-template-areas:
-                "sidebar header"
-                "sidebar main";
+            grid-template-rows: minmax(0, 1fr);
+            grid-template-areas: "sidebar main";
         }
 
         .panel-sidebar {
@@ -104,10 +97,6 @@
             transform: none !important;
             height: 100dvh;
             max-height: 100dvh;
-        }
-
-        .panel-header {
-            grid-area: header;
         }
 
         .panel-main {
@@ -850,15 +839,51 @@
         color: rgb(var(--panel-heading));
     }
 
-    .panel-page-hero {
-        margin-bottom: 2rem;
+    .panel-page-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
     }
 
+    .panel-page-header-menu {
+        flex-shrink: 0;
+        align-self: flex-start;
+        margin-top: 0.125rem;
+    }
+
+    @media (min-width: 1024px) {
+        .panel-page-header-menu {
+            display: none;
+        }
+    }
+
+    .panel-page-header-start {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .panel-page-header-start h1,
     .panel-page-hero h1 {
         font-size: 1.5rem;
         font-weight: 700;
         letter-spacing: -0.025em;
         color: rgb(var(--panel-heading));
+    }
+
+    .panel-page-header .panel-breadcrumbs {
+        flex-shrink: 0;
+        align-self: center;
+        max-width: min(50%, 24rem);
+        margin-left: auto;
+    }
+
+    .panel-page-header .panel-breadcrumbs-list {
+        justify-content: flex-end;
+    }
+
+    .panel-page-hero {
+        margin-bottom: 2rem;
     }
 
     .panel-form-card {
@@ -1001,10 +1026,80 @@
         color: rgb(var(--panel-muted));
     }
 
-    .panel-breadcrumbs ol {
+    .panel-breadcrumbs ol,
+    .panel-breadcrumbs-list {
         list-style: none;
         margin: 0;
         padding: 0;
+    }
+
+    .panel-breadcrumbs-list {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.375rem;
+    }
+
+    .panel-breadcrumbs-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .panel-breadcrumbs-separator {
+        font-size: 0.875rem;
+        user-select: none;
+    }
+
+    .panel-breadcrumbs-link {
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: color 0.15s ease;
+    }
+
+    .panel-breadcrumbs-link:hover {
+        color: rgb(var(--panel-text));
+    }
+
+    .panel-breadcrumbs-current {
+        font-size: 0.875rem;
+        font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .panel-sidebar-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .panel-sidebar-version {
+        flex: 1 1 auto;
+        text-align: center;
+        font-size: 0.6875rem;
+        font-weight: 500;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        user-select: none;
+    }
+
+    .panel-sidebar-toolbar-btn {
+        flex-shrink: 0;
+    }
+
+    .panel-sidebar-logout-form {
+        margin: 0;
+        flex-shrink: 0;
+    }
+
+    .panel-sidebar-logout-btn:hover {
+        color: rgb(var(--panel-danger));
     }
 
     .panel-form-section {
@@ -1179,7 +1274,7 @@
     .panel-spa-loader {
         --panel-loader-exit: 360ms;
         position: fixed;
-        top: var(--panel-header-height);
+        top: 0;
         right: 0;
         bottom: 0;
         left: 0;
@@ -1247,27 +1342,46 @@
 
     .panel-spa-loader-ring {
         position: relative;
-        width: 3rem;
-        height: 3rem;
+        width: 4rem;
+        height: 4rem;
+        --panel-loader-progress: 0;
     }
 
     .panel-spa-loader-ring-track,
-    .panel-spa-loader-ring-spinner {
+    .panel-spa-loader-ring-progress {
         position: absolute;
         inset: 0;
         border-radius: 9999px;
-        border: 2px solid transparent;
     }
 
     .panel-spa-loader-ring-track {
-        border-color: rgb(var(--panel-border));
+        border: 2px solid rgb(var(--panel-border));
         opacity: 0.65;
     }
 
-    .panel-spa-loader-ring-spinner {
-        border-top-color: rgb(var(--panel-primary));
-        border-right-color: rgb(var(--panel-primary) / 0.35);
-        animation: panel-spa-spin 0.9s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+    .panel-spa-loader-ring-progress {
+        background: conic-gradient(
+            rgb(var(--panel-primary)) calc(var(--panel-loader-progress, 0) * 1%),
+            transparent 0
+        );
+        -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+        mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+        transition: background 120ms linear;
+    }
+
+    .panel-spa-loader-percent {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+        color: rgb(var(--panel-heading));
+        pointer-events: none;
+        user-select: none;
     }
 
     .panel-spa-loader-title {
@@ -1276,11 +1390,6 @@
         font-weight: 600;
         letter-spacing: -0.01em;
         color: rgb(var(--panel-heading));
-    }
-
-    @keyframes panel-spa-spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
     }
 
     .panel-skeleton {

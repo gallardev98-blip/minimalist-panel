@@ -10,10 +10,14 @@
             const MIN_VISIBLE_MS = 420;
             const EXIT_MS = 360;
             const VISIBLE_CLASS = 'panel-spa-loader--visible';
+            const PROGRESS_CAP = 92;
 
             let shownAt = 0;
             let hideTimer = null;
             let exitTimer = null;
+            let progressFrame = null;
+            let progressStartedAt = 0;
+            let isVisible = false;
 
             function loader() {
                 return document.getElementById('panel-spa-loader');
@@ -21,6 +25,18 @@
 
             function main() {
                 return document.getElementById('panel-main');
+            }
+
+            function progressLabel() {
+                return document.querySelector('[data-panel-loader-progress]');
+            }
+
+            function progressBar() {
+                return document.querySelector('[data-panel-loader-progressbar]');
+            }
+
+            function progressRing() {
+                return document.querySelector('[data-panel-loader-ring]');
             }
 
             function lockScroll() {
@@ -34,9 +50,75 @@
                 document.body.classList.remove('panel-scroll-lock');
             }
 
-            function showLoader() {
+            function stopProgressAnimation() {
+                if (progressFrame !== null) {
+                    cancelAnimationFrame(progressFrame);
+                    progressFrame = null;
+                }
+            }
+
+            function setProgress(value) {
+                const element = loader();
+                const percent = Math.max(0, Math.min(100, Math.floor(value)));
+                const label = progressLabel();
+                const bar = progressBar();
+                const ring = progressRing();
+
+                if (label) {
+                    label.textContent = `${percent}%`;
+                }
+
+                if (bar) {
+                    bar.setAttribute('aria-valuenow', String(percent));
+                }
+
+                if (element) {
+                    element.style.setProperty('--panel-loader-progress', String(percent));
+                }
+
+                if (ring) {
+                    ring.style.setProperty('--panel-loader-progress', String(percent));
+                }
+            }
+
+            function startProgress(isCached = false) {
+                stopProgressAnimation();
+                progressStartedAt = Date.now();
+                setProgress(0);
+
+                if (isCached) {
+                    setProgress(100);
+
+                    return;
+                }
+
+                const tick = () => {
+                    if (! isVisible) {
+                        return;
+                    }
+
+                    const elapsed = Date.now() - progressStartedAt;
+                    const next = PROGRESS_CAP * (1 - Math.exp(-elapsed / 850));
+
+                    setProgress(next);
+
+                    if (next < PROGRESS_CAP) {
+                        progressFrame = requestAnimationFrame(tick);
+                    }
+                };
+
+                progressFrame = requestAnimationFrame(tick);
+            }
+
+            function finishProgress() {
+                stopProgressAnimation();
+                setProgress(100);
+            }
+
+            function showLoader(options = {}) {
                 const element = loader();
                 const mainEl = main();
+                const { resetProgress = true, isCached = false } = options;
 
                 if (! element) {
                     return;
@@ -45,24 +127,33 @@
                 clearTimeout(hideTimer);
                 clearTimeout(exitTimer);
 
-                shownAt = Date.now();
-                lockScroll();
-                element.setAttribute('aria-hidden', 'false');
-                element.setAttribute('aria-busy', 'true');
-                mainEl?.classList.add('panel-navigating');
+                if (! isVisible) {
+                    shownAt = Date.now();
+                    isVisible = true;
+                    lockScroll();
+                    element.setAttribute('aria-hidden', 'false');
+                    element.setAttribute('aria-busy', 'true');
+                    mainEl?.classList.add('panel-navigating');
 
-                requestAnimationFrame(() => {
-                    element.classList.add(VISIBLE_CLASS);
-                });
+                    requestAnimationFrame(() => {
+                        element.classList.add(VISIBLE_CLASS);
+                    });
+                }
+
+                if (resetProgress) {
+                    startProgress(isCached);
+                }
             }
 
             function hideLoader() {
                 const element = loader();
                 const mainEl = main();
 
-                if (! element) {
+                if (! element || ! isVisible) {
                     return;
                 }
+
+                finishProgress();
 
                 const elapsed = Date.now() - shownAt;
                 const delay = Math.max(0, MIN_VISIBLE_MS - elapsed);
@@ -78,6 +169,9 @@
                         element.setAttribute('aria-hidden', 'true');
                         mainEl?.classList.remove('panel-navigating');
                         unlockScroll();
+                        isVisible = false;
+                        stopProgressAnimation();
+                        setProgress(0);
                     }, EXIT_MS);
                 }, delay);
             }
@@ -88,19 +182,19 @@
                 document.querySelectorAll('.panel-auth-bg, .panel-auth-shell, .panel-auth-theme-toggle').forEach((element) => {
                     element.remove();
                 });
-
-                document.querySelectorAll('[x-persist="panel-header"]').forEach((element) => element.remove());
-
-                const headers = document.querySelectorAll('.panel-shell > .panel-header');
-                headers.forEach((header, index) => {
-                    if (index > 0) {
-                        header.remove();
-                    }
-                });
             }
 
-            document.addEventListener('livewire:navigate', showLoader);
-            document.addEventListener('livewire:navigating', showLoader);
+            document.addEventListener('livewire:navigate', (event) => {
+                showLoader({
+                    resetProgress: true,
+                    isCached: Boolean(event.detail?.cached),
+                });
+            });
+
+            document.addEventListener('livewire:navigating', () => {
+                showLoader({ resetProgress: false });
+            });
+
             document.addEventListener('livewire:navigated', () => {
                 hideLoader();
                 cleanupLayoutArtifacts();

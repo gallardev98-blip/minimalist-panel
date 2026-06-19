@@ -10,6 +10,7 @@
         @break
 
     @case('roles')
+    @case('permissions')
         @if (is_array($value) && count($value) > 0)
             <div class="flex flex-wrap gap-1">
                 @foreach ($value as $role)

@@ -131,6 +131,13 @@ return [
         'enabled' => false,
         'driver' => 'spatie',
         'panel_access' => 'access panel',
+        /*
+        | Recursos integrados Role/Permission cuando Spatie está instalado.
+        | Si defines RoleResource o PermissionResource en app/Panel/Resources
+        | con el mismo slug (roles / permissions), prevalece el tuyo.
+        */
+        'resources' => true,
+        'manage_permission' => 'manage users',
     ],
 
     /*
@@ -157,6 +164,18 @@ return [
         'name' => 'Panel',
         'logo' => null,
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Versión mostrada en el sidebar
+    |--------------------------------------------------------------------------
+    |
+    | null — usa la versión del paquete (Package::VERSION) con prefijo "v".
+    | string — texto libre, p. ej. "v1" o "beta".
+    |
+    */
+
+    'version' => null,
 
     'per_page' => 15,
 

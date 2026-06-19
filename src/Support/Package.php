@@ -10,6 +10,8 @@ final class Package
 
     public const DISPLAY_NAME = 'Minimalist';
 
+    public const VERSION = '0.14.0';
+
     public static function vendorPath(): string
     {
         return 'vendor/'.self::NAME;

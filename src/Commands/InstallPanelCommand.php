@@ -23,6 +23,7 @@ final class InstallPanelCommand extends Command
         ]);
 
         $this->ensurePanelDirectoryExists();
+        $this->ensureLivewireNavigateProgressDisabled();
         $this->printPostInstallInstructions();
 
         $this->components->info('Panel instalado correctamente.');
@@ -40,6 +41,36 @@ final class InstallPanelCommand extends Command
         }
     }
 
+    private function ensureLivewireNavigateProgressDisabled(): void
+    {
+        $configPath = config_path('livewire.php');
+
+        if (! is_file($configPath)) {
+            $this->call('vendor:publish', [
+                '--tag' => 'livewire:config',
+            ]);
+        }
+
+        if (! is_file($configPath)) {
+            return;
+        }
+
+        $contents = (string) file_get_contents($configPath);
+
+        if (! str_contains($contents, "'show_progress_bar' => true")) {
+            return;
+        }
+
+        $updated = str_replace(
+            "'show_progress_bar' => true",
+            "'show_progress_bar' => false",
+            $contents,
+        );
+
+        file_put_contents($configPath, $updated);
+        $this->components->info('Livewire: show_progress_bar desactivado (usa el loader del panel).');
+    }
+
     private function printPostInstallInstructions(): void
     {
         $vendorViews = './'.Package::vendorPath().'/resources/views/**/*.blade.php';
@@ -55,10 +86,11 @@ final class InstallPanelCommand extends Command
         $this->line("     {$vendorViewsV4}");
         $this->newLine();
         $this->line('  3. Auth integrada: /' . config('panel.path', 'admin') . '/login y /register');
-        $this->line('  4. Crea resources: php artisan panel:make-resource Product --model=Product');
-        $this->line('  5. Policies (opcional): php artisan panel:make-policy Product');
-        $this->line('  6. Enlaza storage: php artisan storage:link');
-        $this->line('  7. Visita: /' . config('panel.path', 'admin'));
+        $this->line('  4. Livewire: config/livewire.php con navigate.show_progress_bar = false (evita barra duplicada)');
+        $this->line('  5. Crea resources: php artisan panel:make-resource Product --model=Product');
+        $this->line('  6. Policies (opcional): php artisan panel:make-policy Product');
+        $this->line('  7. Enlaza storage: php artisan storage:link');
+        $this->line('  8. Visita: /' . config('panel.path', 'admin'));
         $this->newLine();
     }
 }

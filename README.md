@@ -40,7 +40,7 @@ Repositorio local (desarrollo):
 php artisan panel:install
 ```
 
-Esto publica `config/panel.php`, registra rutas en `/admin` y prepara la estructura.
+Esto publica `config/panel.php`, registra rutas en `/admin` y prepara la estructura. También publica `config/livewire.php` (si no existe) con `navigate.show_progress_bar = false` para usar solo el loader del panel.
 
 El panel incluye **login y registro** en `/admin/login` y `/admin/register` usando la tabla `users` de Laravel. No necesitas Breeze salvo que quieras auth separada.
 
@@ -263,6 +263,32 @@ final class SettingsPage extends Page
 - Auto-discovery en `app/Panel/Pages`
 - Añade al menú: `['page' => SettingsPage::class]`
 
+Vista Blade con cabecera unificada (título + miga de pan en la misma fila):
+
+```blade
+<x-panel::page-header class="mb-8">
+    <h1>{{ $pageClass::label() }}</h1>
+    <p class="panel-muted mt-1 text-sm">Descripción opcional.</p>
+</x-panel::page-header>
+```
+
+---
+
+## Layout y cabecera de página
+
+Desde **v0.13.0** no hay barra superior global. Cada pantalla usa `<x-panel::page-header>`:
+
+- **Izquierda:** título (y subtítulo, enlace «volver», etc.)
+- **Derecha:** miga de pan automática
+- **Móvil:** botón menú a la izquierda del título
+
+El **sidebar** incluye en el footer: enlace al perfil, toggle claro/oscuro, versión del panel (`panel.version`) e icono de cerrar sesión.
+
+```php
+// config/panel.php — versión mostrada en el sidebar (null = v{Package::VERSION})
+'version' => null,
+```
+
 ---
 
 ## Tema y colores
@@ -322,7 +348,7 @@ Los colores se inyectan como variables CSS (`--panel-primary`, `--panel-bg`, etc
 
 ### Toggle claro/oscuro
 
-Botón en el header. Persistencia en `localStorage` (`panel-theme`).
+Botón en el **footer del sidebar**. Persistencia en `localStorage` (`panel-theme`).
 
 ### Clases semánticas
 
@@ -365,10 +391,15 @@ composer require spatie/laravel-permission
 'permissions' => [
     'enabled' => true,
     'panel_access' => 'access panel',
+    'resources' => true,              // RoleResource + PermissionResource integrados
+    'manage_permission' => 'manage users', // permiso para CRUD roles/permisos
 ],
 ```
 
 - `EnsurePanelAccess` exige el permiso `panel_access` para entrar al panel
+- Con `resources => true` y Spatie instalado, se registran **`RoleResource`** y **`PermissionResource`** en `/admin/resources/roles` y `/admin/resources/permissions`
+- Asigna permisos a roles con `PermissionsField`; asigna roles a usuarios con `RolesField`
+- Si defines tus propios resources con slug `roles` o `permissions` en `app/Panel/Resources`, prevalecen sobre los integrados
 - En **Pages**: `protected static ?string $permission = 'view reports'`
 - En **navegación**: `'permission' => 'manage settings'` en enlaces manuales
 - Resources y Pages en el menú se ocultan si el usuario no tiene acceso
@@ -388,6 +419,18 @@ RolesColumn::make('roles')->label('Roles'),
 ```
 
 Los roles se sincronizan con `syncRoles()` al crear o editar (no van en `$fillable`).
+
+### Permisos en roles
+
+```php
+use Panel\Minimalist\Fields\PermissionsField;
+use Panel\Minimalist\Columns\PermissionsColumn;
+
+PermissionsField::make('permissions')->label('Permisos'),
+PermissionsColumn::make('permissions')->label('Permisos'),
+```
+
+Los permisos se sincronizan con `syncPermissions()` al guardar el rol.
 
 ---
 
@@ -554,9 +597,20 @@ public static function relations(): array
 ## Navegación SPA
 
 - `wire:navigate` en enlaces internos
-- Sidebar y header persistentes (`@persist`)
-- Spinner con blur solo en el área de contenido (`#panel-main`)
-- Prefetch con `wire:navigate.hover`
+- Sidebar persistente (`@persist` en toasts)
+- Loader a pantalla completa del área de contenido con **porcentaje entero** (`0%`–`100%`) en el anillo
+- Prefetch con `wire:navigate.hover` (páginas cacheadas saltan a `100%`)
+
+Desactiva la barra nativa de Livewire para no duplicar indicadores:
+
+```php
+// config/livewire.php
+'navigate' => [
+    'show_progress_bar' => false,
+],
+```
+
+`panel:install` publica `config/livewire.php` y desactiva `show_progress_bar` automáticamente si aún está en `true`.
 
 ---
 
@@ -576,6 +630,7 @@ public static function relations(): array
 |---------|-------------|
 | `php artisan panel:install` | Instalar panel |
 | `php artisan panel:make-resource Name` | Crear Resource |
+| `php artisan panel:make-page Name` | Crear página custom |
 | `php artisan panel:make-policy Name` | Crear Policy para un modelo |
 | `php artisan vendor:publish --tag=panel-config` | Publicar config |
 | `php artisan vendor:publish --tag=panel-views` | Publicar vistas |
@@ -612,12 +667,27 @@ public static function rowActions(): array
 
 Por defecto: `view`, `edit`, `delete` (+ `restore` / `forceDelete` con soft deletes).
 
-## Breadcrumbs con título de registro
+## Breadcrumbs
+
+Automáticos según la ruta (`Panel / Productos / Editar`). Se renderizan dentro de `<x-panel::page-header>` a la derecha del título.
+
+Título del registro en show/edit:
 
 ```php
 protected static ?string $recordTitleAttribute = 'name';
 // o automático desde la primera columna searchable
 ```
+
+---
+
+## Tests
+
+```bash
+cd minimalist-panel-library
+composer test
+```
+
+Incluye tests de layout SPA (`SpaLoaderTest`): markup del loader con `%`, script de progreso y `page-header`.
 
 ## Filtros avanzados
 
@@ -703,17 +773,6 @@ Botones **CSV**, **XLSX** y **PDF** en la toolbar del listado. Si hay filas sele
 
 Ver [PUBLISHING.md](PUBLISHING.md) para subir el paquete a Packagist y etiquetar releases.
 
-## Breadcrumbs
-
-Automáticos en el header según la ruta (`Dashboard / Productos / Editar`).
-
-## Tests
-
-```bash
-cd minimalist-panel-library
-composer test
-```
-
 ---
 
 ## Roadmap
@@ -722,7 +781,13 @@ composer test
 - [x] Fase 6: RowAction, confirm modal, skeletons, DateRange/MultiSelect, breadcrumbs con título
 - [x] Fase 7: crear/editar en modal, tabs en formularios, export PDF
 - [x] Fase 8: Policies Laravel, `panel:make-policy`, `ResourcePolicy`
-- [ ] Publicación Packagist — ver `PUBLISHING.md`
+- [x] Fase 9: páginas custom (`Page`) y permisos Spatie/Gate
+- [x] Fase 10: autenticación integrada (login, registro, logout)
+- [x] Fase 11: recuperar contraseña, `RolesField` / `RolesColumn`
+- [x] Fase 12: perfil de usuario (`/admin/profile`)
+- [x] Fase 13: layout sin header, `<x-panel::page-header>`, loader SPA con `%`
+- [x] Fase 14: `RoleResource` / `PermissionResource` integrados, `PermissionsField` / `PermissionsColumn`
+- [x] Packagist — `gallardev/minimalist`
 
 ## Licencia
 
