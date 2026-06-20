@@ -1,9 +1,9 @@
-﻿# Minimalist
+# Minimalist
 
 Panel de administración declarativo y monocromático para Laravel. Alternativa moderna a AdminLTE, basado en **Livewire 3**, **Tailwind CSS** y una API de **Resources** al estilo Filament/Nova.
 
 ```bash
-composer require gallardev/minimalist
+composer require mylaraveltools/minimalist
 ```
 
 ## Requisitos
@@ -18,7 +18,7 @@ composer require gallardev/minimalist
 ### 1. Composer
 
 ```bash
-composer require gallardev/minimalist
+composer require mylaraveltools/minimalist
 ```
 
 Repositorio local (desarrollo):
@@ -29,7 +29,7 @@ Repositorio local (desarrollo):
     { "type": "path", "url": "../minimalist-panel-library" }
   ],
   "require": {
-    "gallardev/minimalist": "@dev"
+    "mylaraveltools/minimalist": "@dev"
   }
 }
 ```
@@ -40,7 +40,7 @@ Repositorio local (desarrollo):
 php artisan panel:install
 ```
 
-Esto publica `config/panel.php`, registra rutas en `/admin` y prepara la estructura. También publica `config/livewire.php` (si no existe) con `navigate.show_progress_bar = false` para usar solo el loader del panel.
+Esto publica `config/panel.php`, registra rutas en `/admin` y prepara la estructura. También publica `config/livewire.php` si no existe.
 
 El panel incluye **login y registro** en `/admin/login` y `/admin/register` usando la tabla `users` de Laravel. No necesitas Breeze salvo que quieras auth separada.
 
@@ -82,7 +82,7 @@ Incluye las vistas del paquete en `tailwind.config.js`:
 ```js
 content: [
   './resources/views/**/*.blade.php',
-  './vendor/gallardev/minimalist/resources/views/**/*.blade.php',
+  './vendor/mylaraveltools/minimalist/resources/views/**/*.blade.php',
 ],
 ```
 
@@ -94,16 +94,22 @@ darkMode: 'class',
 
 ### 4. Alpine + Livewire
 
-En `resources/js/app.js`, **no** llames `Alpine.start()` en rutas del panel (Livewire lo gestiona):
+En `resources/js/app.js`, **no importes Alpine en rutas del panel** (`/admin/*`). Livewire lo incluye y arranca solo:
 
 ```js
-import Alpine from 'alpinejs';
-window.Alpine = Alpine;
+const panelPath = '/admin';
 
-if (! window.location.pathname.startsWith('/admin')) {
-    Alpine.start();
+if (! window.location.pathname.startsWith(panelPath)) {
+    import('alpinejs').then(({ default: Alpine }) => {
+        window.Alpine = Alpine;
+        Alpine.start();
+    });
 }
 ```
+
+Importar `alpinejs` en `/admin/login` rompe `wire:submit` (el formulario no envía nada).
+
+**APP_URL** debe coincidir con tu servidor de desarrollo (host **y** puerto), p. ej. `http://127.0.0.1:8000`.
 
 ---
 
@@ -239,7 +245,7 @@ php artisan panel:make-page Settings
 ```
 
 ```php
-use Panel\Minimalist\Pages\Page;
+use MyLaravelTools\Panel\Pages\Page;
 
 final class SettingsPage extends Page
 {
@@ -411,8 +417,8 @@ Usa Spatie en tus Policies: `$user->can('manage products')`.
 Con Spatie instalado y `HasRoles` en tu modelo `User`:
 
 ```php
-use Panel\Minimalist\Fields\RolesField;
-use Panel\Minimalist\Columns\RolesColumn;
+use MyLaravelTools\Panel\Fields\RolesField;
+use MyLaravelTools\Panel\Columns\RolesColumn;
 
 RolesField::make('roles')->label('Roles'),
 RolesColumn::make('roles')->label('Roles'),
@@ -423,8 +429,8 @@ Los roles se sincronizan con `syncRoles()` al crear o editar (no van en `$fillab
 ### Permisos en roles
 
 ```php
-use Panel\Minimalist\Fields\PermissionsField;
-use Panel\Minimalist\Columns\PermissionsColumn;
+use MyLaravelTools\Panel\Fields\PermissionsField;
+use MyLaravelTools\Panel\Columns\PermissionsColumn;
 
 PermissionsField::make('permissions')->label('Permisos'),
 PermissionsColumn::make('permissions')->label('Permisos'),
@@ -454,7 +460,7 @@ public static function canDelete(Model $record): bool { return true; }
 php artisan panel:make-policy Product
 ```
 
-Genera `App\Policies\ProductPolicy` extendiendo `Panel\Minimalist\Policies\ResourcePolicy`.
+Genera `App\Policies\ProductPolicy` extendiendo `MyLaravelTools\Panel\Policies\ResourcePolicy`.
 
 Las policies hijas deben mantener `$user` y `$record` **sin type-hint** (restricción de PHP al heredar). Usa `instanceof` en el cuerpo si necesitas tu modelo:
 
@@ -531,7 +537,7 @@ Ruta: `GET /admin/resources/{slug}/{id}`
 ## Form Sections
 
 ```php
-use Panel\Minimalist\Forms\Section;
+use MyLaravelTools\Panel\Forms\Section;
 
 public static function form(): array
 {
@@ -601,16 +607,14 @@ public static function relations(): array
 - Loader a pantalla completa del área de contenido con **porcentaje entero** (`0%`–`100%`) en el anillo
 - Prefetch con `wire:navigate.hover` (páginas cacheadas saltan a `100%`)
 
-Desactiva la barra nativa de Livewire para no duplicar indicadores:
+Mantén `show_progress_bar => true` en Livewire (obligatorio). La barra NProgress de Livewire se oculta vía CSS del panel; usar `false` provoca `Alpine is not defined` al cargar `/admin`:
 
 ```php
 // config/livewire.php
 'navigate' => [
-    'show_progress_bar' => false,
+    'show_progress_bar' => true,
 ],
 ```
-
-`panel:install` publica `config/livewire.php` y desactiva `show_progress_bar` automáticamente si aún está en `true`.
 
 ---
 
@@ -650,7 +654,7 @@ admin@panel.test / password → /admin
 ## RowAction (acciones por fila)
 
 ```php
-use Panel\Minimalist\Actions\RowAction;
+use MyLaravelTools\Panel\Actions\RowAction;
 
 public static function rowActions(): array
 {
@@ -714,9 +718,9 @@ Requiere `phpoffice/phpspreadsheet` (incluido en el paquete).
 ## Nuevos Fields
 
 ```php
-use Panel\Minimalist\Fields\DateField;
-use Panel\Minimalist\Fields\FileField;
-use Panel\Minimalist\Fields\RichTextField;
+use MyLaravelTools\Panel\Fields\DateField;
+use MyLaravelTools\Panel\Fields\FileField;
+use MyLaravelTools\Panel\Fields\RichTextField;
 
 DateField::make('published_at')->label('Publicación')->time(),
 FileField::make('brochure')->directory('docs')->acceptedMimes(['pdf']),
@@ -747,8 +751,8 @@ Con `false`, se usan las rutas de página completa (`panel.resources.create` / `
 Organiza secciones en pestañas con `Tab::make()`:
 
 ```php
-use Panel\Minimalist\Forms\Section;
-use Panel\Minimalist\Forms\Tab;
+use MyLaravelTools\Panel\Forms\Section;
+use MyLaravelTools\Panel\Forms\Tab;
 
 public static function form(): array
 {
@@ -787,7 +791,7 @@ Ver [PUBLISHING.md](PUBLISHING.md) para subir el paquete a Packagist y etiquetar
 - [x] Fase 12: perfil de usuario (`/admin/profile`)
 - [x] Fase 13: layout sin header, `<x-panel::page-header>`, loader SPA con `%`
 - [x] Fase 14: `RoleResource` / `PermissionResource` integrados, `PermissionsField` / `PermissionsColumn`
-- [x] Packagist — `gallardev/minimalist`
+- [x] Packagist — `mylaraveltools/minimalist`
 
 ## Licencia
 

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Unit;
+namespace MyLaravelTools\Panel\Tests\Unit;
 
-use Panel\Minimalist\Support\NavigationBuilder;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Support\NavigationBuilder;
+use MyLaravelTools\Panel\Tests\TestCase;
 
 final class NavigationBuilderTest extends TestCase
 {
@@ -59,7 +59,7 @@ final class NavigationBuilderTest extends TestCase
                     ['label' => 'Pedidos', 'url' => '/admin/resources/orders', 'icon' => 'shopping-cart'],
                 ],
             ],
-        ], app(\Panel\Minimalist\Support\ResourceRegistry::class));
+        ], app(\MyLaravelTools\Panel\Support\ResourceRegistry::class));
 
         $this->assertTrue($navigation[0]['open']);
     }

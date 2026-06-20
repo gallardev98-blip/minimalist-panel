@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Support;
+namespace MyLaravelTools\Panel\Support;
 
-use Panel\Minimalist\Resources\Resource;
+use MyLaravelTools\Panel\Resources\Resource;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Facades;
+namespace MyLaravelTools\Panel\Facades;
 
-use Panel\Minimalist\Support\ResourceRegistry;
+use MyLaravelTools\Panel\Support\ResourceRegistry;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static array<int, class-string<\Panel\Minimalist\Resources\Resource>> all()
- * @method static class-string<\Panel\Minimalist\Resources\Resource>|null findBySlug(string $slug)
- * @method static void register(array<int, class-string<\Panel\Minimalist\Resources\Resource>> $resources)
+ * @method static array<int, class-string<\MyLaravelTools\Panel\Resources\Resource>> all()
+ * @method static class-string<\MyLaravelTools\Panel\Resources\Resource>|null findBySlug(string $slug)
+ * @method static void register(array<int, class-string<\MyLaravelTools\Panel\Resources\Resource>> $resources)
  *
  * @see ResourceRegistry
  */

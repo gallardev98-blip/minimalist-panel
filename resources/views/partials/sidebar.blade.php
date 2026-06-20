@@ -1,6 +1,6 @@
 @php
-    use Panel\Minimalist\Support\Package;
-    use Panel\Minimalist\Support\ResourceRegistry;
+    use MyLaravelTools\Panel\Support\Package;
+    use MyLaravelTools\Panel\Support\ResourceRegistry;
 
     $panelPath = config('panel.path', 'admin');
     $navigation = app(ResourceRegistry::class)->navigation();
@@ -48,7 +48,7 @@
                 $initial = strtoupper(substr($user?->name ?? $user?->email ?? '?', 0, 1));
             @endphp
 
-            @if (\Panel\Minimalist\Support\PanelAuth::profileEnabled())
+            @if (\MyLaravelTools\Panel\Support\PanelAuth::profileEnabled())
                 <a
                     href="{{ route('panel.profile') }}"
                     wire:navigate
@@ -84,7 +84,7 @@
 
                 <span class="panel-sidebar-version panel-muted">{{ $panelVersion }}</span>
 
-                <form method="POST" action="{{ route(\Panel\Minimalist\Support\PanelAuth::logoutRouteName()) }}" class="panel-sidebar-logout-form">
+                <form method="POST" action="{{ route(\MyLaravelTools\Panel\Support\PanelAuth::logoutRouteName()) }}" class="panel-sidebar-logout-form">
                     @csrf
                     <button
                         type="submit"

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Http\Middleware;
+namespace MyLaravelTools\Panel\Http\Middleware;
 
-use Panel\Minimalist\Support\PanelAuth;
-use Panel\Minimalist\Support\PanelPermission;
+use MyLaravelTools\Panel\Support\PanelAuth;
+use MyLaravelTools\Panel\Support\PanelPermission;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +17,7 @@ final class EnsurePanelAccess
         $guard = PanelAuth::guard();
 
         if (! auth($guard)->check()) {
-            return redirect()->guest(route(PanelAuth::loginRouteName()));
+            return redirect()->guest(route(PanelAuth::loginRouteName(), [], false));
         }
 
         abort_unless(PanelPermission::panelAccessGranted(), 403);

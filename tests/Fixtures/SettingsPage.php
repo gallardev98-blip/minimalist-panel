@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Fixtures;
+namespace MyLaravelTools\Panel\Tests\Fixtures;
 
-use Panel\Minimalist\Pages\Page;
+use MyLaravelTools\Panel\Pages\Page;
 
 final class SettingsPage extends Page
 {

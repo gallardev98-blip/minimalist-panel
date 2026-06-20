@@ -176,7 +176,27 @@
                 }, delay);
             }
 
+            function resolveNavigatePath(detail) {
+                try {
+                    const raw = detail?.url ?? window.location.href;
+
+                    return new URL(String(raw), window.location.origin).pathname;
+                } catch {
+                    return window.location.pathname;
+                }
+            }
+
+            function isPanelAuthPath(pathname) {
+                const authSegments = ['/login', '/register', '/forgot-password', '/reset-password'];
+
+                return authSegments.some((segment) => pathname.includes(segment));
+            }
+
             function cleanupLayoutArtifacts() {
+                if (! document.querySelector('.panel-shell')) {
+                    return;
+                }
+
                 document.documentElement.classList.remove('panel-auth-root');
 
                 document.querySelectorAll('.panel-auth-bg, .panel-auth-shell, .panel-auth-theme-toggle').forEach((element) => {
@@ -185,13 +205,21 @@
             }
 
             document.addEventListener('livewire:navigate', (event) => {
+                if (isPanelAuthPath(resolveNavigatePath(event.detail))) {
+                    return;
+                }
+
                 showLoader({
                     resetProgress: true,
                     isCached: Boolean(event.detail?.cached),
                 });
             });
 
-            document.addEventListener('livewire:navigating', () => {
+            document.addEventListener('livewire:navigating', (event) => {
+                if (isPanelAuthPath(resolveNavigatePath(event.detail))) {
+                    return;
+                }
+
                 showLoader({ resetProgress: false });
             });
 

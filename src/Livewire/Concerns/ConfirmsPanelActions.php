@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Livewire\Concerns;
+namespace MyLaravelTools\Panel\Livewire\Concerns;
 
 trait ConfirmsPanelActions
 {

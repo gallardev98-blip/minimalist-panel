@@ -36,7 +36,7 @@
                 <div x-show="openGroup === {{ $index }}" x-cloak class="panel-nav-group-children">
                     @foreach ($item['children'] ?? [] as $child)
                         @php
-                            $isCurrent = Panel\Minimalist\Support\NavigationBuilder::linkIsCurrent($child);
+                            $isCurrent = MyLaravelTools\Panel\Support\NavigationBuilder::linkIsCurrent($child);
                         @endphp
                         <a
                             href="{{ $child['url'] }}"
@@ -53,7 +53,7 @@
         @else
             @php
                 $iconName = $item['icon'] ?? 'layers';
-                $isCurrent = Panel\Minimalist\Support\NavigationBuilder::linkIsCurrent($item);
+                $isCurrent = MyLaravelTools\Panel\Support\NavigationBuilder::linkIsCurrent($item);
             @endphp
             <a
                 href="{{ $item['url'] }}"

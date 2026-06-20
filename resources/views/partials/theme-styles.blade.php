@@ -10,7 +10,7 @@
     .panel-body {
         background-color: rgb(var(--panel-bg));
         color: rgb(var(--panel-text));
-        font-family: {!! \Panel\Minimalist\Support\ThemeResolver::fontFamily() !!};
+        font-family: {!! \MyLaravelTools\Panel\Support\ThemeResolver::fontFamily() !!};
         min-height: 100vh;
         min-height: 100dvh;
     }
@@ -1271,6 +1271,13 @@
         margin-top: 1.5rem;
     }
 
+    /* Livewire Navigate (NProgress): oculto — el panel usa panel-spa-loader */
+    #nprogress,
+    #nprogress .bar,
+    #nprogress .spinner {
+        display: none !important;
+    }
+
     .panel-spa-loader {
         --panel-loader-exit: 360ms;
         position: fixed;
@@ -1294,6 +1301,10 @@
         .panel-spa-loader {
             left: var(--panel-sidebar-width);
         }
+    }
+
+    body.panel-auth-body .panel-spa-loader {
+        left: 0;
     }
 
     .panel-spa-loader--visible {
@@ -1688,6 +1699,21 @@
         font-size: 0.75rem;
         line-height: 1.3;
         color: rgb(var(--panel-danger));
+    }
+
+    .panel-auth-error-summary {
+        padding: 0.75rem 0.875rem;
+        border-radius: calc(var(--panel-radius) - 0.125rem);
+        border: 1px solid rgb(var(--panel-danger) / 0.35);
+        background-color: rgb(var(--panel-danger) / 0.08);
+    }
+
+    .panel-auth-error-summary p {
+        margin: 0;
+    }
+
+    .panel-auth-error-summary p + p {
+        margin-top: 0.25rem;
     }
 
     .panel-auth-remember {

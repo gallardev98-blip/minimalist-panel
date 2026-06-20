@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Resources\Spatie;
+namespace MyLaravelTools\Panel\Resources\Spatie;
 
-use Panel\Minimalist\Columns\TextColumn;
-use Panel\Minimalist\Fields\TextField;
-use Panel\Minimalist\Resources\Resource;
-use Panel\Minimalist\Support\PanelPermission;
+use MyLaravelTools\Panel\Columns\TextColumn;
+use MyLaravelTools\Panel\Fields\TextField;
+use MyLaravelTools\Panel\Resources\Resource;
+use MyLaravelTools\Panel\Support\PanelPermission;
 use Illuminate\Database\Eloquent\Model;
 
 final class PermissionResource extends Resource
@@ -53,7 +53,7 @@ final class PermissionResource extends Resource
         return static::canManageAccess();
     }
 
-    /** @return array<int, \Panel\Minimalist\Fields\Field> */
+    /** @return array<int, \MyLaravelTools\Panel\Fields\Field> */
     public static function form(): array
     {
         return [
@@ -67,7 +67,7 @@ final class PermissionResource extends Resource
         ];
     }
 
-    /** @return array<int, \Panel\Minimalist\Columns\Column> */
+    /** @return array<int, \MyLaravelTools\Panel\Columns\Column> */
     public static function table(): array
     {
         return [

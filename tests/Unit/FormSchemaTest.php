@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Unit;
+namespace MyLaravelTools\Panel\Tests\Unit;
 
-use Panel\Minimalist\Fields\TextField;
-use Panel\Minimalist\Forms\Section;
-use Panel\Minimalist\Forms\Tab;
-use Panel\Minimalist\Support\FormSchema;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Fields\TextField;
+use MyLaravelTools\Panel\Forms\Section;
+use MyLaravelTools\Panel\Forms\Tab;
+use MyLaravelTools\Panel\Support\FormSchema;
+use MyLaravelTools\Panel\Tests\TestCase;
 
 final class FormSchemaTest extends TestCase
 {

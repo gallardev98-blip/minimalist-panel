@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace {{ namespace }};
 
-use Panel\Minimalist\Policies\ResourcePolicy;
+use MyLaravelTools\Panel\Policies\ResourcePolicy;
 use {{ modelFqn }};
 
 final class {{ policyClass }} extends ResourcePolicy

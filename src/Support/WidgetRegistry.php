@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Support;
+namespace MyLaravelTools\Panel\Support;
 
-use Panel\Minimalist\Widgets\ResourceCountWidget;
-use Panel\Minimalist\Widgets\StatWidget;
+use MyLaravelTools\Panel\Widgets\ResourceCountWidget;
+use MyLaravelTools\Panel\Widgets\StatWidget;
 
 final class WidgetRegistry
 {

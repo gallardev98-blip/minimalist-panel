@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Panel\Pages;
 
-use Panel\Minimalist\Pages\Page;
+use MyLaravelTools\Panel\Pages\Page;
 
 final class {{ pageClass }} extends Page
 {

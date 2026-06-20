@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Support;
+namespace MyLaravelTools\Panel\Support;
 
-use Panel\Minimalist\Fields\Field;
+use MyLaravelTools\Panel\Fields\Field;
 use Illuminate\Database\Eloquent\Model;
 
 final class FieldPayload

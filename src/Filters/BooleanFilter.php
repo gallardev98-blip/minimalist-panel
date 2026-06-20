@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Filters;
+namespace MyLaravelTools\Panel\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
 

@@ -1,5 +1,5 @@
 @php
-    use Panel\Minimalist\Support\FormSchema;
+    use MyLaravelTools\Panel\Support\FormSchema;
 
     $tabs = FormSchema::tabs($formSchema);
     $firstTabId = $tabs[0]->getId();

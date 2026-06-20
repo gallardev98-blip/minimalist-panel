@@ -10,7 +10,7 @@
         </div>
     @endif
 
-    <form wire:submit="sendResetLink" class="panel-auth-fields">
+    <form wire:submit.prevent="sendResetLink" class="panel-auth-fields" novalidate>
         @include('panel::partials.auth-field', [
             'name' => 'email',
             'label' => __('panel::panel.auth.email'),

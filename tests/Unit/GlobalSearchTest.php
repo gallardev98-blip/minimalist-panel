@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Unit;
+namespace MyLaravelTools\Panel\Tests\Unit;
 
-use Panel\Minimalist\Support\ExportColumnHelper;
-use Panel\Minimalist\Support\GlobalSearch;
-use Panel\Minimalist\Tests\Fixtures\Article;
-use Panel\Minimalist\Tests\Fixtures\ArticleResource;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Support\ExportColumnHelper;
+use MyLaravelTools\Panel\Support\GlobalSearch;
+use MyLaravelTools\Panel\Tests\Fixtures\Article;
+use MyLaravelTools\Panel\Tests\Fixtures\ArticleResource;
+use MyLaravelTools\Panel\Tests\TestCase;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 

@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-use Panel\Minimalist\Livewire\Dashboard;
-use Panel\Minimalist\Livewire\PanelPage;
-use Panel\Minimalist\Livewire\ResourceForm;
-use Panel\Minimalist\Livewire\ResourceIndex;
-use Panel\Minimalist\Livewire\ResourceShow;
+use MyLaravelTools\Panel\Livewire\Dashboard;
+use MyLaravelTools\Panel\Livewire\PanelPage;
+use MyLaravelTools\Panel\Livewire\ResourceForm;
+use MyLaravelTools\Panel\Livewire\ResourceIndex;
+use MyLaravelTools\Panel\Livewire\ResourceShow;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', Dashboard::class)->name('dashboard');
 
 if (config('panel.profile.enabled', true)) {
-    Route::get('/profile', \Panel\Minimalist\Livewire\Profile::class)->name('profile');
+    Route::get('/profile', \MyLaravelTools\Panel\Livewire\Profile::class)->name('profile');
 }
 
 Route::get('/pages/{page}', PanelPage::class)->name('pages.show');

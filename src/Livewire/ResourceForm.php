@@ -6,21 +6,21 @@ declare(strict_types=1);
 
 
 
-namespace Panel\Minimalist\Livewire;
+namespace MyLaravelTools\Panel\Livewire;
 
 
 
-use Panel\Minimalist\Livewire\Concerns\DispatchesPanelToasts;
+use MyLaravelTools\Panel\Livewire\Concerns\DispatchesPanelToasts;
 
-use Panel\Minimalist\Livewire\Concerns\InteractsWithPanelResource;
+use MyLaravelTools\Panel\Livewire\Concerns\InteractsWithPanelResource;
 
-use Panel\Minimalist\Resources\Resource;
+use MyLaravelTools\Panel\Resources\Resource;
 
-use Panel\Minimalist\Support\FieldPayload;
+use MyLaravelTools\Panel\Support\FieldPayload;
 
-use Panel\Minimalist\Support\FormSchema;
+use MyLaravelTools\Panel\Support\FormSchema;
 
-use Panel\Minimalist\Support\ResourceRegistry;
+use MyLaravelTools\Panel\Support\ResourceRegistry;
 
 use Illuminate\Database\Eloquent\Model;
 

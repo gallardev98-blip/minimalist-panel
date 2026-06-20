@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Pages;
+namespace MyLaravelTools\Panel\Pages;
 
-use Panel\Minimalist\Support\PanelPermission;
+use MyLaravelTools\Panel\Support\PanelPermission;
 use Illuminate\Support\Str;
 
 abstract class Page

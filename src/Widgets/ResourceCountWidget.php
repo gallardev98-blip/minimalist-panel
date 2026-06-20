@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Widgets;
+namespace MyLaravelTools\Panel\Widgets;
 
-use Panel\Minimalist\Resources\Resource;
+use MyLaravelTools\Panel\Resources\Resource;
 
 final class ResourceCountWidget
 {

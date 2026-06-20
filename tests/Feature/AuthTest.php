@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Feature;
+namespace MyLaravelTools\Panel\Tests\Feature;
 
-use Panel\Minimalist\Livewire\Auth\ForgotPassword;
-use Panel\Minimalist\Livewire\Auth\Login;
-use Panel\Minimalist\Livewire\Auth\Register;
-use Panel\Minimalist\Livewire\Auth\ResetPassword;
-use Panel\Minimalist\Support\PanelAuthMessages;
-use Panel\Minimalist\Tests\Fixtures\PanelUser;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Livewire\Auth\ForgotPassword;
+use MyLaravelTools\Panel\Livewire\Auth\Login;
+use MyLaravelTools\Panel\Livewire\Auth\Register;
+use MyLaravelTools\Panel\Livewire\Auth\ResetPassword;
+use MyLaravelTools\Panel\Support\PanelAuthMessages;
+use MyLaravelTools\Panel\Tests\Fixtures\PanelUser;
+use MyLaravelTools\Panel\Tests\TestCase;
 use Illuminate\Auth\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;

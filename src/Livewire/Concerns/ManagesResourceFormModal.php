@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Livewire\Concerns;
+namespace MyLaravelTools\Panel\Livewire\Concerns;
 
-use Panel\Minimalist\Support\FieldPayload;
-use Panel\Minimalist\Support\FormSchema;
+use MyLaravelTools\Panel\Support\FieldPayload;
+use MyLaravelTools\Panel\Support\FormSchema;
 use Illuminate\Database\Eloquent\Model;
 
 trait ManagesResourceFormModal

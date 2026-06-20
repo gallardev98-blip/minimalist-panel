@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Columns;
+namespace MyLaravelTools\Panel\Columns;
 
 use Illuminate\Database\Eloquent\Model;
 

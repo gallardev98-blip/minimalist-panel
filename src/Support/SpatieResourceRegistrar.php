@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Support;
+namespace MyLaravelTools\Panel\Support;
 
-use Panel\Minimalist\Resources\Resource;
-use Panel\Minimalist\Resources\Spatie\PermissionResource;
-use Panel\Minimalist\Resources\Spatie\RoleResource;
+use MyLaravelTools\Panel\Resources\Resource;
+use MyLaravelTools\Panel\Resources\Spatie\PermissionResource;
+use MyLaravelTools\Panel\Resources\Spatie\RoleResource;
 
 final class SpatieResourceRegistrar
 {

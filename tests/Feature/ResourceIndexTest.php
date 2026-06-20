@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Feature;
+namespace MyLaravelTools\Panel\Tests\Feature;
 
-use Panel\Minimalist\Livewire\ResourceIndex;
-use Panel\Minimalist\Tests\Fixtures\Article;
-use Panel\Minimalist\Tests\Fixtures\ArticleResource;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Livewire\ResourceIndex;
+use MyLaravelTools\Panel\Tests\Fixtures\Article;
+use MyLaravelTools\Panel\Tests\Fixtures\ArticleResource;
+use MyLaravelTools\Panel\Tests\TestCase;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Livewire\Livewire;

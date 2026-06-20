@@ -7,10 +7,40 @@
     <title>{{ $title ?? config('panel.brand.name', 'Panel') }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    @php use Panel\Minimalist\Support\ThemeResolver; @endphp
+    @php use MyLaravelTools\Panel\Support\ThemeResolver; @endphp
     <link href="{{ ThemeResolver::googleFontsUrl() }}" rel="stylesheet">
     <script>
         window.panelDefaultTheme = @json(config('panel.theme.default', 'dark'));
+
+        function panelApp() {
+            return {
+                sidebarOpen: false,
+                theme: window.panelDefaultTheme || 'dark',
+                init() {
+                    const saved = localStorage.getItem('panel-theme');
+                    if (saved === 'light' || saved === 'dark') {
+                        this.theme = saved;
+                    }
+
+                    this.applyTheme();
+
+                    document.addEventListener('keydown', (event) => {
+                        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+                            event.preventDefault();
+                            Livewire.dispatch('open-global-search');
+                        }
+                    });
+                },
+                toggleTheme() {
+                    this.theme = this.theme === 'dark' ? 'light' : 'dark';
+                    localStorage.setItem('panel-theme', this.theme);
+                    this.applyTheme();
+                },
+                applyTheme() {
+                    document.documentElement.classList.toggle('dark', this.theme === 'dark');
+                },
+            };
+        }
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -47,37 +77,5 @@
     @livewireScripts
 
     @include('panel::partials.spa-navigation')
-
-    <script>
-        function panelApp() {
-            return {
-                sidebarOpen: false,
-                theme: window.panelDefaultTheme || 'dark',
-                init() {
-                    const saved = localStorage.getItem('panel-theme');
-                    if (saved === 'light' || saved === 'dark') {
-                        this.theme = saved;
-                    }
-
-                    this.applyTheme();
-
-                    document.addEventListener('keydown', (event) => {
-                        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
-                            event.preventDefault();
-                            Livewire.dispatch('open-global-search');
-                        }
-                    });
-                },
-                toggleTheme() {
-                    this.theme = this.theme === 'dark' ? 'light' : 'dark';
-                    localStorage.setItem('panel-theme', this.theme);
-                    this.applyTheme();
-                },
-                applyTheme() {
-                    document.documentElement.classList.toggle('dark', this.theme === 'dark');
-                },
-            };
-        }
-    </script>
 </body>
 </html>

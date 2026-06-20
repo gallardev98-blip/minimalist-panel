@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Actions;
+namespace MyLaravelTools\Panel\Actions;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;

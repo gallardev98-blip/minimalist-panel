@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-use Panel\Minimalist\Http\Controllers\LogoutController;
-use Panel\Minimalist\Http\Middleware\RedirectIfPanelAuthenticated;
-use Panel\Minimalist\Http\Middleware\SetPanelLocale;
-use Panel\Minimalist\Livewire\Auth\ForgotPassword;
-use Panel\Minimalist\Livewire\Auth\Login;
-use Panel\Minimalist\Livewire\Auth\Register;
-use Panel\Minimalist\Livewire\Auth\ResetPassword;
+use MyLaravelTools\Panel\Http\Controllers\LogoutController;
+use MyLaravelTools\Panel\Http\Middleware\RedirectIfPanelAuthenticated;
+use MyLaravelTools\Panel\Http\Middleware\SetPanelLocale;
+use MyLaravelTools\Panel\Livewire\Auth\ForgotPassword;
+use MyLaravelTools\Panel\Livewire\Auth\Login;
+use MyLaravelTools\Panel\Livewire\Auth\Register;
+use MyLaravelTools\Panel\Livewire\Auth\ResetPassword;
 use Illuminate\Support\Facades\Route;
 
 if (! config('panel.auth.enabled', true)) {

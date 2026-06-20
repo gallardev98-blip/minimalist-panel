@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Http\Middleware;
+namespace MyLaravelTools\Panel\Http\Middleware;
 
-use Panel\Minimalist\Support\PanelAuth;
+use MyLaravelTools\Panel\Support\PanelAuth;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +16,7 @@ final class RedirectIfPanelAuthenticated
         $guard = PanelAuth::guard();
 
         if (auth($guard)->check()) {
-            return redirect()->route(PanelAuth::redirectAfterLogin());
+            return redirect()->to(route(PanelAuth::redirectAfterLogin(), [], false));
         }
 
         return $next($request);

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Livewire;
+namespace MyLaravelTools\Panel\Livewire;
 
-use Panel\Minimalist\Livewire\Concerns\DispatchesPanelToasts;
-use Panel\Minimalist\Livewire\Concerns\InteractsWithPanelResource;
-use Panel\Minimalist\Support\PanelAuth;
+use MyLaravelTools\Panel\Livewire\Concerns\DispatchesPanelToasts;
+use MyLaravelTools\Panel\Livewire\Concerns\InteractsWithPanelResource;
+use MyLaravelTools\Panel\Support\PanelAuth;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;

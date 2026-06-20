@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Unit;
+namespace MyLaravelTools\Panel\Tests\Unit;
 
-use Panel\Minimalist\Actions\RowAction;
-use Panel\Minimalist\Tests\Fixtures\Article;
-use Panel\Minimalist\Tests\Fixtures\ArticleResource;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Actions\RowAction;
+use MyLaravelTools\Panel\Tests\Fixtures\Article;
+use MyLaravelTools\Panel\Tests\Fixtures\ArticleResource;
+use MyLaravelTools\Panel\Tests\TestCase;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 

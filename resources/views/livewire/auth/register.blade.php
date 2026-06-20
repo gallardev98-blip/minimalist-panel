@@ -4,7 +4,7 @@
         <p class="panel-auth-subtitle">{{ __('panel::panel.auth.register_subtitle') }}</p>
     </div>
 
-    <form wire:submit="register" class="panel-auth-fields">
+    <form wire:submit.prevent="register" class="panel-auth-fields" novalidate>
         @include('panel::partials.auth-field', [
             'name' => 'name',
             'label' => __('panel::panel.auth.name'),

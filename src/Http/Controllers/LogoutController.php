@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Http\Controllers;
+namespace MyLaravelTools\Panel\Http\Controllers;
 
-use Panel\Minimalist\Support\PanelAuth;
+use MyLaravelTools\Panel\Support\PanelAuth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

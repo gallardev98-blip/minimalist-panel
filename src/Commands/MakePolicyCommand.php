@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Commands;
+namespace MyLaravelTools\Panel\Commands;
 
-use Panel\Minimalist\Resources\Resource;
-use Panel\Minimalist\Support\ResourceRegistry;
+use MyLaravelTools\Panel\Resources\Resource;
+use MyLaravelTools\Panel\Support\ResourceRegistry;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;

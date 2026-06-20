@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Livewire\Auth;
+namespace MyLaravelTools\Panel\Livewire\Auth;
 
-use Panel\Minimalist\Support\PanelAuth;
+use MyLaravelTools\Panel\Support\PanelAuth;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -43,7 +43,7 @@ final class Register extends Component
         PanelAuth::assignRegisteredRole($user);
         PanelAuth::login($user);
 
-        $this->redirect(route(PanelAuth::redirectAfterRegister()), navigate: false);
+        $this->redirect(PanelAuth::redirectTargetAfterRegister(), navigate: true);
     }
 
     public function render(): mixed

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Fields;
+namespace MyLaravelTools\Panel\Fields;
 
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;

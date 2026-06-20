@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests;
+namespace MyLaravelTools\Panel\Tests;
 
-use Panel\Minimalist\PanelServiceProvider;
+use MyLaravelTools\Panel\PanelServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;

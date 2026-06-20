@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Unit;
+namespace MyLaravelTools\Panel\Tests\Unit;
 
-use Panel\Minimalist\Support\SpatieResourceRegistrar;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Support\SpatieResourceRegistrar;
+use MyLaravelTools\Panel\Tests\TestCase;
 
 final class SpatieResourceRegistrarTest extends TestCase
 {

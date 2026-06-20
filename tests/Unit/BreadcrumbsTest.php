@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Unit;
+namespace MyLaravelTools\Panel\Tests\Unit;
 
-use Panel\Minimalist\Support\Breadcrumbs;
-use Panel\Minimalist\Tests\Fixtures\ArticleResource;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Support\Breadcrumbs;
+use MyLaravelTools\Panel\Tests\Fixtures\ArticleResource;
+use MyLaravelTools\Panel\Tests\TestCase;
 use Illuminate\Support\Facades\Route;
 
 final class BreadcrumbsTest extends TestCase
@@ -58,7 +58,7 @@ final class BreadcrumbsTest extends TestCase
     public function test_it_builds_page_crumbs(): void
     {
         config([
-            'panel.pages.registered' => [\Panel\Minimalist\Tests\Fixtures\SettingsPage::class],
+            'panel.pages.registered' => [\MyLaravelTools\Panel\Tests\Fixtures\SettingsPage::class],
             'panel.pages.discovery.enabled' => false,
         ]);
 

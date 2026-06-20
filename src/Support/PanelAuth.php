@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Support;
+namespace MyLaravelTools\Panel\Support;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
@@ -94,6 +94,40 @@ final class PanelAuth
         return static::redirectAfterLogin();
     }
 
+    public static function redirectTargetAfterAuth(): string
+    {
+        $intended = session()->pull('url.intended');
+        $loginPath = parse_url(route(static::loginRouteName(), [], false), PHP_URL_PATH) ?: '';
+        $default = route(static::redirectAfterLogin(), [], false);
+
+        if (
+            is_string($intended)
+            && $intended !== ''
+            && ($loginPath === '' || ! str_contains($intended, $loginPath))
+        ) {
+            return $intended;
+        }
+
+        return $default;
+    }
+
+    public static function redirectTargetAfterRegister(): string
+    {
+        $intended = session()->pull('url.intended');
+        $loginPath = parse_url(route(static::loginRouteName(), [], false), PHP_URL_PATH) ?: '';
+        $default = route(static::redirectAfterRegister(), [], false);
+
+        if (
+            is_string($intended)
+            && $intended !== ''
+            && ($loginPath === '' || ! str_contains($intended, $loginPath))
+        ) {
+            return $intended;
+        }
+
+        return $default;
+    }
+
     public static function guard(): string
     {
         return (string) config('panel.guard', 'web');
@@ -102,7 +136,6 @@ final class PanelAuth
     public static function login(Authenticatable $user, bool $remember = false): void
     {
         Auth::guard(static::guard())->login($user, $remember);
-        session()->regenerate();
     }
 
     public static function assignRegisteredRole(Authenticatable $user): void

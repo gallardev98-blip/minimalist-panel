@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Livewire\Concerns;
+namespace MyLaravelTools\Panel\Livewire\Concerns;
 
-use Panel\Minimalist\Resources\Resource;
-use Panel\Minimalist\Support\ResourceAuthorizer;
-use Panel\Minimalist\Support\ResourceRegistry;
+use MyLaravelTools\Panel\Resources\Resource;
+use MyLaravelTools\Panel\Support\ResourceAuthorizer;
+use MyLaravelTools\Panel\Support\ResourceRegistry;
 use Illuminate\Database\Eloquent\Model;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

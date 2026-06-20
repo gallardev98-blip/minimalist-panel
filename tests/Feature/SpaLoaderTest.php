@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Feature;
+namespace MyLaravelTools\Panel\Tests\Feature;
 
-use Panel\Minimalist\Tests\Fixtures\PanelUser;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Tests\Fixtures\PanelUser;
+use MyLaravelTools\Panel\Tests\TestCase;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
@@ -31,6 +31,14 @@ final class SpaLoaderTest extends TestCase
             $table->rememberToken();
             $table->timestamps();
         });
+    }
+
+    public function test_login_page_includes_spa_loader_for_auth_transition(): void
+    {
+        $this->get('/admin/login')
+            ->assertOk()
+            ->assertSee('id="panel-spa-loader"', false)
+            ->assertSee('registerPanelSpaNavigation', false);
     }
 
     public function test_layout_includes_spa_loader_with_integer_percent_markup(): void

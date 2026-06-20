@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Unit;
+namespace MyLaravelTools\Panel\Tests\Unit;
 
-use Panel\Minimalist\Fields\PermissionsField;
-use Panel\Minimalist\Support\FieldPayload;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Fields\PermissionsField;
+use MyLaravelTools\Panel\Support\FieldPayload;
+use MyLaravelTools\Panel\Tests\TestCase;
 use Illuminate\Database\Eloquent\Model;
 
 final class PermissionsFieldTest extends TestCase

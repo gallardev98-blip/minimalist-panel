@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Unit;
+namespace MyLaravelTools\Panel\Tests\Unit;
 
-use Panel\Minimalist\Pages\Page;
-use Panel\Minimalist\Support\NavigationBuilder;
-use Panel\Minimalist\Support\PageRegistry;
-use Panel\Minimalist\Support\PanelPermission;
-use Panel\Minimalist\Tests\Fixtures\SettingsPage;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Pages\Page;
+use MyLaravelTools\Panel\Support\NavigationBuilder;
+use MyLaravelTools\Panel\Support\PageRegistry;
+use MyLaravelTools\Panel\Support\PanelPermission;
+use MyLaravelTools\Panel\Tests\Fixtures\SettingsPage;
+use MyLaravelTools\Panel\Tests\TestCase;
 
 final class PageTest extends TestCase
 {
@@ -43,7 +43,7 @@ final class PageTest extends TestCase
             ],
         ]);
 
-        $navigation = app(\Panel\Minimalist\Support\ResourceRegistry::class)->navigation();
+        $navigation = app(\MyLaravelTools\Panel\Support\ResourceRegistry::class)->navigation();
 
         $this->assertCount(1, $navigation);
         $this->assertSame('Settings', $navigation[0]['label']);
@@ -63,7 +63,7 @@ final class PageTest extends TestCase
 
         $this->assertFalse(SettingsPage::canAccess());
 
-        $navigation = app(\Panel\Minimalist\Support\ResourceRegistry::class)->navigation();
+        $navigation = app(\MyLaravelTools\Panel\Support\ResourceRegistry::class)->navigation();
 
         $this->assertSame([], $navigation);
     }

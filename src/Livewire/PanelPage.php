@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Livewire;
+namespace MyLaravelTools\Panel\Livewire;
 
-use Panel\Minimalist\Livewire\Concerns\InteractsWithPanelResource;
-use Panel\Minimalist\Pages\Page;
-use Panel\Minimalist\Support\PageRegistry;
+use MyLaravelTools\Panel\Livewire\Concerns\InteractsWithPanelResource;
+use MyLaravelTools\Panel\Pages\Page;
+use MyLaravelTools\Panel\Support\PageRegistry;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;

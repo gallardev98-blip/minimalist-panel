@@ -1,5 +1,5 @@
 @php
-    $crumbs = \Panel\Minimalist\Support\Breadcrumbs::resolve();
+    $crumbs = \MyLaravelTools\Panel\Support\Breadcrumbs::resolve();
 @endphp
 
 @if (count($crumbs) > 0)

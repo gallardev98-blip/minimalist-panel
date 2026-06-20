@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Livewire\Auth;
+namespace MyLaravelTools\Panel\Livewire\Auth;
 
-use Panel\Minimalist\Support\PanelAuth;
-use Panel\Minimalist\Support\PanelAuthMessages;
+use MyLaravelTools\Panel\Support\PanelAuth;
+use MyLaravelTools\Panel\Support\PanelAuthMessages;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules\Password as PasswordRule;
@@ -58,7 +58,10 @@ final class ResetPassword extends Component
             ]);
         }
 
-        $this->redirectRoute(PanelAuth::loginRouteName(), navigate: false);
+        $this->redirect(
+            route(PanelAuth::loginRouteName(), [], false),
+            navigate: false,
+        );
     }
 
     public function render(): mixed

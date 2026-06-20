@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Livewire\Auth;
+namespace MyLaravelTools\Panel\Livewire\Auth;
 
-use Panel\Minimalist\Support\PanelAuth;
+use MyLaravelTools\Panel\Support\PanelAuth;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
@@ -37,9 +37,7 @@ final class Login extends Component
             ]);
         }
 
-        session()->regenerate();
-
-        $this->redirectIntended(route(PanelAuth::redirectAfterLogin()), navigate: false);
+        $this->redirect(PanelAuth::redirectTargetAfterAuth(), navigate: true);
     }
 
     public function render(): mixed

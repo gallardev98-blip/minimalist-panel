@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Fixtures;
+namespace MyLaravelTools\Panel\Tests\Fixtures;
 
-use Panel\Minimalist\Columns\BooleanColumn;
-use Panel\Minimalist\Columns\TextColumn;
-use Panel\Minimalist\Fields\TextField;
-use Panel\Minimalist\Filters\BooleanFilter;
-use Panel\Minimalist\Resources\Resource;
+use MyLaravelTools\Panel\Columns\BooleanColumn;
+use MyLaravelTools\Panel\Columns\TextColumn;
+use MyLaravelTools\Panel\Fields\TextField;
+use MyLaravelTools\Panel\Filters\BooleanFilter;
+use MyLaravelTools\Panel\Resources\Resource;
 
 final class ArticleResource extends Resource
 {

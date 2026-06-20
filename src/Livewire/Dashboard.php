@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Livewire;
+namespace MyLaravelTools\Panel\Livewire;
 
-use Panel\Minimalist\Livewire\Concerns\InteractsWithPanelResource;
-use Panel\Minimalist\Support\NavigationBuilder;
-use Panel\Minimalist\Support\ResourceRegistry;
-use Panel\Minimalist\Support\WidgetRegistry;
+use MyLaravelTools\Panel\Livewire\Concerns\InteractsWithPanelResource;
+use MyLaravelTools\Panel\Support\NavigationBuilder;
+use MyLaravelTools\Panel\Support\ResourceRegistry;
+use MyLaravelTools\Panel\Support\WidgetRegistry;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 

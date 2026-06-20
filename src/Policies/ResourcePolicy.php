@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Policies;
+namespace MyLaravelTools\Panel\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 

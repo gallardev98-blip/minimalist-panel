@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Forms;
+namespace MyLaravelTools\Panel\Forms;
 
-use Panel\Minimalist\Fields\Field;
+use MyLaravelTools\Panel\Fields\Field;
 
 final class Section
 {

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Fields;
+namespace MyLaravelTools\Panel\Fields;
 
 use Illuminate\Database\Eloquent\Model;
-use Panel\Minimalist\Support\SpatiePermissions;
+use MyLaravelTools\Panel\Support\SpatiePermissions;
 
 final class PermissionsField extends Field
 {

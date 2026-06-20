@@ -1,5 +1,5 @@
 {
-    "name": "gallardev/minimalist",
+    "name": "mylaraveltools/minimalist",
     "description": "Minimalist — declarative monochrome admin panel for Laravel with Livewire and Tailwind",
     "type": "library",
     "license": "MIT",
@@ -9,6 +9,7 @@
         "panel",
         "livewire",
         "tailwind",
+        "mylaraveltools",
         "minimalist",
         "monochrome"
     ],
@@ -35,21 +36,21 @@
     },
     "autoload": {
         "psr-4": {
-            "Panel\\Minimalist\\": "src/"
+            "MyLaravelTools\\Panel\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Panel\\Minimalist\\Tests\\": "tests/"
+            "MyLaravelTools\\Panel\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Panel\\Minimalist\\PanelServiceProvider"
+                "MyLaravelTools\\Panel\\PanelServiceProvider"
             ],
             "aliases": {
-                "Panel": "Panel\\Minimalist\\Facades\\Panel"
+                "Panel": "MyLaravelTools\\Panel\\Facades\\Panel"
             }
         }
     },

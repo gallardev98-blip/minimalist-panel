@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Support;
+namespace MyLaravelTools\Panel\Support;
 
-use Panel\Minimalist\Pages\Page;
-use Panel\Minimalist\Resources\Resource;
+use MyLaravelTools\Panel\Pages\Page;
+use MyLaravelTools\Panel\Resources\Resource;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Throwable;

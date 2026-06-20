@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Panel\Resources;
 
-use Panel\Minimalist\Columns\DateTimeColumn;
-use Panel\Minimalist\Columns\TextColumn;
-use Panel\Minimalist\Fields\EmailField;
-use Panel\Minimalist\Fields\TextField;
-use Panel\Minimalist\Resources\Resource;
+use MyLaravelTools\Panel\Columns\DateTimeColumn;
+use MyLaravelTools\Panel\Columns\TextColumn;
+use MyLaravelTools\Panel\Fields\EmailField;
+use MyLaravelTools\Panel\Fields\TextField;
+use MyLaravelTools\Panel\Resources\Resource;
 use App\Models\{{ modelClass }};
 
 final class {{ resourceClass }} extends Resource

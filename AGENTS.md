@@ -1,8 +1,8 @@
-﻿# AGENTS — Minimalist (`gallardev/minimalist`)
+﻿# AGENTS — Minimalist (`mylaraveltools/minimalist`)
 
 ## Estado actual
 
-**Paquete Composer:** `gallardev/minimalist` — `composer require gallardev/minimalist` (namespace PHP: `Panel\Minimalist`).
+**Paquete Composer:** `mylaraveltools/minimalist` — `composer require mylaraveltools/minimalist` (namespace PHP: `MyLaravelTools\Panel`).
 
 **Fase 9** (2026-06-18): páginas custom (`Page`, `panel:make-page`, ruta `pages/{slug}`) e integración opcional de permisos Spatie/Gate (`PanelPermission`, filtrado de navegación).
 
@@ -15,6 +15,8 @@
 **v0.13.0** (2026-06-19): layout sin header — `<x-panel::page-header>` (título + breadcrumbs en la misma fila); footer del sidebar con tema / versión / logout; loader SPA con `%`.
 
 **v0.14.0** (2026-06-19): resources Spatie integrados — `RoleResource`, `PermissionResource`, `PermissionsField`/`PermissionsColumn`; auto-registro cuando `permissions.enabled` + Spatie instalado.
+
+**v0.16.0** (2026-06-20): namespace PHP `MyLaravelTools\Panel` (antes `Panel\Minimalist`); alineado con `MyLaravelTools\Alertas`.
 
 **Config-first** (2026-06-19): `config/panel.php` sin `env('PANEL_*')` por defecto.
 
@@ -39,7 +41,7 @@
 ### RowAction
 
 ```php
-use Panel\Minimalist\Actions\RowAction;
+use MyLaravelTools\Panel\Actions\RowAction;
 
 public static function rowActions(): array
 {
@@ -104,8 +106,8 @@ Resource::recordTitle($record);
 ### Tabs en formularios
 
 ```php
-use Panel\Minimalist\Forms\Section;
-use Panel\Minimalist\Forms\Tab;
+use MyLaravelTools\Panel\Forms\Section;
+use MyLaravelTools\Panel\Forms\Tab;
 
 Tab::make('General', [
     Section::make('Datos', [ TextField::make('name') ]),
@@ -136,15 +138,22 @@ Tab::make('General', [
 - Sidebar footer: perfil arriba; fila inferior con tema (izq.), versión (centro) y logout (der.)
 - Sidebar `fixed` en móvil, `relative` en grid desktop
 - SPA loader (`partials/spa-loader.blade.php` + `spa-navigation.blade.php`): porcentaje entero en el anillo (`0%`→`100%`); progreso simulado (Livewire no expone % real de fetch); si `event.detail.cached`, salta a `100%`
-- Livewire: desactivar `config/livewire.php` → `navigate.show_progress_bar = false` (lo hace `panel:install`); evita barra superior duplicada
+- Livewire: mantener `navigate.show_progress_bar = true` en `config/livewire.php` — si es `false`, Livewire añade `data-no-progress-bar` y lanza `Alpine is not defined` al cargar; la barra NProgress se oculta vía CSS (`#nprogress` en theme-styles)
+- **`panelApp()` en `<head>`** del layout app — definir antes de `@livewireScripts` para que Alpine resuelva `x-data` en `<body>`
 - **BOM UTF-8** — las vistas no deben guardarse con BOM (PowerShell `Set-Content` lo añade); un BOM dentro de `.panel-shell` rompe el CSS Grid y crea hueco superior
 
 ## Fase 10 — Autenticación integrada (v0.10.0)
 
 - Rutas: `panel.login`, `panel.register`, `panel.logout`
-- Livewire: `Panel\Minimalist\Livewire\Auth\Login`, `Register`
+- Livewire: `MyLaravelTools\Panel\Livewire\Auth\Login`, `Register`
 - Layout: `panel::layouts.guest` (mismo tema monocromático)
-- Tras login/registro: **recarga completa** (`navigate: false`) para no mezclar layout guest con `panel-shell` vía SPA
+- Tras login/registro: **navegación SPA** (`navigate: true`) con el mismo loader del panel; el layout guest incluye `spa-loader` + `spa-navigation`
+- **`spa-navigation` en auth:** `cleanupLayoutArtifacts()` solo corre si existe `.panel-shell` (transición post-login); no mostrar loader ni limpiar DOM al navegar **hacia** rutas auth (`/login`, `/register`, etc.) — de lo contrario el login parpadea y desaparece
+- Enlace de marca del guest layout **sin** `wire:navigate` (misma ruta login; evita navigate innecesario)
+- **Alpine en auth:** no importar `alpinejs` en `app.js` para rutas `/admin/*` — Livewire lo arranca; importarlo rompe `wire:submit` en login
+- **Guest layout sin Alpine en `<body>`** — el toggle de tema usa JS vanilla en `<head>`; Livewire gestiona el formulario de login (`wire:submit.prevent`)
+- **`PanelAuth::redirectTargetAfterAuth()`** — redirección tras login/registro; ignora `url.intended` si apunta al login
+- **APP_URL** debe incluir host y puerto correctos (`http://127.0.0.1:8000`); redirecciones auth usan URLs relativas (`absolute: false`)
 - Estilos auth solo en `body.panel-auth-body` — nunca `overflow: hidden` en `html` (rompe el grid al navegar)
 - **BOM UTF-8** en `theme-styles.blade.php` rompe el layout del admin; guardar siempre UTF-8 sin BOM
 - Config: `panel.auth.enabled`, `register`, `register_role` (Spatie)
@@ -158,7 +167,7 @@ Tab::make('General', [
 php artisan panel:make-page Settings
 ```
 
-- `Panel\Minimalist\Pages\Page` — slug, label, icon, `view()`, `data()`, `canAccess()`
+- `MyLaravelTools\Panel\Pages\Page` — slug, label, icon, `view()`, `data()`, `canAccess()`
 - Auto-discovery en `app/Panel/Pages`
 - Ruta: `{panel.path}/pages/{slug}` → Livewire `PanelPage`
 - Navegación: `['page' => SettingsPage::class]` en `config/panel-navigation.php`
@@ -175,7 +184,7 @@ php artisan panel:make-page Settings
 ],
 ```
 
-- `Panel\Minimalist\Support\PanelPermission` — `check()`, `panelAccessGranted()`, `manageAccessPermission()`
+- `MyLaravelTools\Panel\Support\PanelPermission` — `check()`, `panelAccessGranted()`, `manageAccessPermission()`
 - `SpatieResourceRegistrar` — `RoleResource` + `PermissionResource` cuando `enabled` + Spatie + `resources => true`
 - Slugs: `roles`, `permissions` — el host puede sobreescribir con su propio Resource del mismo slug
 - `PermissionsField` / `PermissionsColumn` — `syncPermissions()` en roles (como `RolesField` en usuarios)
@@ -202,7 +211,7 @@ php artisan panel:make-page Settings
 php artisan panel:make-policy Product
 ```
 
-- `Panel\Minimalist\Policies\ResourcePolicy` — deny-by-default
+- `MyLaravelTools\Panel\Policies\ResourcePolicy` — deny-by-default
 - `PolicyRegistrar` en boot si `panel.policies.auto_register`
 - `Resource::$policy` o convención `App\Policies\{Model}Policy`
 - Autorización: hooks `can*()` **AND** Policy (si existe)
@@ -221,7 +230,7 @@ Ver `CHANGELOG.md` — versionado semántico desde v0.6.0.
 - Crear/editar en modal (`forms_in_modal`)
 - Tabs en formularios (`Tab::make`)
 - Export PDF (listado y selección bulk)
-- Publicación Packagist — `gallardev/minimalist` en Packagist (ver `PUBLISHING.md`)
+- Publicación Packagist — `mylaraveltools/minimalist` en Packagist (ver `PUBLISHING.md`)
 
 ## Fases anteriores
 

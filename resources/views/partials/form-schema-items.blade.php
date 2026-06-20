@@ -1,5 +1,5 @@
 @php
-    use Panel\Minimalist\Forms\Section;
+    use MyLaravelTools\Panel\Forms\Section;
 @endphp
 
 @foreach ($formSchema as $item)

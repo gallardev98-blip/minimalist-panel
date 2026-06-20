@@ -1,6 +1,6 @@
 @php
-    use Panel\Minimalist\Forms\Section;
-    use Panel\Minimalist\Support\FormSchema;
+    use MyLaravelTools\Panel\Forms\Section;
+    use MyLaravelTools\Panel\Support\FormSchema;
 @endphp
 
 @if ($hasTabs ?? FormSchema::hasTabs($formSchema))

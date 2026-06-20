@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Unit;
+namespace MyLaravelTools\Panel\Tests\Unit;
 
-use Panel\Minimalist\Policies\ResourcePolicy;
-use Panel\Minimalist\Support\PolicyResolver;
-use Panel\Minimalist\Support\ResourceAuthorizer;
-use Panel\Minimalist\Tests\Fixtures\Article;
-use Panel\Minimalist\Tests\Fixtures\ArticleResource;
-use Panel\Minimalist\Tests\Fixtures\AllowViewAnyArticlePolicy;
-use Panel\Minimalist\Tests\Fixtures\DenyViewAnyArticlePolicy;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Policies\ResourcePolicy;
+use MyLaravelTools\Panel\Support\PolicyResolver;
+use MyLaravelTools\Panel\Support\ResourceAuthorizer;
+use MyLaravelTools\Panel\Tests\Fixtures\Article;
+use MyLaravelTools\Panel\Tests\Fixtures\ArticleResource;
+use MyLaravelTools\Panel\Tests\Fixtures\AllowViewAnyArticlePolicy;
+use MyLaravelTools\Panel\Tests\Fixtures\DenyViewAnyArticlePolicy;
+use MyLaravelTools\Panel\Tests\TestCase;
 use Illuminate\Auth\GenericUser;
 use Illuminate\Support\Facades\Gate;
 

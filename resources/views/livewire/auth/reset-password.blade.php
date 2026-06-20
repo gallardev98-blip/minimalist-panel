@@ -4,7 +4,7 @@
         <p class="panel-auth-subtitle">{{ __('panel::panel.auth.reset_subtitle') }}</p>
     </div>
 
-    <form wire:submit="resetPassword" class="panel-auth-fields">
+    <form wire:submit.prevent="resetPassword" class="panel-auth-fields" novalidate>
         @include('panel::partials.auth-field', [
             'name' => 'email',
             'label' => __('panel::panel.auth.email'),

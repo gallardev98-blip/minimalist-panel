@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Fields;
+namespace MyLaravelTools\Panel\Fields;
 
 use Illuminate\Database\Eloquent\Model;
-use Panel\Minimalist\Support\SpatieRoles;
+use MyLaravelTools\Panel\Support\SpatieRoles;
 
 final class RolesField extends Field
 {

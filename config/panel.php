@@ -39,8 +39,8 @@ return [
 
     'middleware' => [
         'web',
-        Panel\Minimalist\Http\Middleware\SetPanelLocale::class,
-        Panel\Minimalist\Http\Middleware\EnsurePanelAccess::class,
+        MyLaravelTools\Panel\Http\Middleware\SetPanelLocale::class,
+        MyLaravelTools\Panel\Http\Middleware\EnsurePanelAccess::class,
     ],
 
     'guard' => 'web',
@@ -262,7 +262,7 @@ return [
     | Widgets del dashboard
     |--------------------------------------------------------------------------
     |
-    | Panel\Minimalist\Widgets\ResourceCountWidget::make(App\Panel\Resources\ProductResource::class),
+    | MyLaravelTools\Panel\Widgets\ResourceCountWidget::make(App\Panel\Resources\ProductResource::class),
     |
     */
 

@@ -6,15 +6,15 @@ declare(strict_types=1);
 
 
 
-namespace Panel\Minimalist\Relations;
+namespace MyLaravelTools\Panel\Relations;
 
 
 
-use Panel\Minimalist\Fields\Field;
+use MyLaravelTools\Panel\Fields\Field;
 
-use Panel\Minimalist\Resources\Resource;
+use MyLaravelTools\Panel\Resources\Resource;
 
-use Panel\Minimalist\Support\FormSchema;
+use MyLaravelTools\Panel\Support\FormSchema;
 
 use Illuminate\Database\Eloquent\Builder;
 

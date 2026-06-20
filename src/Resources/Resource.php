@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Resources;
+namespace MyLaravelTools\Panel\Resources;
 
-use Panel\Minimalist\Actions\BulkAction;
-use Panel\Minimalist\Actions\RowAction;
-use Panel\Minimalist\Columns\Column;
-use Panel\Minimalist\Fields\Field;
-use Panel\Minimalist\Filters\Filter;
-use Panel\Minimalist\Relations\RelationManager;
-use Panel\Minimalist\Support\FormSchema;
-use Panel\Minimalist\Support\ResourceAuthorizer;
+use MyLaravelTools\Panel\Actions\BulkAction;
+use MyLaravelTools\Panel\Actions\RowAction;
+use MyLaravelTools\Panel\Columns\Column;
+use MyLaravelTools\Panel\Fields\Field;
+use MyLaravelTools\Panel\Filters\Filter;
+use MyLaravelTools\Panel\Relations\RelationManager;
+use MyLaravelTools\Panel\Support\FormSchema;
+use MyLaravelTools\Panel\Support\ResourceAuthorizer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;

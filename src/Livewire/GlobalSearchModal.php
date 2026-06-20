@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Livewire;
+namespace MyLaravelTools\Panel\Livewire;
 
-use Panel\Minimalist\Support\GlobalSearch;
+use MyLaravelTools\Panel\Support\GlobalSearch;
 use Livewire\Attributes\On;
 use Livewire\Component;
 

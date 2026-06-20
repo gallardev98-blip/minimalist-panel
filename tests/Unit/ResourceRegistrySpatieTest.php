@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Unit;
+namespace MyLaravelTools\Panel\Tests\Unit;
 
-use Panel\Minimalist\Resources\Spatie\PermissionResource;
-use Panel\Minimalist\Resources\Spatie\RoleResource;
-use Panel\Minimalist\Support\ResourceRegistry;
-use Panel\Minimalist\Tests\Fixtures\ArticleResource;
-use Panel\Minimalist\Tests\Fixtures\HostRoleResource;
-use Panel\Minimalist\Tests\TestCase;
+use MyLaravelTools\Panel\Resources\Spatie\PermissionResource;
+use MyLaravelTools\Panel\Resources\Spatie\RoleResource;
+use MyLaravelTools\Panel\Support\ResourceRegistry;
+use MyLaravelTools\Panel\Tests\Fixtures\ArticleResource;
+use MyLaravelTools\Panel\Tests\Fixtures\HostRoleResource;
+use MyLaravelTools\Panel\Tests\TestCase;
 
 final class ResourceRegistrySpatieTest extends TestCase
 {

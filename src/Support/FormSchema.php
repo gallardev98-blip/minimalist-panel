@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Support;
+namespace MyLaravelTools\Panel\Support;
 
-use Panel\Minimalist\Fields\Field;
-use Panel\Minimalist\Forms\Section;
-use Panel\Minimalist\Forms\Tab;
+use MyLaravelTools\Panel\Fields\Field;
+use MyLaravelTools\Panel\Forms\Section;
+use MyLaravelTools\Panel\Forms\Tab;
 use InvalidArgumentException;
 
 final class FormSchema

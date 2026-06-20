@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Support;
+namespace MyLaravelTools\Panel\Support;
 
-use Panel\Minimalist\Pages\Page;
+use MyLaravelTools\Panel\Pages\Page;
 use InvalidArgumentException;
 
 final class PageRegistry

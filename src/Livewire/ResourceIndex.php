@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Livewire;
+namespace MyLaravelTools\Panel\Livewire;
 
-use Panel\Minimalist\Actions\BulkAction;
-use Panel\Minimalist\Actions\RowAction;
-use Panel\Minimalist\Livewire\Concerns\ConfirmsPanelActions;
-use Panel\Minimalist\Livewire\Concerns\DispatchesPanelToasts;
-use Panel\Minimalist\Livewire\Concerns\InteractsWithPanelResource;
-use Panel\Minimalist\Livewire\Concerns\ManagesResourceFormModal;
-use Panel\Minimalist\Resources\Resource;
-use Panel\Minimalist\Support\CsvExporter;
-use Panel\Minimalist\Support\ExcelExporter;
-use Panel\Minimalist\Support\FormSchema;
-use Panel\Minimalist\Support\PdfExporter;
-use Panel\Minimalist\Support\ResourceQuery;
+use MyLaravelTools\Panel\Actions\BulkAction;
+use MyLaravelTools\Panel\Actions\RowAction;
+use MyLaravelTools\Panel\Livewire\Concerns\ConfirmsPanelActions;
+use MyLaravelTools\Panel\Livewire\Concerns\DispatchesPanelToasts;
+use MyLaravelTools\Panel\Livewire\Concerns\InteractsWithPanelResource;
+use MyLaravelTools\Panel\Livewire\Concerns\ManagesResourceFormModal;
+use MyLaravelTools\Panel\Resources\Resource;
+use MyLaravelTools\Panel\Support\CsvExporter;
+use MyLaravelTools\Panel\Support\ExcelExporter;
+use MyLaravelTools\Panel\Support\FormSchema;
+use MyLaravelTools\Panel\Support\PdfExporter;
+use MyLaravelTools\Panel\Support\ResourceQuery;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Layout;

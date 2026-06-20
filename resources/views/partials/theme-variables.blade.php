@@ -1,5 +1,5 @@
 @php
-    use Panel\Minimalist\Support\ThemeResolver;
+    use MyLaravelTools\Panel\Support\ThemeResolver;
 
     $light = ThemeResolver::lightVariables();
     $dark = ThemeResolver::darkVariables();

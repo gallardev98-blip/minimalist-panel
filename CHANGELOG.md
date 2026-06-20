@@ -1,8 +1,18 @@
 # Changelog
 
-All notable changes to `gallardev/minimalist` are documented in this file.
+All notable changes to `mylaraveltools/minimalist` are documented in this file.
 
 ## [Unreleased]
+
+### Changed
+
+- **Rebranding:** paquete Composer `mylaraveltools/minimalist` (antes `gallardev/minimalist`)
+- **Breaking:** namespace PHP `Panel\Minimalist` → `MyLaravelTools\Panel` (alineado con `MyLaravelTools\Alertas`)
+
+### Fixed
+
+- Login/auth — transición SPA tras login/registro (`navigate: true` + loader en layout guest); Livewire `Auth\Login`; guest sin Alpine en body
+- **`/admin/login` parpadeo / formulario invisible** — `spa-navigation` ya no elimina `.panel-auth-shell` al llegar a rutas auth; loader SPA omitido en destinos auth; brand link sin `wire:navigate`
 
 ## [0.14.0] - 2026-06-19
 
@@ -95,7 +105,7 @@ All notable changes to `gallardev/minimalist` are documented in this file.
 ### Changed
 
 - **Packagist:** nombre del paquete `panel/minimalist` → `gallardev/minimalist` (el vendor `panel` ya estaba reclamado en Packagist)
-- Namespace PHP sin cambios: `Panel\Minimalist`
+- Namespace PHP sin cambios: `MyLaravelTools\Panel`
 
 
 ### Added
@@ -129,7 +139,7 @@ All notable changes to `gallardev/minimalist` are documented in this file.
 
 ### Changed
 
-- **Breaking:** namespace PHP `Alberto\Panel` renombrado a `Panel\Minimalist` (alineado con el paquete `gallardev/minimalist`)
+- **Breaking:** namespace PHP `Alberto\Panel` renombrado a `MyLaravelTools\Panel` (alineado con el paquete `gallardev/minimalist`)
 
 ## [0.8.0] - 2026-06-18
 

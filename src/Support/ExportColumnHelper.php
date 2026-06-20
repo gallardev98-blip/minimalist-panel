@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Support;
+namespace MyLaravelTools\Panel\Support;
 
-use Panel\Minimalist\Columns\Column;
-use Panel\Minimalist\Resources\Resource;
+use MyLaravelTools\Panel\Columns\Column;
+use MyLaravelTools\Panel\Resources\Resource;
 
 final class ExportColumnHelper
 {

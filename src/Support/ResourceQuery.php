@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Support;
+namespace MyLaravelTools\Panel\Support;
 
-use Panel\Minimalist\Columns\Column;
-use Panel\Minimalist\Filters\Filter;
-use Panel\Minimalist\Resources\Resource;
+use MyLaravelTools\Panel\Columns\Column;
+use MyLaravelTools\Panel\Filters\Filter;
+use MyLaravelTools\Panel\Resources\Resource;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 

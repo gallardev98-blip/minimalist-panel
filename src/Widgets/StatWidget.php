@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Widgets;
+namespace MyLaravelTools\Panel\Widgets;
 
 use Closure;
 

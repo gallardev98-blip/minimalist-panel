@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Tests\Fixtures;
+namespace MyLaravelTools\Panel\Tests\Fixtures;
 
-use Panel\Minimalist\Resources\Spatie\RoleResource;
+use MyLaravelTools\Panel\Resources\Spatie\RoleResource;
 
 final class HostRoleResource extends RoleResource
 {

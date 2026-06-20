@@ -4,7 +4,15 @@
         <p class="panel-auth-subtitle">{{ __('panel::panel.auth.login_subtitle') }}</p>
     </div>
 
-    <form wire:submit="login" class="panel-auth-fields">
+    <form wire:submit.prevent="login" class="panel-auth-fields" novalidate>
+        @if ($errors->any())
+            <div class="panel-auth-error panel-auth-error-summary" role="alert">
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        @endif
+
         @include('panel::partials.auth-field', [
             'name' => 'email',
             'label' => __('panel::panel.auth.email'),

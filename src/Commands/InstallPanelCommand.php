@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Panel\Minimalist\Commands;
+namespace MyLaravelTools\Panel\Commands;
 
-use Panel\Minimalist\Support\Package;
+use MyLaravelTools\Panel\Support\Package;
 use Illuminate\Console\Command;
 
 final class InstallPanelCommand extends Command
@@ -23,7 +23,7 @@ final class InstallPanelCommand extends Command
         ]);
 
         $this->ensurePanelDirectoryExists();
-        $this->ensureLivewireNavigateProgressDisabled();
+        $this->ensureLivewireConfigPublished();
         $this->printPostInstallInstructions();
 
         $this->components->info('Panel instalado correctamente.');
@@ -41,34 +41,17 @@ final class InstallPanelCommand extends Command
         }
     }
 
-    private function ensureLivewireNavigateProgressDisabled(): void
+    private function ensureLivewireConfigPublished(): void
     {
         $configPath = config_path('livewire.php');
 
-        if (! is_file($configPath)) {
-            $this->call('vendor:publish', [
-                '--tag' => 'livewire:config',
-            ]);
-        }
-
-        if (! is_file($configPath)) {
+        if (is_file($configPath)) {
             return;
         }
 
-        $contents = (string) file_get_contents($configPath);
-
-        if (! str_contains($contents, "'show_progress_bar' => true")) {
-            return;
-        }
-
-        $updated = str_replace(
-            "'show_progress_bar' => true",
-            "'show_progress_bar' => false",
-            $contents,
-        );
-
-        file_put_contents($configPath, $updated);
-        $this->components->info('Livewire: show_progress_bar desactivado (usa el loader del panel).');
+        $this->call('vendor:publish', [
+            '--tag' => 'livewire:config',
+        ]);
     }
 
     private function printPostInstallInstructions(): void
@@ -86,11 +69,12 @@ final class InstallPanelCommand extends Command
         $this->line("     {$vendorViewsV4}");
         $this->newLine();
         $this->line('  3. Auth integrada: /' . config('panel.path', 'admin') . '/login y /register');
-        $this->line('  4. Livewire: config/livewire.php con navigate.show_progress_bar = false (evita barra duplicada)');
+        $this->line('  4. Livewire: mantén navigate.show_progress_bar = true (NProgress se oculta vía CSS del panel; false rompe Alpine al cargar)');
         $this->line('  5. Crea resources: php artisan panel:make-resource Product --model=Product');
         $this->line('  6. Policies (opcional): php artisan panel:make-policy Product');
         $this->line('  7. Enlaza storage: php artisan storage:link');
         $this->line('  8. Visita: /' . config('panel.path', 'admin'));
+        $this->line('  9. APP_URL en .env debe coincidir con host y puerto (p. ej. http://127.0.0.1:8000)');
         $this->newLine();
     }
 }
