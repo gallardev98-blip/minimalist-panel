@@ -1,4 +1,12 @@
 <div>
+    @php
+        $hasCharts = collect($widgets)->contains(fn ($w) => method_exists($w, 'getChartType'));
+    @endphp
+
+    @if ($hasCharts)
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+    @endif
+
     <x-panel::page-header class="mb-8">
         <h1>{{ __('panel::panel.breadcrumbs.dashboard') }}</h1>
         <p class="panel-muted mt-1 text-sm">{{ __('panel::panel.welcome') }}</p>

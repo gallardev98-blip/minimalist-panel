@@ -16,7 +16,68 @@
 
 **v0.14.0** (2026-06-19): resources Spatie integrados — `RoleResource`, `PermissionResource`, `PermissionsField`/`PermissionsColumn`; auto-registro cuando `permissions.enabled` + Spatie instalado.
 
+**v0.17.0** (2026-06-20): Fase 15 — import CSV/Excel, selector de idioma, RelationManager HasOne/Morph, `ChartWidget`, verificación email.
+
+**v0.18.0** (2026-06-20): `ViewWidget`, tipo `progression`, `ChartWidget::themeColors()`, gráficos reactivos al tema y SPA, docs demo al día.
+
 **v0.16.0** (2026-06-20): namespace PHP `MyLaravelTools\Panel` (antes `Panel\Minimalist`); alineado con `MyLaravelTools\Alertas`.
+
+## Fase 15 — Import, locale, relations, charts, email verify (v0.17.0)
+
+### Import CSV/Excel
+
+- `ResourceImporter`, `ImportTemplateExporter` — plantilla con cabeceras + filas de ejemplo (BBDD)
+- Modal: botones **Plantilla CSV** / **Plantilla Excel** + subida de archivo
+- `Field::importable(false)` — excluye un campo del form
+- `Resource::import()` — esquema propio de columnas (vacío = form filtrado)
+- Config: `panel.import.enabled`
+
+### Selector de idioma
+
+- `PanelLocale::resolve()` — sesión `panel.locale` > config `panel.locale`
+- Livewire `LocaleSwitcher` en sidebar footer y layout guest
+- Config: `panel.locales`, `panel.locale_selector`
+
+### RelationManager ampliado
+
+- `hasOne()`, `morphMany()`, `morphToMany()` — ramas en `RelationPanel::save()`/`delete()`
+- `isPivotRelation()` unifica belongsToMany + morphToMany (detach)
+
+### ChartWidget
+
+- `ChartWidget::make($label, 'bar'|'line'|'pie'|'doughnut'|'progression', $data)` — Chart.js con tema del panel
+- `progression` — línea suave + puntos parpadeantes (plugin `panelPulse`); render interno como `line`
+- `->themeColors()` — claves resueltas en JS vía `--panel-primary`, `--panel-success`, etc. (claro/oscuro)
+- `->colors([])`, `->options([])`, `->height(140)` — override manual
+- Partial `partials/widget-chart.blade.php` — runtime centralizado (`panelChartMount`, `panelChartRefreshAll`)
+- Repinta en `panel-theme-changed` (toggle sidebar) y `livewire:navigated`
+- Chart.js CDN solo si hay charts en el dashboard
+
+### ViewWidget
+
+- `ViewWidget::make($label, 'panel.widgets.mi-grafica', fn () => [...])` — vista Blade propia
+- `->columnSpan(2)` — ocupa más columnas en el grid del dashboard
+- Sin Chart.js; ideal para CSS/SVG o librerías externas en la vista
+
+### Import — columnas personalizables
+
+- `Field::importable(false)` — excluye del esquema de import/plantilla
+- `Resource::import()` — esquema propio (vacío = form filtrado)
+- Tipos excluidos siempre: image, file, password, roles, permissions, rich-text
+
+### Vistas publicadas
+
+- Si existen en `resources/views/vendor/panel/`, **sobreescriben** las del vendor
+- Tras actualizar paquete: `vendor:publish --tag=panel-views --force` + `view:clear`
+- Sin publicar vistas, el host usa las del paquete directamente (recomendado)
+
+### Verificación email
+
+- Config: `panel.auth.email_verification` (default `false`)
+- User debe implementar `MustVerifyEmail`
+- Middleware `EnsurePanelEmailVerified` en stack del panel
+- Rutas: `panel.verification.notice`, `panel.verification.verify`
+- Livewire `Auth\VerifyEmail`
 
 **Config-first** (2026-06-19): `config/panel.php` sin `env('PANEL_*')` por defecto.
 
@@ -199,6 +260,8 @@ php artisan panel:make-page Settings
 ### Demo (`panel-demo`)
 
 - `spatie/laravel-permission` + `PanelPermissionSeeder` (roles: admin, editor, viewer)
+- **Fase 15** — dashboard: `ChartWidget` progression + doughnut (`themeColors`), `ViewWidget` catalog-health, import CSV, selector ES/EN
+- Widgets en `config/panel.php`; vista custom en `resources/views/panel/widgets/catalog-health.blade.php`
 - Páginas: `SettingsPage`, `SalesReportPage`, `LowStockReportPage`, `CustomerActivityPage`, `OnlineStoreSettingsPage`
 - Usuarios: `admin@panel.test` / `editor@panel.test` (password: `password`)
 

@@ -1889,4 +1889,99 @@
     .panel-field-error {
         color: rgb(var(--panel-danger));
     }
+
+    .panel-locale-switcher {
+        position: relative;
+        flex-shrink: 0;
+    }
+
+    .panel-locale-menu {
+        position: absolute;
+        bottom: calc(100% + 0.5rem);
+        left: 0;
+        z-index: 60;
+        min-width: 8rem;
+        padding: 0.25rem;
+        background: rgb(var(--panel-card));
+        border: 1px solid rgb(var(--panel-border));
+        border-radius: var(--panel-radius);
+        box-shadow: 0 8px 24px rgb(0 0 0 / 0.15);
+    }
+
+    .panel-locale-option {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8125rem;
+        text-align: left;
+        color: rgb(var(--panel-text));
+        background: transparent;
+        border: none;
+        border-radius: calc(var(--panel-radius) * 0.75);
+        cursor: pointer;
+    }
+
+    .panel-locale-option:hover,
+    .panel-locale-option--active {
+        background: rgb(var(--panel-elevated));
+        color: rgb(var(--panel-heading));
+    }
+
+    .panel-import-field-tag {
+        padding: 0.125rem 0.5rem;
+        background: rgb(var(--panel-elevated));
+        border: 1px solid rgb(var(--panel-border));
+        border-radius: 9999px;
+    }
+
+    .panel-chart-wrap {
+        position: relative;
+        height: 8rem;
+    }
+
+    .panel-chart-wrap--progression canvas {
+        filter: drop-shadow(0 0 12px rgb(var(--panel-primary) / 0.15));
+    }
+
+    .dark .panel-chart-wrap--progression canvas {
+        filter: drop-shadow(0 0 6px rgb(var(--panel-primary) / 0.08));
+    }
+
+    .panel-widget-card--chart {
+        min-height: 10rem;
+    }
+
+    .panel-widget-card--view {
+        padding: 0;
+        overflow: visible;
+    }
+
+    .panel-custom-chart {
+        padding: 1.25rem;
+    }
+
+    .panel-custom-chart__bar {
+        height: 0.5rem;
+        border-radius: 9999px;
+        background-color: rgb(var(--panel-elevated));
+        overflow: hidden;
+    }
+
+    .panel-custom-chart__fill {
+        height: 100%;
+        border-radius: 9999px;
+        background: linear-gradient(90deg, rgb(var(--panel-primary)), rgb(var(--panel-accent)));
+        transition: width 0.7s ease;
+    }
+
+    .panel-auth-verify .panel-auth-actions {
+        margin-top: 1.5rem;
+    }
+
+    .panel-auth-locale {
+        position: fixed;
+        top: 1rem;
+        right: 4rem;
+        z-index: 50;
+    }
 </style>

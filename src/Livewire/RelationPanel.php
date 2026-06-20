@@ -121,12 +121,14 @@ final class RelationPanel extends Component
 
 
     public function openCreateForm(): void
-
     {
-
         abort_unless($this->childResourceClass::authorize('create'), 403);
 
+        if ($this->manager->isHasOne() && $this->parentRecord->{$this->relation}()->exists()) {
+            $this->toastError(__('panel::panel.related_has_one_exists'));
 
+            return;
+        }
 
         $this->editingId = null;
 
@@ -178,10 +180,8 @@ final class RelationPanel extends Component
 
     {
 
-        $message = $this->manager->isBelongsToMany()
-
+        $message = $this->manager->isPivotRelation()
             ? __('panel::panel.confirm_detach')
-
             : __('panel::panel.confirm_delete');
 
         $this->askConfirm($message, 'delete', $recordId);
@@ -210,18 +210,17 @@ final class RelationPanel extends Component
 
 
 
-            if ($this->manager->isBelongsToMany()) {
-
+            if ($this->manager->isPivotRelation()) {
                 $child = $this->childResourceClass::modelClass()::query()->create($payload);
-
                 $this->parentRecord->{$this->relation}()->attach($child->getKey());
-
-            } else {
-
+            } elseif ($this->manager->isMorphMany()) {
+                $this->parentRecord->{$this->relation}()->create($payload);
+            } elseif ($this->manager->isHasOne()) {
                 $payload[$this->manager->resolveForeignKey($this->parentRecord)] = $this->parentRecord->getKey();
-
                 $this->childResourceClass::modelClass()::query()->create($payload);
-
+            } else {
+                $payload[$this->manager->resolveForeignKey($this->parentRecord)] = $this->parentRecord->getKey();
+                $this->childResourceClass::modelClass()::query()->create($payload);
             }
 
 
@@ -258,30 +257,18 @@ final class RelationPanel extends Component
 
 
 
-        if ($this->manager->isBelongsToMany()) {
-
+        if ($this->manager->isPivotRelation()) {
             $this->parentRecord->{$this->relation}()->detach($recordId);
 
-
-
             if ($this->manager->shouldDeleteRelated()) {
-
                 $record->delete();
-
                 $this->toastSuccess(__('panel::panel.related_deleted'));
-
             } else {
-
                 $this->toastSuccess(__('panel::panel.related_detached'));
-
             }
-
         } else {
-
             $record->delete();
-
             $this->toastSuccess(__('panel::panel.related_deleted'));
-
         }
 
     }
@@ -314,7 +301,8 @@ final class RelationPanel extends Component
 
             'canCreate' => $this->childResourceClass::authorize('create'),
 
-            'isBelongsToMany' => $this->manager->isBelongsToMany(),
+            'isPivotRelation' => $this->manager->isPivotRelation(),
+            'isHasOne' => $this->manager->isHasOne(),
 
             'showConfirm' => $this->showConfirm,
 

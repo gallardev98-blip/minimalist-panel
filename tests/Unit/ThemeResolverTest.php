@@ -24,4 +24,13 @@ final class ThemeResolverTest extends TestCase
         $this->assertSame('255 255 255', $dark['panel-primary']);
         $this->assertSame('0 0 0', $dark['panel-primary-fg']);
     }
+
+    public function test_it_resolves_chart_colors_from_theme(): void
+    {
+        $colors = ThemeResolver::chartColors(['success', 'danger']);
+
+        $this->assertSame('rgb(22, 163, 74)', $colors[0]);
+        $this->assertSame('rgb(220, 38, 38)', $colors[1]);
+        $this->assertSame(['success', 'danger'], ThemeResolver::defaultChartColorKeys('doughnut', 2));
+    }
 }

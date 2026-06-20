@@ -38,6 +38,17 @@ abstract class Resource
     /** @return array<int, Field> */
     abstract public static function form(): array;
 
+    /**
+     * Columnas importables (plantilla CSV/Excel e importación).
+     * Vacío = usa form() filtrando importable() y tipos no soportados.
+     *
+     * @return array<int, Field|\MyLaravelTools\Panel\Forms\Section|\MyLaravelTools\Panel\Forms\Tab>
+     */
+    public static function import(): array
+    {
+        return [];
+    }
+
     /** @return array<int, Column> */
     abstract public static function table(): array;
 

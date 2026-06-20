@@ -69,6 +69,9 @@ final class ThemeResolver
             'panel-muted' => self::toRgb((string) ($dark['muted'] ?? '#737373')),
             'panel-input-bg' => self::toRgb((string) ($dark['input_bg'] ?? '#0a0a0a')),
             'panel-input-border' => self::toRgb((string) ($dark['input_border'] ?? '#404040')),
+            'panel-success' => self::toRgb((string) ($colors['success'] ?? '#16a34a')),
+            'panel-danger' => self::toRgb((string) ($colors['danger'] ?? '#dc2626')),
+            'panel-warning' => self::toRgb((string) ($colors['warning'] ?? '#ca8a04')),
         ];
     }
 
@@ -85,6 +88,64 @@ final class ThemeResolver
         $query = str_replace(' ', '+', $font);
 
         return "https://fonts.googleapis.com/css2?family={$query}:wght@400;500;600;700&display=swap";
+    }
+
+    /** @return array<string, string> */
+    public static function themeColorMap(): array
+    {
+        $colors = config('panel.theme.colors', []);
+        $light = config('panel.theme.light', []);
+
+        return [
+            'primary' => (string) ($colors['primary'] ?? '#000000'),
+            'accent' => (string) ($colors['accent'] ?? '#525252'),
+            'success' => (string) ($colors['success'] ?? '#16a34a'),
+            'danger' => (string) ($colors['danger'] ?? '#dc2626'),
+            'warning' => (string) ($colors['warning'] ?? '#ca8a04'),
+            'muted' => (string) ($light['muted'] ?? '#737373'),
+        ];
+    }
+
+    /** @param list<string> $keys primary|accent|success|danger|warning|muted */
+    public static function chartColors(array $keys): array
+    {
+        $map = self::themeColorMap();
+
+        return array_map(
+            fn (string $key): string => self::toCssRgb((string) ($map[$key] ?? $map['primary'])),
+            $keys
+        );
+    }
+
+    /** @return list<string> */
+    public static function defaultChartColorKeys(string $chartType, int $sliceCount): array
+    {
+        $cycle = ['primary', 'accent', 'success', 'warning', 'danger'];
+        $count = max(1, $sliceCount);
+
+        if (in_array($chartType, ['pie', 'doughnut'], true) && $count === 2) {
+            return ['success', 'danger'];
+        }
+
+        if (in_array($chartType, ['line', 'progression'], true)) {
+            return ['primary'];
+        }
+
+        $keys = [];
+        for ($i = 0; $i < $count; $i++) {
+            $keys[] = $cycle[$i % count($cycle)];
+        }
+
+        return $keys;
+    }
+
+    public static function toCssRgb(string $color): string
+    {
+        if (str_starts_with(trim($color), 'rgb')) {
+            return trim($color);
+        }
+
+        return 'rgb('.str_replace(' ', ', ', self::toRgb($color)).')';
     }
 
     private static function toRgb(string $color): string

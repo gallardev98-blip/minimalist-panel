@@ -41,6 +41,14 @@ final class Register extends Component
         event(new Registered($user));
 
         PanelAuth::assignRegisteredRole($user);
+
+        if (PanelAuth::emailVerificationEnabled()) {
+            PanelAuth::login($user);
+            $this->redirect(route('panel.verification.notice', [], false), navigate: true);
+
+            return;
+        }
+
         PanelAuth::login($user);
 
         $this->redirect(PanelAuth::redirectTargetAfterRegister(), navigate: true);

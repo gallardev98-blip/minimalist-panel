@@ -637,17 +637,29 @@ Mantén `show_progress_bar => true` en Livewire (obligatorio). La barra NProgres
 | `php artisan panel:make-page Name` | Crear página custom |
 | `php artisan panel:make-policy Name` | Crear Policy para un modelo |
 | `php artisan vendor:publish --tag=panel-config` | Publicar config |
-| `php artisan vendor:publish --tag=panel-views` | Publicar vistas |
+| `php artisan vendor:publish --tag=panel-views` | Publicar vistas Blade |
+
+Tras actualizar el paquete, republica vistas si las personalizaste en `resources/views/vendor/panel/`:
+
+```bash
+php artisan vendor:publish --tag=panel-views --force
+php artisan view:clear
+```
+
+Si no publicaste vistas, Laravel usa las del vendor directamente (recomendado hasta que necesites editar Blade).
 
 ---
 
 ## Demo
 
-Proyecto de prueba en `panel-demo/`:
+Proyecto de prueba en `panel-demo/` (ver su `README.md`):
 
-```
-admin@panel.test / password → /admin
-```
+| Usuario | Email | Password |
+|---------|-------|----------|
+| Admin | `admin@panel.test` | `password` |
+| Editor | `editor@panel.test` | `password` |
+
+Dashboard con `ChartWidget` (progresión, doughnut), `ViewWidget` custom e import CSV en productos.
 
 ---
 
@@ -773,6 +785,115 @@ public static function form(): array
 
 Botones **CSV**, **XLSX** y **PDF** en la toolbar del listado. Si hay filas seleccionadas, exportan solo la selección; si no, el listado filtrado completo.
 
+## Import CSV / Excel
+
+Botón **Importar** en la toolbar del listado (requiere permiso `create`).
+
+En el modal:
+- **Plantilla CSV / Excel** — descarga cabeceras + hasta 5 filas de ejemplo desde la BBDD
+- Sube el archivo rellenado (`.csv`, `.txt`, `.xlsx`, `.xls`)
+
+Campos excluidos por tipo: image, file, password, roles, permissions, rich-text
+
+Personaliza qué columnas entran en la plantilla e importación:
+
+```php
+// Opción 1 — desactivar campos concretos del form()
+TextField::make('sku')->label('SKU'),
+DateField::make('published_at')->importable(false),
+
+// Opción 2 — esquema de importación propio (solo estas columnas)
+public static function import(): array
+{
+    return [
+        TextField::make('name')->label('Nombre')->required(),
+        NumberField::make('price')->label('Precio'),
+        BelongsToField::make('category_id')->relationship(Category::class, 'name'),
+    ];
+}
+```
+
+```php
+// config/panel.php
+'import' => ['enabled' => true],
+```
+
+## Selector de idioma
+
+```php
+'locale' => 'es',
+'locales' => ['es' => 'Español', 'en' => 'English'],
+'locale_selector' => true,
+```
+
+Icono globo en el footer del sidebar (y en auth). La preferencia se guarda en sesión (`panel.locale`).
+
+## RelationManager — HasOne y Morph
+
+```php
+RelationManager::hasOne('profile', ProfileResource::class),
+RelationManager::morphMany('comments', CommentResource::class),
+RelationManager::morphToMany('tags', TagResource::class),
+```
+
+## Widgets con gráficos
+
+### ChartWidget (Chart.js con tema del panel)
+
+```php
+use MyLaravelTools\Panel\Widgets\ChartWidget;
+
+ChartWidget::make('Ventas mensuales', 'bar', fn () => [
+    'labels' => ['Ene', 'Feb', 'Mar'],
+    'values' => [12, 19, 8],
+])
+    ->color('emerald')
+    ->height(160);
+
+ChartWidget::make('Estado', 'doughnut', fn () => [
+    'labels' => ['Activos', 'Inactivos'],
+    'values' => [10, 2],
+])->themeColors();                    // success + danger del tema
+
+ChartWidget::make('Crecimiento', 'progression', fn () => [
+    'labels' => ['Ene', 'Feb', 'Mar', 'Abr'],
+    'values' => [10, 14, 13, 22],
+])->themeColors()->height(160);      // línea + puntos pulsantes
+
+ChartWidget::make('Por canal', 'bar', fn () => [...])->themeColors(['primary', 'accent', 'success']);
+```
+
+Tipos: `bar`, `line`, `pie`, `doughnut`, `progression`. Con `->themeColors()` los colores salen de `config('panel.theme.colors')` (doughnut binaria → success/danger). Sin colores, línea/progresión usa `--panel-primary`. Override manual: `->colors([...])`, `->height()`, `->options()`.
+
+Los gráficos **se repintan** al cambiar tema claro/oscuro y al volver al dashboard vía navegación SPA (`panel-theme-changed`, `livewire:navigated`).
+
+### ViewWidget (gráficas propias)
+
+Para diseños totalmente custom (SVG, CSS, ApexCharts, etc.) crea una vista Blade y regístrala:
+
+```php
+use MyLaravelTools\Panel\Widgets\ViewWidget;
+
+ViewWidget::make('Salud del catálogo', 'panel.widgets.catalog-health', fn () => [
+    'total' => 120,
+    'items' => [['name' => 'Moda', 'pct' => 42]],
+])->columnSpan(2),
+```
+
+La vista recibe `$label` más los datos del closure. Chart.js solo se carga si hay `ChartWidget` en el dashboard.
+
+## Verificación de email
+
+Requiere `MustVerifyEmail` en tu modelo `User`:
+
+```php
+'auth' => [
+    'email_verification' => true,
+],
+```
+
+Tras registrarse, el usuario recibe el correo y debe verificar antes de acceder al panel (`/admin/email/verify`).
+
 ## Publicar en Packagist
 
 Ver [PUBLISHING.md](PUBLISHING.md) para subir el paquete a Packagist y etiquetar releases.
@@ -791,6 +912,8 @@ Ver [PUBLISHING.md](PUBLISHING.md) para subir el paquete a Packagist y etiquetar
 - [x] Fase 12: perfil de usuario (`/admin/profile`)
 - [x] Fase 13: layout sin header, `<x-panel::page-header>`, loader SPA con `%`
 - [x] Fase 14: `RoleResource` / `PermissionResource` integrados, `PermissionsField` / `PermissionsColumn`
+- [x] Fase 15: import CSV/Excel, selector de idioma, HasOne/Morph relations, `ChartWidget`, verificación email
+- [x] Post-15: `ViewWidget`, `progression`, `themeColors()`, gráficos reactivos al tema/SPA
 - [x] Packagist — `mylaraveltools/minimalist`
 
 ## Licencia

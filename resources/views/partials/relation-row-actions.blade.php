@@ -47,7 +47,7 @@
                     @click="open = false"
                 >
                     <x-panel::icon name="trash-2" class="h-4 w-4 shrink-0" />
-                    <span>{{ $isBelongsToMany ? __('panel::panel.detach') : __('panel::panel.delete') }}</span>
+                    <span>{{ ($isPivotRelation ?? false) ? __('panel::panel.detach') : __('panel::panel.delete') }}</span>
                 </button>
             @endif
         </div>

@@ -82,6 +82,12 @@
         </button>
     @endpersist
 
+    @if (\MyLaravelTools\Panel\Support\PanelLocale::selectorEnabled())
+        <div class="panel-auth-locale">
+            <livewire:panel.locale-switcher />
+        </div>
+    @endif
+
     <div class="panel-auth-shell">
         <main class="panel-auth-card">
             <header class="panel-auth-brand">

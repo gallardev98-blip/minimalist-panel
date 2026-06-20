@@ -68,6 +68,10 @@
             @endif
 
             <div class="panel-sidebar-toolbar">
+                @if (\MyLaravelTools\Panel\Support\PanelLocale::selectorEnabled())
+                    <livewire:panel.locale-switcher />
+                @endif
+
                 <button
                     type="button"
                     @click="toggleTheme()"

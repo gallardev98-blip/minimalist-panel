@@ -23,6 +23,8 @@ abstract class Field
 
     protected bool $disabled = false;
 
+    protected bool $importable = true;
+
     protected mixed $default = null;
 
     /** @var array{table: string, column: string}|null */
@@ -86,6 +88,13 @@ abstract class Field
         return $this;
     }
 
+    public function importable(bool $importable = true): static
+    {
+        $this->importable = $importable;
+
+        return $this;
+    }
+
     public function default(mixed $default): static
     {
         $this->default = $default;
@@ -111,6 +120,11 @@ abstract class Field
     public function isDisabled(): bool
     {
         return $this->disabled;
+    }
+
+    public function isImportable(): bool
+    {
+        return $this->importable;
     }
 
     public function getDefault(): mixed

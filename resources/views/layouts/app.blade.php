@@ -38,6 +38,7 @@
                 },
                 applyTheme() {
                     document.documentElement.classList.toggle('dark', this.theme === 'dark');
+                    document.dispatchEvent(new CustomEvent('panel-theme-changed'));
                 },
             };
         }
@@ -77,6 +78,8 @@
     <livewire:panel.global-search />
 
     @livewireScripts
+
+    @stack('panel-scripts')
 
     @include('panel::partials.spa-navigation')
 </body>

@@ -25,6 +25,24 @@ final class PanelAuth
         return static::enabled() && (bool) config('panel.auth.password_reset', true);
     }
 
+    public static function emailVerificationEnabled(): bool
+    {
+        return static::enabled() && (bool) config('panel.auth.email_verification', false);
+    }
+
+    public static function requiresEmailVerification(): bool
+    {
+        if (! static::emailVerificationEnabled()) {
+            return false;
+        }
+
+        $user = static::user();
+
+        return $user !== null
+            && method_exists($user, 'hasVerifiedEmail')
+            && ! $user->hasVerifiedEmail();
+    }
+
     public static function profileEnabled(): bool
     {
         return (bool) config('panel.profile.enabled', true);

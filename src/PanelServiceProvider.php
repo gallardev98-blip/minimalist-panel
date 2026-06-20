@@ -12,7 +12,9 @@ use MyLaravelTools\Panel\Livewire\Auth\ForgotPassword;
 use MyLaravelTools\Panel\Livewire\Auth\Login as PanelLogin;
 use MyLaravelTools\Panel\Livewire\Auth\Register as PanelRegister;
 use MyLaravelTools\Panel\Livewire\Auth\ResetPassword;
+use MyLaravelTools\Panel\Livewire\Auth\VerifyEmail;
 use MyLaravelTools\Panel\Livewire\Dashboard;
+use MyLaravelTools\Panel\Livewire\LocaleSwitcher;
 use MyLaravelTools\Panel\Livewire\PanelPage;
 use MyLaravelTools\Panel\Livewire\Profile;
 use MyLaravelTools\Panel\Livewire\GlobalSearchModal;
@@ -24,9 +26,11 @@ use MyLaravelTools\Panel\Support\CsvExporter;
 use MyLaravelTools\Panel\Support\PanelLocale;
 use MyLaravelTools\Panel\Support\ExcelExporter;
 use MyLaravelTools\Panel\Support\GlobalSearch;
+use MyLaravelTools\Panel\Support\ImportTemplateExporter;
 use MyLaravelTools\Panel\Support\PageRegistry;
 use MyLaravelTools\Panel\Support\PolicyRegistrar;
 use MyLaravelTools\Panel\Support\ResourceAuthorizer;
+use MyLaravelTools\Panel\Support\ResourceImporter;
 use MyLaravelTools\Panel\Support\ResourceRegistry;
 use MyLaravelTools\Panel\Support\WidgetRegistry;
 use Illuminate\Support\Facades\Blade;
@@ -47,6 +51,8 @@ final class PanelServiceProvider extends ServiceProvider
         $this->app->singleton(WidgetRegistry::class);
         $this->app->singleton(CsvExporter::class);
         $this->app->singleton(ExcelExporter::class);
+        $this->app->singleton(ResourceImporter::class);
+        $this->app->singleton(ImportTemplateExporter::class);
         $this->app->singleton(GlobalSearch::class);
     }
 
@@ -141,6 +147,8 @@ final class PanelServiceProvider extends ServiceProvider
         Livewire::component('panel.register', PanelRegister::class);
         Livewire::component('panel.forgot-password', ForgotPassword::class);
         Livewire::component('panel.reset-password', ResetPassword::class);
+        Livewire::component('panel.verify-email', VerifyEmail::class);
+        Livewire::component('panel.locale-switcher', LocaleSwitcher::class);
         Livewire::component('panel.dashboard', Dashboard::class);
         Livewire::component('panel.profile', Profile::class);
         Livewire::component('panel.page', PanelPage::class);

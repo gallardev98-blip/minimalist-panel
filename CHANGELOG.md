@@ -4,6 +4,43 @@ All notable changes to `mylaraveltools/minimalist` are documented in this file.
 
 ## [Unreleased]
 
+## [0.18.0] - 2026-06-20
+
+### Added
+
+- **`ViewWidget`** — widgets Blade custom en dashboard (`->columnSpan()`)
+- **`ChartWidget::themeColors()`** — colores desde `config('panel.theme.colors')` vía `ThemeResolver::chartColors()`
+- Tipo **`progression`** — línea con puntos pulsantes (plugin `panelPulse`)
+- Tipos **`doughnut`** y runtime centralizado de gráficos
+
+### Changed
+
+- Gráficos se **destruyen y recrean** al cambiar tema claro/oscuro (`panel-theme-changed`) y en navegación SPA
+- Doughnut/pie sin ejes; opciones Chart.js más alineadas al tema
+- Documentación demo y README actualizados
+
+### Fixed
+
+- Error Chart.js `"progression" is not a registered controller` (tipo resuelto a `line`)
+- Vistas publicadas obsoletas rompían widgets (documentado republicar con `--force`)
+
+## [0.17.0] - 2026-06-20
+
+### Added
+
+- **Import CSV/Excel** — `ResourceImporter`, modal en listados, config `panel.import.enabled`
+- **Selector de idioma** — `LocaleSwitcher`, `panel.locales`, sesión `panel.locale`
+- **RelationManager** — `hasOne()`, `morphMany()`, `morphToMany()`
+- **`ChartWidget`** — gráficos bar/line/pie en dashboard (Chart.js CDN)
+- **Verificación email** — `panel.auth.email_verification`, middleware `EnsurePanelEmailVerified`, rutas `/email/verify`
+
+### Changed
+
+- Middleware del panel incluye `EnsurePanelEmailVerified`
+- `PanelLocale::resolve()` prioriza sesión del usuario
+
+## [0.16.0] - 2026-06-20
+
 ### Changed
 
 - **Rebranding:** paquete Composer `mylaraveltools/minimalist` (antes `gallardev/minimalist`)

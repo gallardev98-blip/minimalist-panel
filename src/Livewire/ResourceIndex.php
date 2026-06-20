@@ -14,7 +14,9 @@ use MyLaravelTools\Panel\Resources\Resource;
 use MyLaravelTools\Panel\Support\CsvExporter;
 use MyLaravelTools\Panel\Support\ExcelExporter;
 use MyLaravelTools\Panel\Support\FormSchema;
+use MyLaravelTools\Panel\Support\ImportTemplateExporter;
 use MyLaravelTools\Panel\Support\PdfExporter;
+use MyLaravelTools\Panel\Support\ResourceImporter;
 use MyLaravelTools\Panel\Support\ResourceQuery;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -55,6 +57,11 @@ final class ResourceIndex extends Component
 
     /** @var array<int, int|string> */
     public array $selected = [];
+
+    public bool $showImportModal = false;
+
+    /** @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile|null */
+    public $importFile = null;
 
     public function mount(string $resource): void
     {
@@ -332,6 +339,71 @@ final class ResourceIndex extends Component
         return app(PdfExporter::class)->downloadSelected($this->resourceClass, $records);
     }
 
+    public function openImportModal(): void
+    {
+        abort_unless($this->resourceClass::authorize('create'), 403);
+        abort_unless((bool) config('panel.import.enabled', true), 403);
+
+        $this->importFile = null;
+        $this->resetValidation();
+        $this->showImportModal = true;
+    }
+
+    public function closeImportModal(): void
+    {
+        $this->showImportModal = false;
+        $this->importFile = null;
+        $this->resetValidation();
+    }
+
+    public function downloadImportTemplateCsv(): StreamedResponse
+    {
+        return app(ImportTemplateExporter::class)->downloadCsv($this->resourceClass);
+    }
+
+    public function downloadImportTemplateExcel(): StreamedResponse
+    {
+        return app(ImportTemplateExporter::class)->downloadExcel($this->resourceClass);
+    }
+
+    public function processImport(): void
+    {
+        abort_unless($this->resourceClass::authorize('create'), 403);
+
+        $this->validate([
+            'importFile' => ['required', 'file', 'mimes:csv,txt,xlsx,xls', 'max:10240'],
+        ], [], [
+            'importFile' => __('panel::panel.import.file'),
+        ]);
+
+        $extension = strtolower($this->importFile->getClientOriginalExtension());
+        $result = app(ResourceImporter::class)->fromPath(
+            $this->resourceClass,
+            $this->importFile->getRealPath(),
+            $extension,
+        );
+
+        $this->closeImportModal();
+
+        if ($result['imported'] === 0 && $result['failed'] === 0 && $result['errors'] !== []) {
+            $this->toastError($result['errors'][0]);
+
+            return;
+        }
+
+        if ($result['failed'] > 0) {
+            $this->toastError(__('panel::panel.import.partial', [
+                'imported' => $result['imported'],
+                'failed' => $result['failed'],
+            ]));
+
+            return;
+        }
+
+        $this->toastSuccess(__('panel::panel.import.success', ['count' => $result['imported']]));
+        $this->resetPage();
+    }
+
     public function render(): mixed
     {
         /** @var class-string<Resource> $resourceClass */
@@ -358,6 +430,8 @@ final class ResourceIndex extends Component
             'formSchema' => $formSchema,
             'hasTabs' => FormSchema::hasTabs($formSchema),
             'hasSections' => FormSchema::hasSections($formSchema),
+            'canImport' => (bool) config('panel.import.enabled', true) && $resourceClass::authorize('create'),
+            'showImportModal' => $this->showImportModal,
         ]))->title($resourceClass::label());
     }
 

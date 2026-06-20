@@ -37,10 +37,28 @@ return [
 
     'locale' => 'es',
 
+    /*
+    |--------------------------------------------------------------------------
+    | Idiomas disponibles (selector en sidebar)
+    |--------------------------------------------------------------------------
+    |
+    | Clave => etiqueta visible. Con más de un idioma y locale_selector=true
+    | aparece un selector en el footer del sidebar.
+    |
+    */
+
+    'locales' => [
+        'es' => 'Español',
+        'en' => 'English',
+    ],
+
+    'locale_selector' => true,
+
     'middleware' => [
         'web',
         MyLaravelTools\Panel\Http\Middleware\SetPanelLocale::class,
         MyLaravelTools\Panel\Http\Middleware\EnsurePanelAccess::class,
+        MyLaravelTools\Panel\Http\Middleware\EnsurePanelEmailVerified::class,
     ],
 
     'guard' => 'web',
@@ -71,6 +89,7 @@ return [
         'redirect_after_register' => null,
         'register_role' => null,
         'password_reset' => true,
+        'email_verification' => false,
     ],
 
     /*
@@ -190,6 +209,20 @@ return [
     */
 
     'forms_in_modal' => true,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Importación CSV / Excel
+    |--------------------------------------------------------------------------
+    |
+    | Botón "Importar" en listados de resources (requiere permiso create).
+    | Columnas: cabeceras del archivo = label o name de los fields del form().
+    |
+    */
+
+    'import' => [
+        'enabled' => true,
+    ],
 
     /*
     |--------------------------------------------------------------------------

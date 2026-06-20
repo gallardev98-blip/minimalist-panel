@@ -58,7 +58,7 @@
                                     'record' => $record,
                                     'canUpdate' => $childResourceClass::authorize('update', $record),
                                     'canDelete' => $childResourceClass::authorize('delete', $record),
-                                    'isBelongsToMany' => $isBelongsToMany,
+                                    'isPivotRelation' => $isPivotRelation ?? false,
                                 ])
                             </td>
                         </tr>

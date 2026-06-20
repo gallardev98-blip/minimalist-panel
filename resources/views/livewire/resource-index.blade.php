@@ -14,6 +14,11 @@
         ])
     @endif
 
+    @include('panel::partials.import-modal', [
+        'showImportModal' => $showImportModal ?? false,
+        'resourceLabel' => $resourceLabel,
+    ])
+
     <x-panel::page-header class="mb-4">
         <h1>{{ $resourceLabel }}</h1>
         <p class="panel-muted mt-1 text-sm">{{ __('panel::panel.records_list') }}</p>
@@ -69,6 +74,18 @@
                             {{ __('panel::panel.create') }}
                         </a>
                     @endif
+                @endif
+
+                @if (($canImport ?? false) && $trashed !== 'only')
+                    <button
+                        type="button"
+                        wire:click="openImportModal"
+                        class="panel-btn panel-btn-secondary panel-btn-compact"
+                        title="{{ __('panel::panel.import.action') }}"
+                    >
+                        <x-panel::icon name="upload" class="h-4 w-4" />
+                        {{ __('panel::panel.import.short') }}
+                    </button>
                 @endif
 
                 <div class="panel-export-group" role="group" aria-label="{{ __('panel::panel.export_group') }}">
