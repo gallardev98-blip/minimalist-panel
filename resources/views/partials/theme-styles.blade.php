@@ -1301,10 +1301,11 @@
         .panel-spa-loader {
             left: var(--panel-sidebar-width);
         }
-    }
 
-    body.panel-auth-body .panel-spa-loader {
-        left: 0;
+        .panel-spa-loader--fullscreen,
+        body.panel-auth-body .panel-spa-loader {
+            left: 0;
+        }
     }
 
     .panel-spa-loader--visible {

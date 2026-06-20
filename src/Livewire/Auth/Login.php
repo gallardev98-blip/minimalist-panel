@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace MyLaravelTools\Panel\Livewire\Auth;
 
+use MyLaravelTools\Panel\Livewire\Concerns\DispatchesPanelAuthAlert;
 use MyLaravelTools\Panel\Support\PanelAuth;
+use MyLaravelTools\Panel\Support\PanelValidation;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 #[Layout('panel::layouts.guest')]
 final class Login extends Component
 {
+    use DispatchesPanelAuthAlert;
     public string $email = '';
 
     public string $password = '';
@@ -21,10 +23,10 @@ final class Login extends Component
 
     public function login(): void
     {
-        $this->validate([
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
-        ]);
+        $this->validate(
+            PanelValidation::loginCredentials(),
+            PanelValidation::loginMessages(),
+        );
 
         $guard = PanelAuth::guard();
 
@@ -32,9 +34,9 @@ final class Login extends Component
             ['email' => $this->email, 'password' => $this->password],
             $this->remember,
         )) {
-            throw ValidationException::withMessages([
-                'email' => __('panel::panel.auth.failed'),
-            ]);
+            $this->alertAuthFailure(__('panel::panel.auth.failed'));
+
+            return;
         }
 
         $this->redirect(PanelAuth::redirectTargetAfterAuth(), navigate: true);

@@ -21,6 +21,7 @@ use MyLaravelTools\Panel\Livewire\ResourceForm;
 use MyLaravelTools\Panel\Livewire\ResourceIndex;
 use MyLaravelTools\Panel\Livewire\ResourceShow;
 use MyLaravelTools\Panel\Support\CsvExporter;
+use MyLaravelTools\Panel\Support\PanelLocale;
 use MyLaravelTools\Panel\Support\ExcelExporter;
 use MyLaravelTools\Panel\Support\GlobalSearch;
 use MyLaravelTools\Panel\Support\PageRegistry;
@@ -57,8 +58,20 @@ final class PanelServiceProvider extends ServiceProvider
         $this->registerTranslations();
         $this->registerPagination();
         $this->registerLivewireComponents();
+        $this->registerPanelLocaleForLivewire();
         $this->registerPolicies();
         $this->registerRoutes();
+    }
+
+    private function registerPanelLocaleForLivewire(): void
+    {
+        Livewire::listen('component.booted', function (object $component): void {
+            if (! str_starts_with($component::class, 'MyLaravelTools\\Panel\\')) {
+                return;
+            }
+
+            PanelLocale::apply();
+        });
     }
 
     private function registerPolicies(): void

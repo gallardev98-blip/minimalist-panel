@@ -34,6 +34,9 @@
         "orchestra/testbench": "^9.0|^10.0",
         "phpunit/phpunit": "^11.0"
     },
+    "suggest": {
+        "mylaraveltools/alertas": "Toasts y modales en auth y acciones del panel (integración opcional vía panel.integrations.alertas)"
+    },
     "autoload": {
         "psr-4": {
             "MyLaravelTools\\Panel\\": "src/"

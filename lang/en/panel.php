@@ -152,4 +152,8 @@ return [
             'reset' => 'Your password has been reset.',
         ],
     ],
+    'validation' => [
+        'required' => 'The :attribute field is required.',
+        'email' => 'The :attribute field must be a valid email address.',
+    ],
 ];

@@ -38,6 +38,7 @@ final class SpaLoaderTest extends TestCase
         $this->get('/admin/login')
             ->assertOk()
             ->assertSee('id="panel-spa-loader"', false)
+            ->assertSee('panel-spa-loader--fullscreen', false)
             ->assertSee('registerPanelSpaNavigation', false);
     }
 

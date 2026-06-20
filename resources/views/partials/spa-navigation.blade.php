@@ -18,9 +18,22 @@
             let progressFrame = null;
             let progressStartedAt = 0;
             let isVisible = false;
+            let lockFullscreenLoader = false;
 
             function loader() {
                 return document.getElementById('panel-spa-loader');
+            }
+
+            function syncLoaderFullscreen(element) {
+                if (! element) {
+                    return;
+                }
+
+                const shouldUseFullscreen = lockFullscreenLoader
+                    || element.classList.contains('panel-spa-loader--fullscreen')
+                    || document.body.classList.contains('panel-auth-body');
+
+                element.classList.toggle('panel-spa-loader--fullscreen', shouldUseFullscreen);
             }
 
             function main() {
@@ -130,6 +143,12 @@
                 if (! isVisible) {
                     shownAt = Date.now();
                     isVisible = true;
+
+                    if (document.body.classList.contains('panel-auth-body')) {
+                        lockFullscreenLoader = true;
+                    }
+
+                    syncLoaderFullscreen(element);
                     lockScroll();
                     element.setAttribute('aria-hidden', 'false');
                     element.setAttribute('aria-busy', 'true');
@@ -170,6 +189,8 @@
                         mainEl?.classList.remove('panel-navigating');
                         unlockScroll();
                         isVisible = false;
+                        lockFullscreenLoader = false;
+                        syncLoaderFullscreen(element);
                         stopProgressAnimation();
                         setProgress(0);
                     }, EXIT_MS);

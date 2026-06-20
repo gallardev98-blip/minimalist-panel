@@ -138,6 +138,7 @@ Tab::make('General', [
 - Sidebar footer: perfil arriba; fila inferior con tema (izq.), versión (centro) y logout (der.)
 - Sidebar `fixed` en móvil, `relative` en grid desktop
 - SPA loader (`partials/spa-loader.blade.php` + `spa-navigation.blade.php`): porcentaje entero en el anillo (`0%`→`100%`); progreso simulado (Livewire no expone % real de fetch); si `event.detail.cached`, salta a `100%`
+- **Loader en auth:** layout guest pasa `fullscreen => true` → clase `panel-spa-loader--fullscreen` (pantalla completa, sin offset de sidebar); al iniciar navegación desde login se bloquea fullscreen hasta ocultar el loader
 - Livewire: mantener `navigate.show_progress_bar = true` en `config/livewire.php` — si es `false`, Livewire añade `data-no-progress-bar` y lanza `Alpine is not defined` al cargar; la barra NProgress se oculta vía CSS (`#nprogress` en theme-styles)
 - **`panelApp()` en `<head>`** del layout app — definir antes de `@livewireScripts` para que Alpine resuelva `x-data` en `<body>`
 - **BOM UTF-8** — las vistas no deben guardarse con BOM (PowerShell `Set-Content` lo añade); un BOM dentro de `.panel-shell` rompe el CSS Grid y crea hueco superior
@@ -152,6 +153,9 @@ Tab::make('General', [
 - Enlace de marca del guest layout **sin** `wire:navigate` (misma ruta login; evita navigate innecesario)
 - **Alpine en auth:** no importar `alpinejs` en `app.js` para rutas `/admin/*` — Livewire lo arranca; importarlo rompe `wire:submit` en login
 - **Guest layout sin Alpine en `<body>`** — el toggle de tema usa JS vanilla en `<head>`; Livewire gestiona el formulario de login (`wire:submit.prevent`)
+- **Auth + Alertas (`mylaraveltools/alertas`)** — credenciales incorrectas → toast vía `DispatchesPanelAuthAlert` + evento Livewire `alerta`; sin Alertas instalado, fallback a `@error` en el campo email (sin bloque resumen duplicado). Layout guest/app incluyen `partials/integrations/alertas.blade.php` si el paquete está presente (`panel.integrations.alertas`)
+- **Locale Livewire** — `PanelLocale::apply()` en middleware HTTP y en hook `component.booted` de componentes `MyLaravelTools\Panel\*`; mensajes de validación auth en `panel::panel.validation.*`
+- **Tema auth tras morph** — `panelAuthApplyTheme()` reaplica `dark` desde `localStorage` en `Livewire.hook('morph.updated')`; toggle con `onclick` + `@persist` (evita doble listener y parpadeo de tema al validar)
 - **`PanelAuth::redirectTargetAfterAuth()`** — redirección tras login/registro; ignora `url.intended` si apunta al login
 - **APP_URL** debe incluir host y puerto correctos (`http://127.0.0.1:8000`); redirecciones auth usan URLs relativas (`absolute: false`)
 - Estilos auth solo en `body.panel-auth-body` — nunca `overflow: hidden` en `html` (rompe el grid al navegar)

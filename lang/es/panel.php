@@ -152,4 +152,8 @@ return [
             'reset' => 'Tu contraseña se ha restablecido correctamente.',
         ],
     ],
+    'validation' => [
+        'required' => 'El campo :attribute es obligatorio.',
+        'email' => 'El campo :attribute debe ser un correo electrónico válido.',
+    ],
 ];

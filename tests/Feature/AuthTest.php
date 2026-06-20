@@ -57,6 +57,47 @@ final class AuthTest extends TestCase
             ->assertRedirect(route('panel.login'));
     }
 
+    public function test_invalid_login_does_not_redirect(): void
+    {
+        Livewire::test(Login::class)
+            ->set('email', 'wrong@test.com')
+            ->set('password', 'wrong-password')
+            ->call('login')
+            ->assertNoRedirect();
+    }
+
+    public function test_login_validation_messages_use_panel_locale(): void
+    {
+        Livewire::test(Login::class)
+            ->call('login')
+            ->assertHasErrors(['email', 'password'])
+            ->assertSee(__('panel::panel.validation.required', [
+                'attribute' => __('panel::panel.auth.email'),
+            ]), false);
+    }
+
+    public function test_invalid_login_shows_validation_error_when_alertas_is_unavailable(): void
+    {
+        Livewire::test(Login::class)
+            ->set('email', 'wrong@test.com')
+            ->set('password', 'wrong-password')
+            ->call('login')
+            ->assertHasErrors(['email']);
+    }
+
+    public function test_invalid_login_does_not_duplicate_error_message_in_markup(): void
+    {
+        $component = Livewire::test(Login::class)
+            ->set('email', 'wrong@test.com')
+            ->set('password', 'wrong-password')
+            ->call('login');
+
+        $message = __('panel::panel.auth.failed');
+        $occurrences = substr_count($component->html(), $message);
+
+        $this->assertSame(1, $occurrences);
+    }
+
     public function test_user_can_login_via_livewire(): void
     {
         PanelUser::query()->create([

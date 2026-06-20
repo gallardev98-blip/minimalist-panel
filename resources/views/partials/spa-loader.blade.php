@@ -1,6 +1,8 @@
+@php($isFullscreenLoader = $fullscreen ?? false)
+
 <div
     id="panel-spa-loader"
-    class="panel-spa-loader"
+    class="panel-spa-loader{{ $isFullscreenLoader ? ' panel-spa-loader--fullscreen' : '' }}"
     aria-live="polite"
     aria-hidden="true"
     aria-busy="false"

@@ -13,6 +13,9 @@ All notable changes to `mylaraveltools/minimalist` are documented in this file.
 
 - Login/auth — transición SPA tras login/registro (`navigate: true` + loader en layout guest); Livewire `Auth\Login`; guest sin Alpine en body
 - **`/admin/login` parpadeo / formulario invisible** — `spa-navigation` ya no elimina `.panel-auth-shell` al llegar a rutas auth; loader SPA omitido en destinos auth; brand link sin `wire:navigate`
+- **Loader en login a pantalla completa** — `panel-spa-loader--fullscreen` en layout guest; CSS dentro del breakpoint desktop; lock JS durante transición post-login
+- **Login credenciales incorrectas** — un solo mensaje: toast Alertas si `mylaraveltools/alertas` está instalado; si no, error en campo email (eliminado resumen duplicado en la vista)
+- **Login validación/locale/tema** — `return` tras fallo de auth; locale en requests Livewire; mensajes ES en `PanelValidation`; tema auth reaplicado tras morph Livewire
 
 ## [0.14.0] - 2026-06-19
 

@@ -268,4 +268,18 @@ return [
 
     'widgets' => [],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Integraciones opcionales
+    |--------------------------------------------------------------------------
+    |
+    | alertas — mylaraveltools/alertas (toast/modal en auth y layouts del panel).
+    | Requiere composer require mylaraveltools/alertas y @include en layout (automático).
+    |
+    */
+
+    'integrations' => [
+        'alertas' => true,
+    ],
+
 ];

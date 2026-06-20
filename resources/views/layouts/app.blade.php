@@ -72,6 +72,8 @@
         @include('panel::partials.toasts')
     @endpersist
 
+    @include('panel::partials.integrations.alertas')
+
     <livewire:panel.global-search />
 
     @livewireScripts
