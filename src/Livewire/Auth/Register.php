@@ -44,14 +44,14 @@ final class Register extends Component
 
         if (PanelAuth::emailVerificationEnabled()) {
             PanelAuth::login($user);
-            $this->redirect(route('panel.verification.notice', [], false), navigate: true);
+            $this->redirect(route('panel.verification.notice', [], false), navigate: false);
 
             return;
         }
 
         PanelAuth::login($user);
 
-        $this->redirect(PanelAuth::redirectTargetAfterRegister(), navigate: true);
+        $this->redirect(PanelAuth::redirectTargetAfterRegister(), navigate: false);
     }
 
     public function render(): mixed

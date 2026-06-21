@@ -67,7 +67,9 @@
         </main>
     </div>
 
-    @include('panel::partials.spa-loader')
+    @persist('panel-spa-loader')
+        @include('panel::partials.spa-loader')
+    @endpersist
 
     @persist('panel-toasts')
         @include('panel::partials.toasts')

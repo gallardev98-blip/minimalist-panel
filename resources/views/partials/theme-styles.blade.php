@@ -1230,6 +1230,25 @@
         padding: 1.5rem;
     }
 
+    .panel-modal-dialog--wide {
+        max-width: 56rem;
+    }
+
+    .panel-import-preview-table-wrap {
+        max-height: 20rem;
+        overflow: auto;
+        border: 1px solid rgb(var(--panel-border));
+        border-radius: var(--panel-radius);
+    }
+
+    .panel-import-preview-table {
+        margin: 0;
+    }
+
+    .panel-import-preview-row--invalid {
+        background-color: rgb(var(--panel-danger) / 0.06);
+    }
+
     .panel-modal-header {
         display: flex;
         flex-shrink: 0;
@@ -1754,6 +1773,29 @@
         align-items: center;
         justify-content: center;
         line-height: 1;
+    }
+
+    .panel-auth-loading-text {
+        display: inline-flex;
+        align-items: baseline;
+    }
+
+    .panel-auth-dots {
+        display: inline-block;
+        width: 1.125em;
+        text-align: left;
+    }
+
+    .panel-auth-dots::after {
+        content: '';
+        animation: panel-auth-dots 1.2s steps(4, end) infinite;
+    }
+
+    @keyframes panel-auth-dots {
+        0% { content: ''; }
+        25% { content: '.'; }
+        50% { content: '..'; }
+        75%, 100% { content: '...'; }
     }
 
     .panel-auth-form--register .panel-auth-submit {

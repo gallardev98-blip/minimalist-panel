@@ -18,7 +18,7 @@ final class VerifyEmail extends Component
         $user = PanelAuth::user();
 
         if ($user === null || ! method_exists($user, 'hasVerifiedEmail') || $user->hasVerifiedEmail()) {
-            $this->redirect(route('panel.dashboard', [], false), navigate: true);
+            $this->redirect(route('panel.dashboard', [], false), navigate: false);
 
             return;
         }
@@ -34,7 +34,7 @@ final class VerifyEmail extends Component
         session()->invalidate();
         session()->regenerateToken();
 
-        $this->redirect(route(PanelAuth::loginRouteName(), [], false), navigate: true);
+        $this->redirect(route(PanelAuth::loginRouteName(), [], false), navigate: false);
     }
 
     public function render(): mixed

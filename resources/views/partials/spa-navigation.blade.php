@@ -7,8 +7,10 @@
 
             window.__panelSpaNavigationInitialized = true;
 
-            const MIN_VISIBLE_MS = 420;
-            const EXIT_MS = 360;
+            const MIN_VISIBLE_MS = 280;
+            const AUTH_MIN_VISIBLE_MS = 120;
+            const EXIT_MS = 280;
+            const AUTH_EXIT_MS = 200;
             const VISIBLE_CLASS = 'panel-spa-loader--visible';
             const PROGRESS_CAP = 92;
 
@@ -19,6 +21,7 @@
             let progressStartedAt = 0;
             let isVisible = false;
             let lockFullscreenLoader = false;
+            let isAuthTransition = false;
 
             function loader() {
                 return document.getElementById('panel-spa-loader');
@@ -30,7 +33,6 @@
                 }
 
                 const shouldUseFullscreen = lockFullscreenLoader
-                    || element.classList.contains('panel-spa-loader--fullscreen')
                     || document.body.classList.contains('panel-auth-body');
 
                 element.classList.toggle('panel-spa-loader--fullscreen', shouldUseFullscreen);
@@ -137,6 +139,10 @@
                     return;
                 }
 
+                if (isVisible && ! resetProgress) {
+                    return;
+                }
+
                 clearTimeout(hideTimer);
                 clearTimeout(exitTimer);
 
@@ -146,6 +152,7 @@
 
                     if (document.body.classList.contains('panel-auth-body')) {
                         lockFullscreenLoader = true;
+                        isAuthTransition = true;
                     }
 
                     syncLoaderFullscreen(element);
@@ -174,8 +181,10 @@
 
                 finishProgress();
 
+                const minVisible = isAuthTransition ? AUTH_MIN_VISIBLE_MS : MIN_VISIBLE_MS;
+                const exitMs = isAuthTransition ? AUTH_EXIT_MS : EXIT_MS;
                 const elapsed = Date.now() - shownAt;
-                const delay = Math.max(0, MIN_VISIBLE_MS - elapsed);
+                const delay = Math.max(0, minVisible - elapsed);
 
                 clearTimeout(hideTimer);
                 clearTimeout(exitTimer);
@@ -190,10 +199,11 @@
                         unlockScroll();
                         isVisible = false;
                         lockFullscreenLoader = false;
+                        isAuthTransition = false;
                         syncLoaderFullscreen(element);
                         stopProgressAnimation();
                         setProgress(0);
-                    }, EXIT_MS);
+                    }, exitMs);
                 }, delay);
             }
 
@@ -208,7 +218,7 @@
             }
 
             function isPanelAuthPath(pathname) {
-                const authSegments = ['/login', '/register', '/forgot-password', '/reset-password'];
+                const authSegments = ['/login', '/register', '/forgot-password', '/reset-password', '/email/verify'];
 
                 return authSegments.some((segment) => pathname.includes(segment));
             }
@@ -223,6 +233,9 @@
                 document.querySelectorAll('.panel-auth-bg, .panel-auth-shell, .panel-auth-theme-toggle').forEach((element) => {
                     element.remove();
                 });
+
+                document.body.classList.remove('panel-auth-body');
+                syncLoaderFullscreen(loader());
             }
 
             document.addEventListener('livewire:navigate', (event) => {
@@ -234,14 +247,6 @@
                     resetProgress: true,
                     isCached: Boolean(event.detail?.cached),
                 });
-            });
-
-            document.addEventListener('livewire:navigating', (event) => {
-                if (isPanelAuthPath(resolveNavigatePath(event.detail))) {
-                    return;
-                }
-
-                showLoader({ resetProgress: false });
             });
 
             document.addEventListener('livewire:navigated', () => {

@@ -10,7 +10,7 @@ final class Package
 
     public const DISPLAY_NAME = 'Minimalist';
 
-    public const VERSION = '0.17.0';
+    public const VERSION = '0.20.0';
 
     public static function vendorPath(): string
     {

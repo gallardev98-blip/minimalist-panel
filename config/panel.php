@@ -222,6 +222,7 @@ return [
 
     'import' => [
         'enabled' => true,
+        'preview' => true,
     ],
 
     /*

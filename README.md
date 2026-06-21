@@ -55,6 +55,8 @@ El panel incluye **login y registro** en `/admin/login` y `/admin/register` usan
 
 Con auth externa: `'enabled' => false` y `'login_route' => 'login'`.
 
+Tras login/registro el panel hace **recarga completa** al dashboard (no loader SPA). El botón muestra «Entrando» con puntos animados solo mientras dura el POST; si falla, vuelve a «Entrar» y se muestran los errores.
+
 Recuperar contraseña (activo por defecto):
 
 ```php
@@ -789,6 +791,15 @@ Botones **CSV**, **XLSX** y **PDF** en la toolbar del listado. Si hay filas sele
 
 Botón **Importar** en la toolbar del listado (requiere permiso `create`).
 
+Con **`import.preview` => true** (por defecto), al subir el archivo se muestra una **vista previa**: filas válidas, errores por fila y confirmación antes de guardar.
+
+```php
+'import' => [
+    'enabled' => true,
+    'preview' => true,  // false = importación directa (comportamiento anterior)
+],
+```
+
 En el modal:
 - **Plantilla CSV / Excel** — descarga cabeceras + hasta 5 filas de ejemplo desde la BBDD
 - Sube el archivo rellenado (`.csv`, `.txt`, `.xlsx`, `.xls`)
@@ -835,6 +846,8 @@ RelationManager::hasOne('profile', ProfileResource::class),
 RelationManager::morphMany('comments', CommentResource::class),
 RelationManager::morphToMany('tags', TagResource::class),
 ```
+
+En `panel-demo`, abre un **Producto** → verás **Ficha técnica** (hasOne) y **Reseñas de clientes** (morphMany).
 
 ## Widgets con gráficos
 
@@ -914,6 +927,7 @@ Ver [PUBLISHING.md](PUBLISHING.md) para subir el paquete a Packagist y etiquetar
 - [x] Fase 14: `RoleResource` / `PermissionResource` integrados, `PermissionsField` / `PermissionsColumn`
 - [x] Fase 15: import CSV/Excel, selector de idioma, HasOne/Morph relations, `ChartWidget`, verificación email
 - [x] Post-15: `ViewWidget`, `progression`, `themeColors()`, gráficos reactivos al tema/SPA
+- [x] **v0.20** — auth UX (redirect post-login, carga animada en botón)
 - [x] Packagist — `mylaraveltools/minimalist`
 
 ## Licencia

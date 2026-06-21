@@ -20,17 +20,22 @@
 
 **v0.18.0** (2026-06-20): `ViewWidget`, tipo `progression`, `ChartWidget::themeColors()`, gráficos reactivos al tema y SPA, docs demo al día.
 
+**v0.20.0** (2026-06-21): auth UX — redirect completo post-login (sin loader SPA), botón con puntos animados (`auth-loading-text`), `Package::VERSION` sincronizado.
+
+**v0.19.0** (2026-06-20): import con **vista previa** (`import.preview`), demo hasOne/morphMany en Productos.
+
 **v0.16.0** (2026-06-20): namespace PHP `MyLaravelTools\Panel` (antes `Panel\Minimalist`); alineado con `MyLaravelTools\Alertas`.
 
 ## Fase 15 — Import, locale, relations, charts, email verify (v0.17.0)
 
 ### Import CSV/Excel
 
-- `ResourceImporter`, `ImportTemplateExporter` — plantilla con cabeceras + filas de ejemplo (BBDD)
-- Modal: botones **Plantilla CSV** / **Plantilla Excel** + subida de archivo
+- `ResourceImporter::analyzePath()` — vista previa fila a fila (válida / error)
+- `ResourceImporter::importPayloads()` — persiste solo filas validadas
+- Config: `panel.import.enabled`, `panel.import.preview` (default `true`)
+- Modal en dos pasos: subir archivo → tabla preview → confirmar
 - `Field::importable(false)` — excluye un campo del form
 - `Resource::import()` — esquema propio de columnas (vacío = form filtrado)
-- Config: `panel.import.enabled`
 
 ### Selector de idioma
 
@@ -199,7 +204,7 @@ Tab::make('General', [
 - Sidebar footer: perfil arriba; fila inferior con tema (izq.), versión (centro) y logout (der.)
 - Sidebar `fixed` en móvil, `relative` en grid desktop
 - SPA loader (`partials/spa-loader.blade.php` + `spa-navigation.blade.php`): porcentaje entero en el anillo (`0%`→`100%`); progreso simulado (Livewire no expone % real de fetch); si `event.detail.cached`, salta a `100%`
-- **Loader en auth:** layout guest pasa `fullscreen => true` → clase `panel-spa-loader--fullscreen` (pantalla completa, sin offset de sidebar); al iniciar navegación desde login se bloquea fullscreen hasta ocultar el loader
+- **Loader en auth:** `@persist('panel-spa-loader')` entre guest y app (un solo loader, sin reinicio al entrar); fullscreen vía JS + `body.panel-auth-body`; tiempos más cortos en transición login→panel
 - Livewire: mantener `navigate.show_progress_bar = true` en `config/livewire.php` — si es `false`, Livewire añade `data-no-progress-bar` y lanza `Alpine is not defined` al cargar; la barra NProgress se oculta vía CSS (`#nprogress` en theme-styles)
 - **`panelApp()` en `<head>`** del layout app — definir antes de `@livewireScripts` para que Alpine resuelva `x-data` en `<body>`
 - **BOM UTF-8** — las vistas no deben guardarse con BOM (PowerShell `Set-Content` lo añade); un BOM dentro de `.panel-shell` rompe el CSS Grid y crea hueco superior
@@ -209,7 +214,8 @@ Tab::make('General', [
 - Rutas: `panel.login`, `panel.register`, `panel.logout`
 - Livewire: `MyLaravelTools\Panel\Livewire\Auth\Login`, `Register`
 - Layout: `panel::layouts.guest` (mismo tema monocromático)
-- Tras login/registro: **navegación SPA** (`navigate: true`) con el mismo loader del panel; el layout guest incluye `spa-loader` + `spa-navigation`
+- Tras login/registro: **redirect completo** (`navigate: false`) — entra al panel sin loader SPA ni doble “Entrando… / Cargando %”
+- Botón auth: `wire:loading` + `wire:target="login|register"` → partial `auth-loading-text` (puntos animados); al fallar la petición vuelve el texto normal y se muestran errores
 - **`spa-navigation` en auth:** `cleanupLayoutArtifacts()` solo corre si existe `.panel-shell` (transición post-login); no mostrar loader ni limpiar DOM al navegar **hacia** rutas auth (`/login`, `/register`, etc.) — de lo contrario el login parpadea y desaparece
 - Enlace de marca del guest layout **sin** `wire:navigate` (misma ruta login; evita navigate innecesario)
 - **Alpine en auth:** no importar `alpinejs` en `app.js` para rutas `/admin/*` — Livewire lo arranca; importarlo rompe `wire:submit` en login
@@ -260,8 +266,8 @@ php artisan panel:make-page Settings
 ### Demo (`panel-demo`)
 
 - `spatie/laravel-permission` + `PanelPermissionSeeder` (roles: admin, editor, viewer)
-- **Fase 15** — dashboard: `ChartWidget` progression + doughnut (`themeColors`), `ViewWidget` catalog-health, import CSV, selector ES/EN
-- Widgets en `config/panel.php`; vista custom en `resources/views/panel/widgets/catalog-health.blade.php`
+- **Fase 15–19** — dashboard widgets, import con preview, selector ES/EN
+- **Relaciones demo** — Producto: `hasOne` ficha técnica, `morphMany` reseñas, `belongsToMany` tags
 - Páginas: `SettingsPage`, `SalesReportPage`, `LowStockReportPage`, `CustomerActivityPage`, `OnlineStoreSettingsPage`
 - Usuarios: `admin@panel.test` / `editor@panel.test` (password: `password`)
 

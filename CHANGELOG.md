@@ -4,6 +4,35 @@ All notable changes to `mylaraveltools/minimalist` are documented in this file.
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-06-21
+
+### Added
+
+- Partial **`auth-loading-text`** — texto de carga en botones auth con puntos animados (`Entrando` / `Registrando`)
+- Claves i18n **`registering`** (ES/EN)
+
+### Changed
+
+- Tras login, registro y verify-email: **redirect completo** (`navigate: false`) — sin loader SPA ni porcentaje tras el POST
+- `Package::VERSION` alineado con el changelog (sidebar muestra `v0.20.0`)
+
+### Fixed
+
+- Login percibido como lento: secuencia doble «Entrando…» + «Cargando %»
+- Al fallar credenciales, el botón vuelve a su etiqueta normal (`wire:loading` solo durante la petición)
+
+## [0.19.0] - 2026-06-20
+
+### Added
+
+- **Import con vista previa** — `ResourceImporter::analyzePath()`, modal en dos pasos, config `import.preview`
+- Tests `ResourceImporterTest`
+
+### Changed
+
+- Demo: Producto con `hasOne` (ficha técnica) y `morphMany` (reseñas polimórficas)
+- Reseñas migradas a `reviewable_id` / `reviewable_type`
+
 ## [0.18.0] - 2026-06-20
 
 ### Added

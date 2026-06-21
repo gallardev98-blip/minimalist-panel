@@ -60,6 +60,11 @@ final class ResourceIndex extends Component
 
     public bool $showImportModal = false;
 
+    public string $importStep = 'upload';
+
+    /** @var array<string, mixed>|null */
+    public ?array $importPreview = null;
+
     /** @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile|null */
     public $importFile = null;
 
@@ -345,6 +350,8 @@ final class ResourceIndex extends Component
         abort_unless((bool) config('panel.import.enabled', true), 403);
 
         $this->importFile = null;
+        $this->importStep = 'upload';
+        $this->importPreview = null;
         $this->resetValidation();
         $this->showImportModal = true;
     }
@@ -353,7 +360,48 @@ final class ResourceIndex extends Component
     {
         $this->showImportModal = false;
         $this->importFile = null;
+        $this->importStep = 'upload';
+        $this->importPreview = null;
         $this->resetValidation();
+    }
+
+    public function backImportUpload(): void
+    {
+        $this->importStep = 'upload';
+        $this->importPreview = null;
+        $this->importFile = null;
+        $this->resetValidation();
+    }
+
+    public function updatedImportFile(): void
+    {
+        if (! $this->importFile || ! (bool) config('panel.import.preview', true)) {
+            return;
+        }
+
+        $this->validate([
+            'importFile' => ['required', 'file', 'mimes:csv,txt,xlsx,xls', 'max:10240'],
+        ], [], [
+            'importFile' => __('panel::panel.import.file'),
+        ]);
+
+        $extension = strtolower($this->importFile->getClientOriginalExtension());
+        $preview = app(ResourceImporter::class)->analyzePath(
+            $this->resourceClass,
+            $this->importFile->getRealPath(),
+            $extension,
+        );
+
+        if ($preview['errors'] !== []) {
+            $this->addError('importFile', $preview['errors'][0]);
+            $this->importPreview = null;
+            $this->importStep = 'upload';
+
+            return;
+        }
+
+        $this->importPreview = $preview;
+        $this->importStep = 'preview';
     }
 
     public function downloadImportTemplateCsv(): StreamedResponse
@@ -367,6 +415,43 @@ final class ResourceIndex extends Component
     }
 
     public function processImport(): void
+    {
+        if ((bool) config('panel.import.preview', true)) {
+            $this->confirmImport();
+
+            return;
+        }
+
+        $this->importDirect();
+    }
+
+    public function confirmImport(): void
+    {
+        abort_unless($this->resourceClass::authorize('create'), 403);
+
+        if ($this->importPreview === null) {
+            $this->importDirect();
+
+            return;
+        }
+
+        $payloads = array_values(array_filter(array_map(
+            fn (array $row): ?array => $row['valid'] ? $row['payload'] : null,
+            $this->importPreview['rows'] ?? [],
+        )));
+
+        if ($payloads === []) {
+            $this->toastError(__('panel::panel.import.preview_no_valid'));
+
+            return;
+        }
+
+        $result = app(ResourceImporter::class)->importPayloads($this->resourceClass, $payloads);
+        $this->closeImportModal();
+        $this->finishImportResult($result);
+    }
+
+    private function importDirect(): void
     {
         abort_unless($this->resourceClass::authorize('create'), 403);
 
@@ -384,7 +469,12 @@ final class ResourceIndex extends Component
         );
 
         $this->closeImportModal();
+        $this->finishImportResult($result);
+    }
 
+    /** @param array{imported: int, failed: int, errors: list<string>} $result */
+    private function finishImportResult(array $result): void
+    {
         if ($result['imported'] === 0 && $result['failed'] === 0 && $result['errors'] !== []) {
             $this->toastError($result['errors'][0]);
 
@@ -431,7 +521,10 @@ final class ResourceIndex extends Component
             'hasTabs' => FormSchema::hasTabs($formSchema),
             'hasSections' => FormSchema::hasSections($formSchema),
             'canImport' => (bool) config('panel.import.enabled', true) && $resourceClass::authorize('create'),
+            'importPreviewEnabled' => (bool) config('panel.import.preview', true),
             'showImportModal' => $this->showImportModal,
+            'importStep' => $this->importStep,
+            'importPreview' => $this->importPreview,
         ]))->title($resourceClass::label());
     }
 

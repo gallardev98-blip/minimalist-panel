@@ -42,13 +42,11 @@
             type="submit"
             class="panel-btn panel-btn-primary panel-auth-submit"
             wire:loading.attr="disabled"
-            wire:loading.class="panel-auth-submit--loading"
         >
             <span wire:loading.remove wire:target="register">{{ __('panel::panel.auth.register_action') }}</span>
-            <span wire:loading wire:target="register" class="panel-auth-submit-loading" aria-hidden="true">
-                <x-panel::icon name="loader-2" class="h-4 w-4 animate-spin" />
+            <span wire:loading wire:target="register">
+                @include('panel::partials.auth-loading-text', ['label' => __('panel::panel.auth.registering')])
             </span>
-            <span wire:loading wire:target="register" class="sr-only">{{ __('panel::panel.loading') }}</span>
         </button>
     </form>
 

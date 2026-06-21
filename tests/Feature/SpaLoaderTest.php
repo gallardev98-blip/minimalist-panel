@@ -38,7 +38,7 @@ final class SpaLoaderTest extends TestCase
         $this->get('/admin/login')
             ->assertOk()
             ->assertSee('id="panel-spa-loader"', false)
-            ->assertSee('panel-spa-loader--fullscreen', false)
+            ->assertSee('panel-auth-body', false)
             ->assertSee('registerPanelSpaNavigation', false);
     }
 
@@ -79,6 +79,7 @@ final class SpaLoaderTest extends TestCase
             ->assertSee('function setProgress', false)
             ->assertSee('Math.floor', false)
             ->assertSee('PROGRESS_CAP', false)
+            ->assertSee('AUTH_MIN_VISIBLE_MS', false)
             ->assertSee('finishProgress', false)
             ->assertSee('event.detail?.cached', false);
     }

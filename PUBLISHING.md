@@ -54,12 +54,25 @@ php artisan panel:install
 |-----|---------------------|
 | `v0.9.0` | Pages custom, `PanelPermission`, Spatie opcional |
 | `v0.10.0` | Auth integrada (`/admin/login`, `/register`) |
+| `v0.17.0` | Import, locale, ChartWidget, email verify |
+| `v0.18.0` | ViewWidget, progression, themeColors |
+| `v0.19.0` | Import con vista previa |
+| `v0.20.0` | Auth UX — redirect post-login, botón con puntos animados |
+
+Última release: **`v0.20.0`**. Tras cambios, etiqueta y push:
+
+```bash
+composer test
+git tag -a v0.20.0 -m "v0.20.0 — auth UX"
+git push origin main v0.20.0
+```
 
 ## Checklist
 
 - [ ] `composer.json` — name, license, authors
 - [ ] `README.md` y `CHANGELOG.md` actualizados
+- [ ] `Package::VERSION` coincide con el tag
 - [ ] `composer test` pasa
-- [ ] Tags `v0.9.0` y `v0.10.0` pusheados
-- [ ] Paquete enviado en Packagist
-- [ ] `panel-demo` probado con `composer require mylaraveltools/minimalist:^0.10`
+- [ ] Tag pusheado a GitHub
+- [ ] Paquete actualizado en Packagist (hook o Update)
+- [ ] `panel-demo` probado con `composer require mylaraveltools/minimalist:^0.20`

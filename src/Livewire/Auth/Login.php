@@ -39,7 +39,7 @@ final class Login extends Component
             return;
         }
 
-        $this->redirect(PanelAuth::redirectTargetAfterAuth(), navigate: true);
+        $this->redirect(PanelAuth::redirectTargetAfterAuth(), navigate: false);
     }
 
     public function render(): mixed

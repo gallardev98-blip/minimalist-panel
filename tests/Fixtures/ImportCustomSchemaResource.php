@@ -17,7 +17,7 @@ final class ImportCustomSchemaResource extends Resource
     public static function import(): array
     {
         return [
-            TextField::make('title')->label('Título'),
+            TextField::make('title')->label('Título')->required()->rules('max:5'),
         ];
     }
 

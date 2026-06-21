@@ -17,25 +17,63 @@ final class ResourceImporter
      */
     public function fromPath(string $resourceClass, string $path, string $extension): array
     {
+        $analysis = $this->analyzePath($resourceClass, $path, $extension);
+
+        if ($analysis['rows'] === [] && $analysis['errors'] !== []) {
+            return ['imported' => 0, 'failed' => 0, 'errors' => $analysis['errors']];
+        }
+
+        $payloads = array_values(array_filter(
+            array_map(fn (array $row): ?array => $row['valid'] ? $row['payload'] : null, $analysis['rows']),
+        ));
+
+        return $this->importPayloads($resourceClass, $payloads);
+    }
+
+    /**
+     * @param class-string<Resource> $resourceClass
+     * @return array{
+     *     headers: list<string>,
+     *     fields: list<string>,
+     *     rows: list<array{row: int, cells: list<string>, payload: array<string, mixed>|null, valid: bool, error: string|null}>,
+     *     summary: array{total: int, valid: int, invalid: int},
+     *     errors: list<string>
+     * }
+     */
+    public function analyzePath(string $resourceClass, string $path, string $extension): array
+    {
         abort_unless($resourceClass::authorize('create'), 403);
 
         $fields = ImportColumnHelper::importableFields($resourceClass);
 
         if ($fields === []) {
-            return ['imported' => 0, 'failed' => 0, 'errors' => [__('panel::panel.import.no_fields')]];
+            return [
+                'headers' => [],
+                'fields' => [],
+                'rows' => [],
+                'summary' => ['total' => 0, 'valid' => 0, 'invalid' => 0],
+                'errors' => [__('panel::panel.import.no_fields')],
+            ];
         }
 
+        $fieldLabels = array_map(fn (Field $field): string => $field->getLabel(), $fields);
         $rows = $this->readRows($path, $extension);
 
         if ($rows === []) {
-            return ['imported' => 0, 'failed' => 0, 'errors' => [__('panel::panel.import.empty_file')]];
+            return [
+                'headers' => [],
+                'fields' => $fieldLabels,
+                'rows' => [],
+                'summary' => ['total' => 0, 'valid' => 0, 'invalid' => 0],
+                'errors' => [__('panel::panel.import.empty_file')],
+            ];
         }
 
         $headers = array_shift($rows);
         $mapping = ImportColumnHelper::mapHeaders($fields, $headers);
-        $imported = 0;
-        $failed = 0;
-        $errors = [];
+        $analyzed = [];
+        $valid = 0;
+        $invalid = 0;
 
         foreach ($rows as $line => $cells) {
             if ($this->isEmptyRow($cells)) {
@@ -43,16 +81,35 @@ final class ResourceImporter
             }
 
             $rowNumber = $line + 2;
-            $payload = $this->buildRowPayload($fields, $mapping, $cells);
+            $analyzed[] = $this->analyzeRow($resourceClass, $fields, $mapping, $cells, $rowNumber);
+            $analyzed[array_key_last($analyzed)]['valid'] ? $valid++ : $invalid++;
+        }
 
-            if ($payload === null) {
-                $failed++;
-                $errors[] = __('panel::panel.import.row_no_columns', ['row' => $rowNumber]);
+        return [
+            'headers' => $headers,
+            'fields' => $fieldLabels,
+            'rows' => $analyzed,
+            'summary' => ['total' => count($analyzed), 'valid' => $valid, 'invalid' => $invalid],
+            'errors' => [],
+        ];
+    }
 
-                continue;
-            }
+    /**
+     * @param class-string<Resource> $resourceClass
+     * @param list<array<string, mixed>> $payloads
+     * @return array{imported: int, failed: int, errors: list<string>}
+     */
+    public function importPayloads(string $resourceClass, array $payloads): array
+    {
+        abort_unless($resourceClass::authorize('create'), 403);
 
-            $result = $this->persistRow($resourceClass, $fields, $payload, $rowNumber);
+        $fields = ImportColumnHelper::importableFields($resourceClass);
+        $imported = 0;
+        $failed = 0;
+        $errors = [];
+
+        foreach ($payloads as $index => $payload) {
+            $result = $this->persistRow($resourceClass, $fields, $payload, $index + 1);
 
             if ($result === null) {
                 $imported++;
@@ -130,6 +187,42 @@ final class ResourceImporter
      * @param array<int, Field> $fields
      * @param array<int, Field|null> $mapping
      * @param list<string> $cells
+     * @return array{row: int, cells: list<string>, payload: array<string, mixed>|null, valid: bool, error: string|null}
+     */
+    private function analyzeRow(
+        string $resourceClass,
+        array $fields,
+        array $mapping,
+        array $cells,
+        int $rowNumber,
+    ): array {
+        $payload = $this->buildRowPayload($fields, $mapping, $cells);
+
+        if ($payload === null) {
+            return [
+                'row' => $rowNumber,
+                'cells' => $cells,
+                'payload' => null,
+                'valid' => false,
+                'error' => __('panel::panel.import.row_no_columns', ['row' => $rowNumber]),
+            ];
+        }
+
+        $error = $this->validatePayload($resourceClass, $fields, $payload, $rowNumber);
+
+        return [
+            'row' => $rowNumber,
+            'cells' => $cells,
+            'payload' => $payload,
+            'valid' => $error === null,
+            'error' => $error,
+        ];
+    }
+
+    /**
+     * @param array<int, Field> $fields
+     * @param array<int, Field|null> $mapping
+     * @param list<string> $cells
      * @return array<string, mixed>|null
      */
     private function buildRowPayload(array $fields, array $mapping, array $cells): ?array
@@ -169,7 +262,7 @@ final class ResourceImporter
      * @param array<int, Field> $fields
      * @param array<string, mixed> $payload
      */
-    private function persistRow(string $resourceClass, array $fields, array $payload, int $rowNumber): ?string
+    private function validatePayload(string $resourceClass, array $fields, array $payload, int $rowNumber): ?string
     {
         $rules = [];
 
@@ -186,7 +279,29 @@ final class ResourceImporter
             ]);
         }
 
-        $validated = $validator->validated();
+        return null;
+    }
+
+    /**
+     * @param class-string<Resource> $resourceClass
+     * @param array<int, Field> $fields
+     * @param array<string, mixed> $payload
+     */
+    private function persistRow(string $resourceClass, array $fields, array $payload, int $rowNumber): ?string
+    {
+        $error = $this->validatePayload($resourceClass, $fields, $payload, $rowNumber);
+
+        if ($error !== null) {
+            return $error;
+        }
+
+        $rules = [];
+
+        foreach ($fields as $field) {
+            $rules[$field->getName()] = $field->getRules();
+        }
+
+        $validated = Validator::make($payload, $rules, $resourceClass::validationMessages())->validated();
         $stored = FieldPayload::fromValidated($fields, $validated);
         $modelClass = $resourceClass::modelClass();
         $record = $modelClass::query()->create($stored);

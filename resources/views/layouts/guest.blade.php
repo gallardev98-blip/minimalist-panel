@@ -108,7 +108,9 @@
         </main>
     </div>
 
-    @include('panel::partials.spa-loader', ['fullscreen' => true])
+    @persist('panel-spa-loader')
+        @include('panel::partials.spa-loader')
+    @endpersist
 
     @include('panel::partials.integrations.alertas')
 
