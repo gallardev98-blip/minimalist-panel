@@ -212,6 +212,7 @@ return [
     'documentation' => [
         'intro' => 'Personaliza el panel y copia la configuración a tu proyecto.',
         'playground_title' => 'Personalizar panel',
+        'playground_link' => 'Personalizar panel',
         'fake_notice' => 'Vista de prueba · sin login',
         'fake_badge' => 'Vista demo',
         'hide_controls' => 'Cerrar',
@@ -280,6 +281,7 @@ return [
         ],
         'charts_title' => 'ChartWidget',
         'charts_desc' => 'Elige un tipo, ajusta altura y colores. El gráfico resaltado en la demo refleja tu configuración.',
+        'chart_widgets_where' => 'Los widgets del dashboard se registran en config/panel.php → widgets, no en theme.',
         'charts_preview' => 'Gráficos del dashboard',
         'charts_preview_hint' => 'Los 5 tipos con datos de ejemplo',
         'chart_type_pick' => 'Tipo a personalizar',

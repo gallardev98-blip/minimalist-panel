@@ -6,6 +6,7 @@ namespace MyLaravelTools\Panel\Tests;
 
 use MyLaravelTools\Panel\PanelServiceProvider;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\File;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -24,6 +25,12 @@ abstract class TestCase extends Orchestra
         parent::setUp();
 
         Blade::directive('vite', fn (): string => '<?php /* vite disabled in tests */ ?>');
+
+        $configHost = config_path('panel.php');
+        if (! is_file($configHost)) {
+            File::ensureDirectoryExists(dirname($configHost));
+            File::copy(dirname(__DIR__).'/config/panel.php', $configHost);
+        }
     }
 
     protected function defineEnvironment($app): void

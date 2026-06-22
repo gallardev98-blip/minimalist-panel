@@ -48,4 +48,15 @@ final class PanelLayoutTest extends TestCase
 
         $this->assertTrue(PanelLayout::layoutAuthSplit());
     }
+
+    public function test_footer_incluye_enlace_playground(): void
+    {
+        config()->set('panel.documentation.enabled', true);
+        config()->set('panel.layout.footer_links', []);
+
+        $enlaces = PanelLayout::enlacesFooter();
+
+        $this->assertNotEmpty($enlaces);
+        $this->assertSame('panel.playground', $enlaces[0]['route'] ?? null);
+    }
 }

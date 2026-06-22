@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Panel\Widgets;
+
+use MyLaravelTools\Panel\Widgets\ViewWidget;
+
+final class {{ class }}
+{
+    public static function definir(): ViewWidget
+    {
+        return ViewWidget::make('{{ label }}', '{{ view }}', fn (): array => [
+            'total' => 0,
+        ]);
+    }
+}

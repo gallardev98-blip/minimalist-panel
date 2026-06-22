@@ -6,6 +6,9 @@
     <header class="panel-playground-section-intro">
         <h2 class="panel-heading text-sm font-bold">{{ __('panel::panel.documentation.charts_title') }}</h2>
         <p class="panel-muted mt-1 text-xs leading-relaxed">{{ __('panel::panel.documentation.charts_desc') }}</p>
+        <p class="panel-playground-aviso panel-muted mt-2 rounded-lg border border-[color:var(--panel-border)] bg-[color:var(--panel-surface)] px-3 py-2 text-xs leading-relaxed">
+            {{ __('panel::panel.documentation.chart_widgets_where') }}
+        </p>
     </header>
 
     <p class="panel-playground-group-label">{{ __('panel::panel.documentation.chart_type_pick') }}</p>

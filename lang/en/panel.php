@@ -212,6 +212,7 @@ return [
     'documentation' => [
         'intro' => 'Customize the panel and copy the configuration to your project.',
         'playground_title' => 'Customize panel',
+        'playground_link' => 'Customize panel',
         'fake_notice' => 'Preview · no login required',
         'fake_badge' => 'Demo view',
         'hide_controls' => 'Close',
@@ -280,6 +281,7 @@ return [
         ],
         'charts_title' => 'ChartWidget',
         'charts_desc' => 'Pick a type, adjust height and colors. The highlighted chart in the demo reflects your settings.',
+        'chart_widgets_where' => 'Dashboard widgets are registered in config/panel.php → widgets, not in theme.',
         'charts_preview' => 'Dashboard charts',
         'charts_preview_hint' => 'All 5 types with sample data',
         'chart_type_pick' => 'Type to customize',

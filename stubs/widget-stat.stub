@@ -1,0 +1,17 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Panel\Widgets;
+
+use MyLaravelTools\Panel\Widgets\StatWidget;
+
+final class {{ class }}
+{
+    public static function definir(): StatWidget
+    {
+        return StatWidget::make('{{ label }}', fn (): int => 0)
+            ->icon('trending-up')
+            ->color('primary');
+    }
+}

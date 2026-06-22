@@ -1,0 +1,20 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Panel\Widgets;
+
+use MyLaravelTools\Panel\Widgets\ChartWidget;
+
+final class {{ class }}
+{
+    public static function definir(): ChartWidget
+    {
+        return ChartWidget::make('{{ label }}', '{{ chartType }}', [
+            'labels' => ['Ene', 'Feb', 'Mar'],
+            'values' => [12, 19, 8],
+        ])
+            ->themeColors()
+            ->height(200);
+    }
+}

@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace MyLaravelTools\Panel;
 
 use MyLaravelTools\Panel\Commands\InstallPanelCommand;
+use MyLaravelTools\Panel\Commands\DoctorPanelCommand;
 use MyLaravelTools\Panel\Commands\MakePageCommand;
+use MyLaravelTools\Panel\Commands\MakeWidgetCommand;
 use MyLaravelTools\Panel\Commands\MakePolicyCommand;
 use MyLaravelTools\Panel\Commands\MakeResourceCommand;
 use MyLaravelTools\Panel\Commands\UpgradeViewsCommand;
@@ -134,8 +136,10 @@ final class PanelServiceProvider extends ServiceProvider
             InstallPanelCommand::class,
             MakeResourceCommand::class,
             MakePageCommand::class,
+            MakeWidgetCommand::class,
             MakePolicyCommand::class,
             UpgradeViewsCommand::class,
+            DoctorPanelCommand::class,
         ]);
     }
 

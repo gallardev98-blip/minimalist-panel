@@ -4,6 +4,25 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.25.0] - 2026-06-20
+
+### Added
+
+- **Playground público** — `GET /playground` (`panel.playground`): personalización en vivo de `config/panel.php` y `ChartWidget` sin login
+- Pestañas Inicio, Apariencia, Colores, Gráficos, Tu código y Avanzado; zonas resaltadas («Cambiado aquí»)
+- **ChartWidget en playground** — 5 tipos (bar, line, pie, doughnut, progression), estilos moderno/minimal/bold, export PHP con `->options()`
+- Comando **`panel:doctor`** — valida config, ruta playground, Livewire navigate, Tailwind, Spatie, vistas publicadas
+- Comando **`panel:make-widget`** — stubs chart|stat|resource-count|view en `app/Panel/Widgets/`
+- Enlace automático al playground en footer del sidebar cuando `documentation.enabled`
+- Aviso en pestaña Gráficos: widgets van en `config/panel.php` → `widgets`
+- Tests ampliados: playground Livewire, gráficos, `PanelDoctor`, footer playground
+
+### Fixed
+
+- Gráficos del playground que desaparecían tras commits Livewire (IDs estables + `panelPlaygroundSincronizarGraficos`)
+- JSON de configuración de gráficos roto en atributos HTML (`@json` + `getAttribute`)
+- `wire:mouseleave` y optional chaining en handlers Livewire del playground
+
 ## [0.24.0] - 2026-06-21
 
 ### Added

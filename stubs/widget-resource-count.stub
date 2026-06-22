@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Panel\Widgets;
+
+use App\Panel\Resources\{{ resourceClass }};
+use MyLaravelTools\Panel\Widgets\ResourceCountWidget;
+
+final class {{ class }}
+{
+    public static function definir(): ResourceCountWidget
+    {
+        return ResourceCountWidget::make({{ resourceClass }}::class);
+    }
+}

@@ -595,6 +595,8 @@ public static function relations(): array
 | `php artisan panel:make-resource Name` | Crear Resource |
 | `php artisan panel:make-page Name` | Crear página custom |
 | `php artisan panel:make-policy Name` | Crear Policy |
+| `php artisan panel:make-widget Name --type=chart` | Crear clase widget para el dashboard |
+| `php artisan panel:doctor` | Diagnosticar instalación del panel |
 | `php artisan panel:upgrade-views` | Actualizar vistas publicadas |
 | `php artisan vendor:publish --tag=panel-config` | Publicar config |
 | `php artisan vendor:publish --tag=panel-views` | Publicar vistas Blade |
@@ -686,6 +688,7 @@ composer test
 - [x] Extensibilidad — presets tema, PanelExtensions, campos custom (v0.22)
 - [x] Layout — densidad, boxed, sidebar colapsable, auth split, RepeaterField (v0.23)
 - [x] Máxima personalización — topbar/dual, slots, upsert, tablas, presets propios (v0.24)
+- [x] Playground público, gráficos interactivos, `panel:doctor`, `panel:make-widget` (v0.25)
 - [ ] Multi-panel, starter kit completo
 
 ---
