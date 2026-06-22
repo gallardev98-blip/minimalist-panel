@@ -6,11 +6,11 @@ namespace MyLaravelTools\Panel\Support;
 
 final class Package
 {
-    public const NAME = 'mylaraveltools/minimalist';
+    public const NAME = 'mylaraveltools/panel';
 
-    public const DISPLAY_NAME = 'Minimalist';
+    public const DISPLAY_NAME = 'Panel';
 
-    public const VERSION = '0.20.0';
+    public const VERSION = '0.21.0';
 
     public static function vendorPath(): string
     {

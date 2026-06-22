@@ -1,27 +1,62 @@
-# Minimalist
+# Panel (`mylaraveltools/panel`)
 
-Panel de administración declarativo y monocromático para Laravel. Alternativa moderna a AdminLTE, basado en **Livewire 3**, **Tailwind CSS** y una API de **Resources** al estilo Filament/Nova.
+Panel de administración declarativo y monocromático para **Laravel**. API de **Resources** al estilo Filament/Nova, con **Livewire 3**, **Tailwind CSS**, auth integrada, permisos Spatie, import/export y navegación SPA.
+
+Parte del ecosistema **[My Laravel Tools](https://packagist.org/packages/mylaraveltools/)** (junto con `mylaraveltools/alertas`).
 
 ```bash
-composer require mylaraveltools/minimalist
+composer require mylaraveltools/panel
 ```
+
+> **Migración:** si usabas `mylaraveltools/minimalist`, sustituye por `mylaraveltools/panel`. El namespace PHP sigue siendo `MyLaravelTools\Panel` — no cambia tu código.
+
+---
+
+## Tabla de contenidos
+
+1. [Requisitos](#requisitos)
+2. [Instalación paso a paso](#instalación-paso-a-paso)
+3. [Tu primer CRUD en 5 minutos](#tu-primer-crud-en-5-minutos)
+4. [Configuración (`config/panel.php`)](#configuración-configpanelphp)
+5. [Autenticación y perfil](#autenticación-y-perfil)
+6. [Permisos (Spatie) y suplantación](#permisos-spatie-y-suplantación)
+7. [Navegación y páginas custom](#navegación-y-páginas-custom)
+8. [Importar y exportar datos](#importar-y-exportar-datos)
+9. [Dashboard y widgets](#dashboard-y-widgets)
+10. [Relaciones entre modelos](#relaciones-entre-modelos)
+11. [Tema, layout y SPA](#tema-layout-y-spa)
+12. [Comandos Artisan](#comandos-artisan)
+13. [Personalizar vistas](#personalizar-vistas)
+14. [Solución de problemas](#solución-de-problemas)
+15. [Proyecto demo](#proyecto-demo)
+16. [Desarrollo y tests](#desarrollo-y-tests)
+17. [Roadmap](#roadmap)
+18. [Licencia](#licencia)
+
+---
 
 ## Requisitos
 
-- PHP 8.2+
-- Laravel 11, 12 o 13
-- Livewire 3.5+
-- Tailwind CSS 3+ en la app host
+| Requisito | Versión |
+|-----------|---------|
+| PHP | 8.2+ |
+| Laravel | 11, 12 o 13 |
+| Livewire | 3.5+ |
+| Tailwind CSS | 3+ en la app host |
 
-## Instalación
+Opcionales: `spatie/laravel-permission`, `mylaraveltools/alertas`.
 
-### 1. Composer
+---
+
+## Instalación paso a paso
+
+### Paso 1 — Composer
 
 ```bash
-composer require mylaraveltools/minimalist
+composer require mylaraveltools/panel
 ```
 
-Repositorio local (desarrollo):
+**Desarrollo local** (path repository):
 
 ```json
 {
@@ -29,112 +64,72 @@ Repositorio local (desarrollo):
     { "type": "path", "url": "../minimalist-panel-library" }
   ],
   "require": {
-    "mylaraveltools/minimalist": "@dev"
+    "mylaraveltools/panel": "@dev"
   }
 }
 ```
 
-### 2. Publicar e instalar
+### Paso 2 — Instalar el panel
 
 ```bash
 php artisan panel:install
 ```
 
-Esto publica `config/panel.php`, registra rutas en `/admin` y prepara la estructura. También publica `config/livewire.php` si no existe.
+Esto publica `config/panel.php`, registra rutas en `/admin` y prepara Livewire.
 
-El panel incluye **login y registro** en `/admin/login` y `/admin/register` usando la tabla `users` de Laravel. No necesitas Breeze salvo que quieras auth separada.
+### Paso 3 — Tailwind
 
-```php
-// config/panel.php
-'auth' => [
-    'enabled' => true,
-    'register' => true,
-    'register_role' => 'viewer', // opcional, con Spatie HasRoles
-],
-```
-
-Con auth externa: `'enabled' => false` y `'login_route' => 'login'`.
-
-Tras login/registro el panel hace **recarga completa** al dashboard (no loader SPA). El botón muestra «Entrando» con puntos animados solo mientras dura el POST; si falla, vuelve a «Entrar» y se muestran los errores.
-
-Recuperar contraseña (activo por defecto):
-
-```php
-'auth' => [
-    'password_reset' => true, // /admin/forgot-password
-],
-```
-
-### Perfil de usuario
-
-Ruta `/admin/profile` — el usuario logueado edita su cuenta:
-
-```php
-'profile' => [
-    'enabled' => true,
-],
-```
-
-Desactivar con `'enabled' => false` si no lo necesitas.
-
-### Suplantación de usuario (impersonation)
-
-Navega el panel **como otro usuario** (mismos permisos, menú y policies). Desactivado por defecto.
-
-```php
-'impersonation' => [
-    'enabled' => true,
-    'permission' => 'impersonate users', // Spatie/Gate
-    'exclude_ids' => [],
-    'banner' => true,
-],
-```
-
-En el resource del modelo `User` aparece la acción **Entrar como** (RowAction). Banner superior con **Volver a mi cuenta**. Requiere permiso Spatie o Gate.
-
-### 3. Tailwind (app host)
-
-Incluye las vistas del paquete en `tailwind.config.js`:
+En `tailwind.config.js` incluye las vistas del paquete y activa modo oscuro por clase:
 
 ```js
-content: [
-  './resources/views/**/*.blade.php',
-  './vendor/mylaraveltools/minimalist/resources/views/**/*.blade.php',
-],
+export default {
+  darkMode: 'class',
+  content: [
+    './resources/views/**/*.blade.php',
+    './vendor/mylaraveltools/panel/resources/views/**/*.blade.php',
+  ],
+};
 ```
 
-Activa modo oscuro por clase:
+### Paso 4 — Alpine + Livewire
 
-```js
-darkMode: 'class',
-```
-
-### 4. Alpine + Livewire
-
-En `resources/js/app.js`, **no importes Alpine en rutas del panel** (`/admin/*`). Livewire lo incluye y arranca solo:
+En `resources/js/app.js`, **no importes Alpine en rutas del panel** (`/admin/*`). Livewire lo gestiona:
 
 ```js
 const panelPath = '/admin';
 
-if (! window.location.pathname.startsWith(panelPath)) {
-    import('alpinejs').then(({ default: Alpine }) => {
-        window.Alpine = Alpine;
-        Alpine.start();
-    });
+if (!window.location.pathname.startsWith(panelPath)) {
+  import('alpinejs').then(({ default: Alpine }) => {
+    window.Alpine = Alpine;
+    Alpine.start();
+  });
 }
 ```
 
-Importar `alpinejs` en `/admin/login` rompe `wire:submit` (el formulario no envía nada).
+> Importar Alpine en `/admin/login` rompe `wire:submit` (el formulario no envía nada).
 
-**APP_URL** debe coincidir con tu servidor de desarrollo (host **y** puerto), p. ej. `http://127.0.0.1:8000`.
+### Paso 5 — Compilar y probar
+
+```bash
+npm run build
+php artisan serve
+```
+
+Abre `http://127.0.0.1:8000/admin` — verás login/registro si `auth.enabled` es `true`.
+
+**APP_URL** debe coincidir con host y puerto (`http://127.0.0.1:8000`).
 
 ---
 
-## Primer Resource
+## Tu primer CRUD en 5 minutos
+
+### 1. Crear el Resource
 
 ```bash
 php artisan panel:make-resource Product --model=Product
 ```
+
+### 2. Definir formulario y tabla
 
 ```php
 // app/Panel/Resources/ProductResource.php
@@ -142,7 +137,7 @@ final class ProductResource extends Resource
 {
     protected static string $model = Product::class;
     protected static ?string $label = 'Productos';
-    protected static ?string $icon = 'package'; // icono Lucide
+    protected static ?string $icon = 'package';
 
     public static function form(): array
     {
@@ -162,54 +157,131 @@ final class ProductResource extends Resource
 }
 ```
 
-Auto-discovery en `app/Panel/Resources/` (configurable en `config/panel.php`).
+### 3. Listo
+
+Auto-discovery en `app/Panel/Resources/` (configurable). URL: `/admin/resources/products` (slug = kebab del modelo; puedes fijarlo con `protected static ?string $slug = 'productos';`).
 
 ---
 
 ## Configuración (`config/panel.php`)
 
+Toda la configuración vive en este archivo (compatible con `config:cache`). No hace falta `.env`, aunque puedes usarlo si prefieres.
+
 | Clave | Descripción | Default |
 |-------|-------------|---------|
-| `path` | Prefijo URL del panel | `admin` |
-| `middleware` | Middleware de rutas | `web` + `EnsurePanelAccess` |
-| `guard` | Guard de autenticación | `web` |
+| `path` | Prefijo URL | `admin` |
+| `guard` | Guard de auth | `web` |
 | `brand.name` | Nombre en sidebar | `Panel` |
-| `brand.logo` | URL o ruta del logo (`null` = icono por defecto) | `null` |
+| `brand.logo` | URL del logo (`null` = icono) | `null` |
 | `per_page` | Registros por página | `15` |
-| `discovery` | Auto-discovery de Resources | `enabled` |
-| `pages` | Auto-discovery de Pages custom | `enabled` |
-| `permissions` | Spatie/Gate (`enabled`, `panel_access`) | `disabled` |
-| `navigation` | Menú lateral personalizado (`null` = auto desde resources) | `null` |
-| `widgets` | Widgets del dashboard | `[]` |
+| `forms_in_modal` | Crear/editar en modal | `true` |
+| `discovery` | Auto-discovery Resources | `enabled` |
+| `pages` | Auto-discovery Pages | `enabled` |
+| `permissions` | Spatie/Gate | `disabled` |
+| `navigation` | Menú lateral (`null` = auto) | `null` |
+| `widgets` | Dashboard | `[]` |
+| `import` | Import CSV/Excel | `enabled` + `preview` |
+| `impersonation` | Suplantar usuarios | `disabled` |
+| `version` | Texto en sidebar (`null` = paquete) | `null` |
 
-### Navegación con grupos desplegables
+### Tema monocromático
 
-Define `navigation` en `config/panel.php` o en un archivo dedicado:
+```php
+'theme' => [
+    'default' => 'dark',
+    'font' => 'Plus Jakarta Sans',
+    'colors' => [
+        'primary' => '#000000',
+        'primary_dark' => '#ffffff',
+        'accent' => '#525252',
+        'success' => '#16a34a',
+        'danger' => '#dc2626',
+        'warning' => '#ca8a04',
+    ],
+    'light' => [ /* bg, surface, card, border, heading, text, muted… */ ],
+    'dark' => [ /* … */ ],
+],
+```
+
+Variables CSS: `--panel-primary`, `--panel-bg`, etc. Toggle claro/oscuro en el footer del sidebar (persiste en `localStorage`).
+
+---
+
+## Autenticación y perfil
+
+Auth integrada en `/admin/login` y `/admin/register` (tabla `users` de Laravel):
+
+```php
+'auth' => [
+    'enabled' => true,
+    'register' => true,
+    'register_role' => 'viewer',      // Spatie, opcional
+    'password_reset' => true,
+    'email_verification' => false,    // requiere MustVerifyEmail
+],
+```
+
+- Auth externa (Breeze/Fortify): `'enabled' => false`, `'login_route' => 'login'`.
+- Tras login: **recarga completa** al dashboard (sin loader SPA). Botón «Entrando» con puntos animados solo durante el POST.
+- Recuperar contraseña: `/admin/forgot-password`.
+- Perfil: `/admin/profile` — `'profile.enabled' => true`.
+
+---
+
+## Permisos (Spatie) y suplantación
+
+### Spatie Laravel Permission
+
+```bash
+composer require spatie/laravel-permission
+```
+
+```php
+'permissions' => [
+    'enabled' => true,
+    'panel_access' => 'access panel',
+    'resources' => true,              // RoleResource + PermissionResource
+    'manage_permission' => 'manage users',
+],
+```
+
+- `RolesField` / `RolesColumn` en usuarios.
+- `PermissionsField` / `PermissionsColumn` en roles.
+- En Pages: `protected static ?string $permission = 'view reports'`.
+- Policies: `php artisan panel:make-policy Product` → extiende `ResourcePolicy` (deny-by-default).
+
+### Suplantación de usuario
+
+Navega el panel **como otro usuario** (permisos, menú y policies reales):
+
+```php
+'impersonation' => [
+    'enabled' => true,
+    'permission' => 'impersonate users',
+    'exclude_ids' => [],
+    'banner' => true,
+],
+```
+
+1. En el resource del modelo `User`, menú ⋮ → **Entrar como**.
+2. Aparece una tarjeta en el **sidebar** (encima del perfil) con botón **Salir**.
+3. Requiere permiso Spatie/Gate. No puedes suplantarte a ti mismo.
+
+---
+
+## Navegación y páginas custom
+
+### Menú con grupos
 
 ```php
 // config/panel.php
 'navigation' => require __DIR__.'/panel-navigation.php',
 ```
 
-Formato de ítems:
-
 ```php
 return [
-    // Enlace a un Resource (resuelve label, icono y URL automáticamente)
     ['resource' => ProductResource::class],
-
-    // Enlace a una Page custom (informes, ajustes)
     ['page' => SettingsPage::class],
-
-    // Enlace manual
-    [
-        'label' => 'Informe de ventas',
-        'icon' => 'bar-chart',
-        'route' => 'panel.dashboard',   // preferido (se resuelve en runtime)
-        'badge' => 'Demo',              // opcional
-    ],
-
-    // Grupo desplegable (Alpine.js)
     [
         'type' => 'group',
         'label' => 'Catálogo',
@@ -222,729 +294,201 @@ return [
 ];
 ```
 
-- Los grupos se abren automáticamente si contienen la ruta activa.
-- La búsqueda global (`Cmd/Ctrl+K`) indexa todos los enlaces (aplanando grupos).
-- Iconos: nombres Lucide soportados en `resources/views/components/icon.blade.php`.
-- **No uses `route()` al cargar el config**; usa la clave `route` para enlaces nombrados.
+- Búsqueda global: **Cmd/Ctrl+K**.
+- No uses `route()` al cargar el config; usa la clave `'route' => 'panel.dashboard'`.
 
-### Configuración (`config/panel.php`)
-
-Tras `panel:install`, edita `config/panel.php`. **No hace falta usar variables `.env`** — todo vive en el archivo de config (buena práctica Laravel; compatible con `config:cache`).
-
-```php
-'path' => 'admin',
-
-'brand' => [
-    'name' => 'Mi Panel',
-    'logo' => '/images/logo.svg',
-],
-
-'theme' => [
-    'default' => 'dark',
-    'colors' => [
-        'primary' => '#000000',
-        'primary_dark' => '#ffffff',
-        'accent' => '#525252',
-    ],
-],
-```
-
-Si prefieres `.env`, puedes envolver valores en el config publicado: `'path' => env('PANEL_PATH', 'admin')`.
-
----
-
-## Páginas custom
-
-Para informes, ajustes o pantallas que no son CRUD:
+### Páginas custom (no CRUD)
 
 ```bash
 php artisan panel:make-page Settings
 ```
 
 ```php
-use MyLaravelTools\Panel\Pages\Page;
-
 final class SettingsPage extends Page
 {
     protected static ?string $label = 'General';
     protected static ?string $slug = 'settings-general';
-    protected static ?string $permission = 'manage settings';
 
     public static function view(): string
     {
         return 'panel.pages.settings-general';
     }
-
-    public static function data(): array
-    {
-        return ['storeName' => config('app.name')];
-    }
 }
 ```
 
-- Ruta: `/admin/pages/{slug}`
-- Auto-discovery en `app/Panel/Pages`
-- Añade al menú: `['page' => SettingsPage::class]`
-
-Vista Blade con cabecera unificada (título + miga de pan en la misma fila):
-
-```blade
-<x-panel::page-header class="mb-8">
-    <h1>{{ $pageClass::label() }}</h1>
-    <p class="panel-muted mt-1 text-sm">Descripción opcional.</p>
-</x-panel::page-header>
-```
+Ruta: `/admin/pages/{slug}`. Vista con `<x-panel::page-header>`.
 
 ---
 
-## Layout y cabecera de página
+## Importar y exportar datos
 
-Desde **v0.13.0** no hay barra superior global. Cada pantalla usa `<x-panel::page-header>`:
+### Export
 
-- **Izquierda:** título (y subtítulo, enlace «volver», etc.)
-- **Derecha:** miga de pan automática
-- **Móvil:** botón menú a la izquierda del título
+Botones **CSV**, **XLSX** y **PDF** en listados. Con filas seleccionadas, exporta solo la selección.
 
-El **sidebar** incluye en el footer: enlace al perfil, toggle claro/oscuro, versión del panel (`panel.version`) e icono de cerrar sesión.
+### Import (con vista previa)
 
 ```php
-// config/panel.php — versión mostrada en el sidebar (null = v{Package::VERSION})
-'version' => null,
-```
-
----
-
-## Tema y colores
-
-Paleta **monocromática** por defecto (blanco/negro). Totalmente personalizable vía config.
-
-### Estructura
-
-```php
-'theme' => [
-    'default' => 'dark',           // dark | light
-    'font' => 'Plus Jakarta Sans',
-    'radius' => '0.75rem',
-    'sidebar_width' => '16rem',
-
-    'colors' => [
-        'primary' => '#000000',              // modo claro: botones, acentos
-        'primary_hover' => '#262626',
-        'primary_dark' => '#ffffff',         // modo oscuro
-        'primary_hover_dark' => '#e5e5e5',
-        'accent' => '#525252',
-        'accent_dark' => '#a3a3a3',
-        'success' => '#16a34a',
-        'danger' => '#dc2626',
-        'warning' => '#ca8a04',
-    ],
-
-    'light' => [
-        'bg' => '#ffffff',
-        'surface' => '#fafafa',
-        'card' => '#ffffff',
-        'elevated' => '#f5f5f5',
-        'border' => '#e5e5e5',
-        'heading' => '#0a0a0a',
-        'text' => '#404040',
-        'muted' => '#737373',
-        'input_bg' => '#ffffff',
-        'input_border' => '#d4d4d4',
-    ],
-
-    'dark' => [
-        'bg' => '#0a0a0a',
-        'surface' => '#111111',
-        'card' => '#141414',
-        'elevated' => '#1a1a1a',
-        'border' => '#262626',
-        'heading' => '#fafafa',
-        'text' => '#d4d4d4',
-        'muted' => '#737373',
-        'input_bg' => '#0a0a0a',
-        'input_border' => '#404040',
-    ],
-],
-```
-
-Los colores se inyectan como variables CSS (`--panel-primary`, `--panel-bg`, etc.) mediante `ThemeResolver`. El contraste del texto en botones primarios se calcula automáticamente.
-
-### Toggle claro/oscuro
-
-Botón en el **footer del sidebar**. Persistencia en `localStorage` (`panel-theme`).
-
-### Clases semánticas
-
-| Clase | Uso |
-|-------|-----|
-| `.panel-body` | Fondo y texto base |
-| `.panel-card` | Tarjetas |
-| `.panel-heading` / `.panel-text` / `.panel-muted` | Tipografía |
-| `.panel-input` | Formularios |
-| `.panel-btn-primary` | Botón principal |
-| `.panel-nav-link-active` | Nav activo |
-| `.panel-table` | Tablas |
-
----
-
-## Iconos (Lucide)
-
-```php
-protected static ?string $icon = 'users';
-```
-
-```blade
-<x-panel::icon name="package" class="h-4 w-4" />
-```
-
-Disponibles: `layout-dashboard`, `package`, `folder`, `users`, `plus`, `pencil`, `trash-2`, `eye`, `search`, `download`, `layers`, `check-circle`, `loader-2`, etc.
-
----
-
-## Permisos
-
-### Spatie Laravel Permission (opcional)
-
-```bash
-composer require spatie/laravel-permission
-```
-
-```php
-// config/panel.php
-'permissions' => [
+'import' => [
     'enabled' => true,
-    'panel_access' => 'access panel',
-    'resources' => true,              // RoleResource + PermissionResource integrados
-    'manage_permission' => 'manage users', // permiso para CRUD roles/permisos
+    'preview' => true,
 ],
 ```
 
-- `EnsurePanelAccess` exige el permiso `panel_access` para entrar al panel
-- Con `resources => true` y Spatie instalado, se registran **`RoleResource`** y **`PermissionResource`** en `/admin/resources/roles` y `/admin/resources/permissions`
-- Asigna permisos a roles con `PermissionsField`; asigna roles a usuarios con `RolesField`
-- Si defines tus propios resources con slug `roles` o `permissions` en `app/Panel/Resources`, prevalecen sobre los integrados
-- En **Pages**: `protected static ?string $permission = 'view reports'`
-- En **navegación**: `'permission' => 'manage settings'` en enlaces manuales
-- Resources y Pages en el menú se ocultan si el usuario no tiene acceso
+1. Botón **Importar** en el listado (permiso `create`).
+2. Sube `.csv`, `.txt`, `.xlsx`, `.xls`.
+3. Revisa filas válidas/errores → confirma.
 
-Usa Spatie en tus Policies: `$user->can('manage products')`.
-
-### Roles en usuarios
-
-Con Spatie instalado y `HasRoles` en tu modelo `User`:
-
-```php
-use MyLaravelTools\Panel\Fields\RolesField;
-use MyLaravelTools\Panel\Columns\RolesColumn;
-
-RolesField::make('roles')->label('Roles'),
-RolesColumn::make('roles')->label('Roles'),
-```
-
-Los roles se sincronizan con `syncRoles()` al crear o editar (no van en `$fillable`).
-
-### Permisos en roles
-
-```php
-use MyLaravelTools\Panel\Fields\PermissionsField;
-use MyLaravelTools\Panel\Columns\PermissionsColumn;
-
-PermissionsField::make('permissions')->label('Permisos'),
-PermissionsColumn::make('permissions')->label('Permisos'),
-```
-
-Los permisos se sincronizan con `syncPermissions()` al guardar el rol.
+Personaliza columnas con `Field::importable(false)` o `Resource::import()`.
 
 ---
 
-Dos capas en **Resources** combinadas con **AND** (ambas deben permitir):
-
-1. **Hooks en el Resource** — `canViewAny()`, `canCreate()`, `canEdit()`, etc.
-2. **Policy de Laravel** — si existe para el modelo
-
-### Hooks rápidos
+## Dashboard y widgets
 
 ```php
-public static function canViewAny(): bool { return true; }
-public static function canCreate(): bool { return true; }
-public static function canEdit(Model $record): bool { return true; }
-public static function canDelete(Model $record): bool { return true; }
-```
-
-### Policies (recomendado)
-
-```bash
-php artisan panel:make-policy Product
-```
-
-Genera `App\Policies\ProductPolicy` extendiendo `MyLaravelTools\Panel\Policies\ResourcePolicy`.
-
-Las policies hijas deben mantener `$user` y `$record` **sin type-hint** (restricción de PHP al heredar). Usa `instanceof` en el cuerpo si necesitas tu modelo:
-
-```php
-public function delete($user, $record): bool
-{
-    return $user instanceof User && $user->isPanelAdmin();
-}
-```
-
-```php
-use App\Policies\ProductPolicy;
-
-protected static ?string $policy = ProductPolicy::class;
-```
-
-Sin `$policy` explícita, auto-detecta `App\Policies\{Model}Policy` si `panel.policies.auto_register` es `true`. La base niega todo por defecto.
-
----
-
-## Filtros
-
-```php
-public static function filters(): array
-{
-    return [
-        SelectFilter::make('category_id')
-            ->label('Categoría')
-            ->relationship(Category::class, 'name'),
-        BooleanFilter::make('is_active')->label('Activo'),
-    ];
-}
-```
-
----
-
-## Acciones masivas
-
-```php
-public static function bulkActions(): array
-{
-    return [
-        BulkAction::make('delete', 'Eliminar')
-            ->action(fn ($records) => $records->each->delete())
-            ->color('rose')
-            ->requiresConfirmation(),
-    ];
-}
-```
-
-Incluye `exportSelection` para CSV.
-
----
-
-## Soft deletes
-
-Si el modelo usa `SoftDeletes`, el listado muestra papelera, restaurar y eliminar permanente.
-
----
-
-## Vista detalle
-
-```php
-public static function detail(): array
-{
-    return static::table(); // o columnas propias
-}
-```
-
-Ruta: `GET /admin/resources/{slug}/{id}`
-
----
-
-## Form Sections
-
-```php
-use MyLaravelTools\Panel\Forms\Section;
-
-public static function form(): array
-{
-    return [
-        Section::make('Información', [
-            TextField::make('name')->required(),
-        ])->description('Datos básicos'),
-        TextField::make('email')->required(),
-    ];
-}
-```
-
-## BelongsToMany
-
-```php
-public static function relations(): array
-{
-    return [
-        RelationManager::belongsToMany('tags', TagResource::class)
-            ->title('Etiquetas'),
-    ];
-}
-```
-
-En la vista **Ver** del registro padre: crear etiqueta y vincular, o desvincular.
-
-## RelationManager (HasMany)
-
-Gestiona relaciones **HasMany** desde la vista detalle:
-
-```php
-public static function relations(): array
-{
-    return [
-        RelationManager::make('products', ProductResource::class)
-            ->title('Productos de esta categoría'),
-    ];
-}
-```
-
----
-
-## Widgets
-
-```php
-// config/panel.php
 'widgets' => [
     ResourceCountWidget::make(ProductResource::class),
     StatWidget::make('Activos', fn () => Product::where('is_active', true)->count())
         ->icon('check-circle'),
+    ChartWidget::make('Ventas', 'bar', fn () => [
+        'labels' => ['Ene', 'Feb'],
+        'values' => [12, 19],
+    ])->themeColors(),
+    ViewWidget::make('Custom', 'panel.widgets.mi-vista', fn () => ['total' => 100])
+        ->columnSpan(2),
 ],
 ```
 
----
-
-## Export CSV
-
-- Botón **Exportar CSV** en listados (respeta búsqueda y filtros)
-- Acción masiva **Exportar selección**
+Tipos ChartWidget: `bar`, `line`, `pie`, `doughnut`, `progression`. Gráficos reactivos al tema y SPA.
 
 ---
 
-## Navegación SPA
+## Relaciones entre modelos
 
-- `wire:navigate` en enlaces internos
-- Sidebar persistente (`@persist` en toasts)
-- Loader a pantalla completa del área de contenido con **porcentaje entero** (`0%`–`100%`) en el anillo
-- Prefetch con `wire:navigate.hover` (páginas cacheadas saltan a `100%`)
-
-Mantén `show_progress_bar => true` en Livewire (obligatorio). La barra NProgress de Livewire se oculta vía CSS del panel; usar `false` provoca `Alpine is not defined` al cargar `/admin`:
+Desde la vista **Ver** del registro padre:
 
 ```php
-// config/livewire.php
-'navigate' => [
-    'show_progress_bar' => true,
-],
+public static function relations(): array
+{
+    return [
+        RelationManager::make('products', ProductResource::class),
+        RelationManager::hasOne('profile', ProfileResource::class),
+        RelationManager::belongsToMany('tags', TagResource::class),
+        RelationManager::morphMany('reviews', ReviewResource::class),
+        RelationManager::morphToMany('tags', TagResource::class),
+    ];
+}
 ```
 
 ---
 
-## Fields disponibles
+## Tema, layout y SPA
 
-`TextField`, `EmailField`, `PasswordField`, `TextareaField`, `BooleanField`, `SelectField`, `BelongsToField`, `NumberField`, `ImageField`
+- **Sin header global** — cada vista usa `<x-panel::page-header>` (título + breadcrumbs).
+- **Sidebar footer:** perfil, idioma, tema, versión, logout.
+- **SPA:** `wire:navigate`, loader con porcentaje `0%`–`100%`, sidebar persistente.
+- **Livewire:** mantén `navigate.show_progress_bar => true` en `config/livewire.php` (la barra NProgress se oculta vía CSS del panel).
 
-## Columns disponibles
+### Fields y Columns
 
-`TextColumn`, `BooleanColumn`, `DateTimeColumn`, `BadgeColumn`, `BelongsToColumn`, `ImageColumn`
+**Fields:** `TextField`, `EmailField`, `PasswordField`, `TextareaField`, `BooleanField`, `SelectField`, `BelongsToField`, `NumberField`, `DateField`, `FileField`, `ImageField`, `RichTextField`, `RolesField`, `PermissionsField`.
+
+**Columns:** `TextColumn`, `BooleanColumn`, `DateTimeColumn`, `BadgeColumn`, `BelongsToColumn`, `ImageColumn`, `RolesColumn`, `PermissionsColumn`.
+
+**Filtros:** `SelectFilter`, `BooleanFilter`, `DateRangeFilter`, `MultiSelectFilter`.
+
+**Formularios:** `Section::make()`, `Tab::make()`, soft deletes, bulk actions, RowAction.
 
 ---
 
-## Comandos
+## Comandos Artisan
 
 | Comando | Descripción |
 |---------|-------------|
 | `php artisan panel:install` | Instalar panel |
 | `php artisan panel:make-resource Name` | Crear Resource |
 | `php artisan panel:make-page Name` | Crear página custom |
-| `php artisan panel:make-policy Name` | Crear Policy para un modelo |
+| `php artisan panel:make-policy Name` | Crear Policy |
 | `php artisan vendor:publish --tag=panel-config` | Publicar config |
 | `php artisan vendor:publish --tag=panel-views` | Publicar vistas Blade |
 
-Tras actualizar el paquete, republica vistas si las personalizaste en `resources/views/vendor/panel/`:
+---
+
+## Personalizar vistas
+
+Si publicas vistas en `resources/views/vendor/panel/`, **sobreescriben** las del paquete.
+
+Tras actualizar el paquete:
 
 ```bash
 php artisan vendor:publish --tag=panel-views --force
 php artisan view:clear
 ```
 
-Si no publicaste vistas, Laravel usa las del vendor directamente (recomendado hasta que necesites editar Blade).
+Si no publicas vistas, Laravel usa las del vendor directamente (recomendado hasta que edites Blade).
 
 ---
 
-## Demo
+## Solución de problemas
 
-Proyecto de prueba en `panel-demo/` (ver su `README.md`):
+| Problema | Solución |
+|----------|----------|
+| Login no envía el formulario | No importes Alpine en rutas `/admin/*` |
+| `Alpine is not defined` | `show_progress_bar => true` en `config/livewire.php` |
+| Estilos rotos | Incluye vistas del paquete en `tailwind.config.js` y `npm run build` |
+| Feature nueva no aparece | Republica vistas con `--force` o borra `resources/views/vendor/panel/` |
+| 404 en `/admin/resources/users` | El slug por defecto es `user` (singular); define `$slug = 'users'` |
+| «Entrar como» no visible | Permiso `impersonate users` + `php artisan db:seed` con ese permiso |
+| Redirecciones raras en login | `APP_URL` con host y puerto correctos |
+
+---
+
+## Proyecto demo
+
+Carpeta `panel-demo/` con catálogo, ventas, Spatie, gráficos, import y suplantación.
+
+```bash
+cd panel-demo
+composer install && npm install && npm run build
+php artisan migrate:fresh --seed
+php artisan serve
+```
 
 | Usuario | Email | Password |
 |---------|-------|----------|
 | Admin | `admin@panel.test` | `password` |
 | Editor | `editor@panel.test` | `password` |
 
-Dashboard con `ChartWidget` (progresión, doughnut), `ViewWidget` custom e import CSV en productos.
+Ver `panel-demo/README.md` para rutas y features de prueba.
 
 ---
 
-## RowAction (acciones por fila)
-
-```php
-use MyLaravelTools\Panel\Actions\RowAction;
-
-public static function rowActions(): array
-{
-    return [
-        RowAction::view(),
-        RowAction::edit(),
-        RowAction::make('duplicate')
-            ->label('Duplicar')
-            ->icon('copy')
-            ->handle(fn (Model $record) => /* ... */),
-    ];
-}
-```
-
-Por defecto: `view`, `edit`, `delete` (+ `restore` / `forceDelete` con soft deletes).
-
-## Breadcrumbs
-
-Automáticos según la ruta (`Panel / Productos / Editar`). Se renderizan dentro de `<x-panel::page-header>` a la derecha del título.
-
-Título del registro en show/edit:
-
-```php
-protected static ?string $recordTitleAttribute = 'name';
-// o automático desde la primera columna searchable
-```
-
----
-
-## Tests
+## Desarrollo y tests
 
 ```bash
 cd minimalist-panel-library
 composer test
 ```
 
-Incluye tests de layout SPA (`SpaLoaderTest`): markup del loader con `%`, script de progreso y `page-header`.
-
-## Filtros avanzados
-
-```php
-DateRangeFilter::make('published_at')->label('Publicado entre'),
-MultiSelectFilter::make('category_id')->relationship(Category::class, 'name'),
-```
-
-## Export Excel
-
-```php
-// En el listado: botones "Exportar CSV" y "Exportar Excel"
-// Bulk actions por defecto incluyen exportSelection y exportSelectionExcel
-```
-
-Requiere `phpoffice/phpspreadsheet` (incluido en el paquete).
-
-## Búsqueda global
-
-- **Cmd+K** / **Ctrl+K** abre la paleta de búsqueda
-- Busca en navegación y registros (columnas `searchable()`)
-- Componente: `panel.global-search`
-
-## Nuevos Fields
-
-```php
-use MyLaravelTools\Panel\Fields\DateField;
-use MyLaravelTools\Panel\Fields\FileField;
-use MyLaravelTools\Panel\Fields\RichTextField;
-
-DateField::make('published_at')->label('Publicación')->time(),
-FileField::make('brochure')->directory('docs')->acceptedMimes(['pdf']),
-RichTextField::make('description')->label('Descripción'),
-```
-
-## Internacionalización
-
-```php
-__('panel::panel.save')
-```
-
-Traducciones en `lang/es/panel.php` y `lang/en/panel.php` (namespace `panel::panel.*`).
-
-## Formularios en modal
-
-Por defecto, crear y editar se abren en un modal sobre el listado sin salir de la página:
-
-```php
-// config/panel.php
-'forms_in_modal' => true,
-```
-
-Con `false`, se usan las rutas de página completa (`panel.resources.create` / `edit`).
-
-## Tabs en formularios
-
-Organiza secciones en pestañas con `Tab::make()`:
-
-```php
-use MyLaravelTools\Panel\Forms\Section;
-use MyLaravelTools\Panel\Forms\Tab;
-
-public static function form(): array
-{
-    return [
-        Tab::make('General', [
-            Section::make('Datos', [
-                TextField::make('name')->required(),
-            ]),
-        ]),
-        Tab::make('Precio', [
-            NumberField::make('price')->required(),
-        ]),
-    ];
-}
-```
-
-## Export PDF
-
-Botones **CSV**, **XLSX** y **PDF** en la toolbar del listado. Si hay filas seleccionadas, exportan solo la selección; si no, el listado filtrado completo.
-
-## Import CSV / Excel
-
-Botón **Importar** en la toolbar del listado (requiere permiso `create`).
-
-Con **`import.preview` => true** (por defecto), al subir el archivo se muestra una **vista previa**: filas válidas, errores por fila y confirmación antes de guardar.
-
-```php
-'import' => [
-    'enabled' => true,
-    'preview' => true,  // false = importación directa (comportamiento anterior)
-],
-```
-
-En el modal:
-- **Plantilla CSV / Excel** — descarga cabeceras + hasta 5 filas de ejemplo desde la BBDD
-- Sube el archivo rellenado (`.csv`, `.txt`, `.xlsx`, `.xls`)
-
-Campos excluidos por tipo: image, file, password, roles, permissions, rich-text
-
-Personaliza qué columnas entran en la plantilla e importación:
-
-```php
-// Opción 1 — desactivar campos concretos del form()
-TextField::make('sku')->label('SKU'),
-DateField::make('published_at')->importable(false),
-
-// Opción 2 — esquema de importación propio (solo estas columnas)
-public static function import(): array
-{
-    return [
-        TextField::make('name')->label('Nombre')->required(),
-        NumberField::make('price')->label('Precio'),
-        BelongsToField::make('category_id')->relationship(Category::class, 'name'),
-    ];
-}
-```
-
-```php
-// config/panel.php
-'import' => ['enabled' => true],
-```
-
-## Selector de idioma
-
-```php
-'locale' => 'es',
-'locales' => ['es' => 'Español', 'en' => 'English'],
-'locale_selector' => true,
-```
-
-Icono globo en el footer del sidebar (y en auth). La preferencia se guarda en sesión (`panel.locale`).
-
-## RelationManager — HasOne y Morph
-
-```php
-RelationManager::hasOne('profile', ProfileResource::class),
-RelationManager::morphMany('comments', CommentResource::class),
-RelationManager::morphToMany('tags', TagResource::class),
-```
-
-En `panel-demo`, abre un **Producto** → verás **Ficha técnica** (hasOne) y **Reseñas de clientes** (morphMany).
-
-## Widgets con gráficos
-
-### ChartWidget (Chart.js con tema del panel)
-
-```php
-use MyLaravelTools\Panel\Widgets\ChartWidget;
-
-ChartWidget::make('Ventas mensuales', 'bar', fn () => [
-    'labels' => ['Ene', 'Feb', 'Mar'],
-    'values' => [12, 19, 8],
-])
-    ->color('emerald')
-    ->height(160);
-
-ChartWidget::make('Estado', 'doughnut', fn () => [
-    'labels' => ['Activos', 'Inactivos'],
-    'values' => [10, 2],
-])->themeColors();                    // success + danger del tema
-
-ChartWidget::make('Crecimiento', 'progression', fn () => [
-    'labels' => ['Ene', 'Feb', 'Mar', 'Abr'],
-    'values' => [10, 14, 13, 22],
-])->themeColors()->height(160);      // línea + puntos pulsantes
-
-ChartWidget::make('Por canal', 'bar', fn () => [...])->themeColors(['primary', 'accent', 'success']);
-```
-
-Tipos: `bar`, `line`, `pie`, `doughnut`, `progression`. Con `->themeColors()` los colores salen de `config('panel.theme.colors')` (doughnut binaria → success/danger). Sin colores, línea/progresión usa `--panel-primary`. Override manual: `->colors([...])`, `->height()`, `->options()`.
-
-Los gráficos **se repintan** al cambiar tema claro/oscuro y al volver al dashboard vía navegación SPA (`panel-theme-changed`, `livewire:navigated`).
-
-### ViewWidget (gráficas propias)
-
-Para diseños totalmente custom (SVG, CSS, ApexCharts, etc.) crea una vista Blade y regístrala:
-
-```php
-use MyLaravelTools\Panel\Widgets\ViewWidget;
-
-ViewWidget::make('Salud del catálogo', 'panel.widgets.catalog-health', fn () => [
-    'total' => 120,
-    'items' => [['name' => 'Moda', 'pct' => 42]],
-])->columnSpan(2),
-```
-
-La vista recibe `$label` más los datos del closure. Chart.js solo se carga si hay `ChartWidget` en el dashboard.
-
-## Verificación de email
-
-Requiere `MustVerifyEmail` en tu modelo `User`:
-
-```php
-'auth' => [
-    'email_verification' => true,
-],
-```
-
-Tras registrarse, el usuario recibe el correo y debe verificar antes de acceder al panel (`/admin/email/verify`).
-
-## Publicar en Packagist
-
-Ver [PUBLISHING.md](PUBLISHING.md) para subir el paquete a Packagist y etiquetar releases.
+- Contexto para agentes/IA: [AGENTS.md](AGENTS.md)
+- Publicar en Packagist: [PUBLISHING.md](PUBLISHING.md)
+- Historial: [CHANGELOG.md](CHANGELOG.md)
 
 ---
 
 ## Roadmap
 
-- [x] Fases 1–5 (CRUD, SPA, Excel, búsqueda global, i18n, tests, CI)
-- [x] Fase 6: RowAction, confirm modal, skeletons, DateRange/MultiSelect, breadcrumbs con título
-- [x] Fase 7: crear/editar en modal, tabs en formularios, export PDF
-- [x] Fase 8: Policies Laravel, `panel:make-policy`, `ResourcePolicy`
-- [x] Fase 9: páginas custom (`Page`) y permisos Spatie/Gate
-- [x] Fase 10: autenticación integrada (login, registro, logout)
-- [x] Fase 11: recuperar contraseña, `RolesField` / `RolesColumn`
-- [x] Fase 12: perfil de usuario (`/admin/profile`)
-- [x] Fase 13: layout sin header, `<x-panel::page-header>`, loader SPA con `%`
-- [x] Fase 14: `RoleResource` / `PermissionResource` integrados, `PermissionsField` / `PermissionsColumn`
-- [x] Fase 15: import CSV/Excel, selector de idioma, HasOne/Morph relations, `ChartWidget`, verificación email
-- [x] Post-15: `ViewWidget`, `progression`, `themeColors()`, gráficos reactivos al tema/SPA
-- [x] **v0.20** — auth UX (redirect post-login, carga animada en botón)
-- [x] Packagist — `mylaraveltools/minimalist`
+- [x] CRUD, SPA, Excel/PDF, búsqueda global, i18n, tests, CI
+- [x] RowAction, modales, skeletons, filtros avanzados
+- [x] Forms en modal, tabs, export PDF
+- [x] Policies, páginas custom, permisos Spatie
+- [x] Auth integrada, reset password, perfil
+- [x] Import con preview, ChartWidget, ViewWidget, email verify
+- [x] Auth UX (v0.20), suplantación de usuario (v0.21)
+- [x] Packagist — `mylaraveltools/panel`
+
+---
 
 ## Licencia
 
-MIT
+MIT — [Alberto Gallardo Morales](mailto:gallardev.98@gmail.com)

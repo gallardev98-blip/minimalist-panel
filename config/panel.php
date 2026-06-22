@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 /*
 |--------------------------------------------------------------------------
-| Minimalist Panel — configuración
+| My Laravel Tools Panel — configuración
 |--------------------------------------------------------------------------
 |
 | Edita este archivo tras `php artisan panel:install`.

@@ -1,8 +1,10 @@
-﻿# AGENTS — Minimalist (`mylaraveltools/minimalist`)
+﻿# AGENTS — Panel (`mylaraveltools/panel`)
 
 ## Estado actual
 
-**Paquete Composer:** `mylaraveltools/minimalist` — `composer require mylaraveltools/minimalist` (namespace PHP: `MyLaravelTools\Panel`).
+**Paquete Composer:** `mylaraveltools/panel` — `composer require mylaraveltools/panel` (namespace PHP: `MyLaravelTools\Panel`).
+
+> Migración desde `mylaraveltools/minimalist`: sustituye el require; el namespace PHP no cambia. `composer.json` incluye `replace` para compatibilidad.
 
 **Fase 9** (2026-06-18): páginas custom (`Page`, `panel:make-page`, ruta `pages/{slug}`) e integración opcional de permisos Spatie/Gate (`PanelPermission`, filtrado de navegación).
 
@@ -22,7 +24,16 @@
 
 **v0.20.0** (2026-06-21): auth UX — redirect completo post-login, botón con puntos animados (`auth-loading-text`), `Package::VERSION` sincronizado.
 
-**v0.21.0** (pendiente): suplantación de usuario — `PanelImpersonation`, RowAction «Entrar como», banner, config `impersonation`.
+**v0.21.0** (2026-06-21): renombre Packagist `mylaraveltools/panel`; suplantación de usuario — `PanelImpersonation`, RowAction «Entrar como», widget sidebar, config `impersonation`.
+
+### Suplantación de usuario (v0.21.0)
+
+- `MyLaravelTools\Panel\Support\PanelImpersonation` — `start()`, `leave()`, `isActive()`, `originalUser()`
+- Config: `panel.impersonation` — `enabled`, `permission`, `exclude_ids`, `banner`
+- `RowAction::impersonate()` en listados; acción `impersonate` en `ResourceIndex`
+- Ruta: `panel.impersonation.leave` (POST)
+- UI: partial `impersonation-banner.blade.php` en sidebar (encima del perfil), estilos en `theme-styles.blade.php`
+- Permiso por defecto: `impersonate users`; no suplantar al propio usuario
 
 **v0.19.0** (2026-06-20): import con **vista previa** (`import.preview`), demo hasOne/morphMany en Productos.
 
@@ -305,7 +316,7 @@ Ver `CHANGELOG.md` — versionado semántico desde v0.6.0.
 - Crear/editar en modal (`forms_in_modal`)
 - Tabs en formularios (`Tab::make`)
 - Export PDF (listado y selección bulk)
-- Publicación Packagist — `mylaraveltools/minimalist` en Packagist (ver `PUBLISHING.md`)
+- Publicación Packagist — `mylaraveltools/panel` en Packagist (ver `PUBLISHING.md`)
 
 ## Fases anteriores
 

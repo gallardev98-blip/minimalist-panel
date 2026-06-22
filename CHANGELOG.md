@@ -1,13 +1,25 @@
 # Changelog
 
-All notable changes to `mylaraveltools/minimalist` are documented in this file.
+All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-06-21
+
 ### Added
 
-- **Suplantación de usuario** — `PanelImpersonation`, config `impersonation`, RowAction «Entrar como», banner, ruta `impersonation.leave`
+- **Suplantación de usuario** — `PanelImpersonation`, config `impersonation`, RowAction «Entrar como», widget en sidebar, ruta `panel.impersonation.leave`
 - Tests `PanelImpersonationTest`
+
+### Changed
+
+- **Renombrado del paquete:** `mylaraveltools/minimalist` → `mylaraveltools/panel` (`composer replace` para migración)
+- `Package::DISPLAY_NAME` → `Panel`; README reescrito como guía para usuario final
+- Widget de suplantación en **sidebar** (encima del perfil), no banner superior
+
+### Fixed
+
+- `TextField` ya no es `final` — `EmailField` puede extenderla
 
 ## [0.20.0] - 2026-06-21
 

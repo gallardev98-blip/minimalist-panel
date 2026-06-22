@@ -1,6 +1,6 @@
 {
-    "name": "mylaraveltools/minimalist",
-    "description": "Minimalist — declarative monochrome admin panel for Laravel with Livewire and Tailwind",
+    "name": "mylaraveltools/panel",
+    "description": "Panel — declarative monochrome admin panel for Laravel with Livewire and Tailwind",
     "type": "library",
     "license": "MIT",
     "keywords": [
@@ -10,7 +10,6 @@
         "livewire",
         "tailwind",
         "mylaraveltools",
-        "minimalist",
         "monochrome"
     ],
     "authors": [
@@ -60,5 +59,8 @@
     "scripts": {
         "test": "phpunit"
     },
-    "prefer-stable": true
+    "prefer-stable": true,
+    "replace": {
+        "mylaraveltools/minimalist": "0.21.0"
+    }
 }
