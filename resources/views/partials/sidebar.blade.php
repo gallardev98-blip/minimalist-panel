@@ -7,6 +7,8 @@
     $navigation = app(ResourceRegistry::class)->navigation();
     $panelVersion = config('panel.version') ?? ('v'.Package::VERSION);
     $sidebarColapsable = PanelLayout::sidebarColapsable();
+    $sidebarDerecha = PanelLayout::posicionSidebar() === 'right';
+    $esDrawerMovil = PanelLayout::modo() === 'topbar';
 
     $openGroupIndex = null;
 
@@ -20,23 +22,33 @@
 @endphp
 
 <aside
-    class="panel-sidebar fixed inset-y-0 left-0 z-50 flex -translate-x-full flex-col transition-transform duration-200 lg:translate-x-0 {{ \MyLaravelTools\Panel\Support\PanelLayout::modo() === 'topbar' ? 'panel-sidebar--mobile-drawer' : '' }}"
+    class="panel-sidebar fixed inset-y-0 z-50 flex flex-col transition-transform duration-200 lg:translate-x-0 {{ $sidebarDerecha ? 'right-0 left-auto translate-x-full' : 'left-0 -translate-x-full' }} {{ $esDrawerMovil ? 'panel-sidebar--mobile-drawer' : '' }}"
     :class="{ 'translate-x-0': sidebarOpen }"
 >
     <div class="panel-chrome-header panel-border">
-        @include('panel::partials.brand-mark')
-        <a
-            href="{{ route('panel.dashboard') }}"
-            wire:navigate
-            wire:navigate.hover
-            class="panel-heading panel-sidebar-brand-text truncate text-base font-bold tracking-tight"
+        <div class="panel-chrome-header-brand">
+            @include('panel::partials.brand-mark')
+            <a
+                href="{{ route('panel.dashboard') }}"
+                wire:navigate
+                wire:navigate.hover
+                class="panel-heading panel-sidebar-brand-text truncate text-base font-bold tracking-tight"
+            >
+                {{ $brandName }}
+            </a>
+        </div>
+        <button
+            type="button"
+            class="panel-btn-icon panel-sidebar-close-btn lg:hidden"
+            @click="sidebarOpen = false"
+            aria-label="{{ __('panel::panel.documentation.close') }}"
         >
-            {{ $brandName }}
-        </a>
+            <x-panel::icon name="x" class="h-5 w-5" />
+        </button>
         @if ($sidebarColapsable)
             <button
                 type="button"
-                class="panel-btn-icon panel-sidebar-collapse-btn ms-auto hidden lg:inline-flex"
+                class="panel-btn-icon panel-sidebar-collapse-btn hidden lg:inline-flex"
                 @click="toggleSidebarCollapsed()"
                 :aria-label="sidebarCollapsed ? '{{ __('panel::panel.sidebar_expand') }}' : '{{ __('panel::panel.sidebar_collapse') }}'"
             >

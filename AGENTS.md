@@ -32,6 +32,14 @@
 
 **Playground público** (v0.25): ruta `GET /playground` (sin login) — demo interactiva de `config/panel.php` y `ChartWidget`; ver sección **Playground** más abajo (regla obligatoria para agentes).
 
+**Estado del producto (v0.25):** la librería se considera **completa para uso en producción** en proyectos Laravel que buscan un panel minimalista y config-first. Lo único explícito en roadmap global: **multi-panel** y **starter kit completo** (ver README). El resto son mejoras opcionales del playground o de ecosistema (docs, ejemplos).
+
+### Herramientas DX (v0.25.0)
+
+- `php artisan panel:doctor` — `PanelDoctor::diagnosticar()`: config, playground, Livewire navigate, Tailwind, Spatie, vistas publicadas, Alertas
+- `php artisan panel:make-widget Nombre --type=chart|stat|resource-count|view` — stub en `app/Panel/Widgets/{Nombre}Widget.php` con `definir()`
+- `PanelLayout::enlacesFooter()` — solo `config('panel.layout.footer_links')`; el playground no se inyecta automáticamente
+
 ### Personalización máxima (v0.24.0)
 
 - `PanelLayout::modo()` — `sidebar` | `topbar` | `dual`; `posicionSidebar()` left/right
@@ -42,6 +50,7 @@
 - `ThemePresets` — fusiona `theme.presets_file` con presets del paquete
 - Vista parcial `partials/topbar.blade.php` + `render-slot.blade.php`
 - `php artisan panel:install --demo` — stubs navigation + PostResource
+- **Móvil (< lg):** `sidebar` | `topbar` | `dual` usan columna flex; menú lateral off-canvas; barra `mobile-bar` en modo solo-sidebar; hamburguesa en topbar (dual/topbar); sidebar derecho desliza desde la derecha
 
 ### Layout y apariencia (v0.23.0)
 
@@ -133,17 +142,18 @@ Checklist antes de cerrar un PR de personalización:
 1. ¿El usuario puede **ver** el efecto en la demo? Si no → añadir zona, opción o pestaña.
 2. ¿Puede **copiar** código (`Tu código` o bloque PHP del gráfico)?
 3. ¿`PanelDocumentacion::clavesInteractivas()` incluye las claves nuevas?
-4. Tests en `PanelPlaygroundTest`, `PanelPlaygroundVistaTest`, `PanelPlaygroundGraficosTest` si aplica.
+4. Tests en `PanelPlaygroundTest`, `PanelPlaygroundVistaTest`, `PanelPlaygroundGraficosTest`, `Feature/PlaygroundTest` si aplica.
 5. En `panel-demo`: `php artisan vendor:publish --tag=panel-views --force` si se tocaron vistas.
+6. En cada release: `Package::VERSION`, entrada en `CHANGELOG.md`, roadmap en `README.md`, y esta sección si cambia el alcance del playground.
 
 ### Qué incluye hoy el playground
 
 | Pestaña | Contenido |
 |---------|-----------|
-| **Inicio** | Pasos 1-2-3 + atajos a personalizar / exportar |
+| **Inicio** | Pasos 1-2-3 + atajos: personalizar, **Probar gráficos** (`go_charts`), ver exportar |
 | **Apariencia** | `layout.*`, `brand.*` (menú, marca, modo, densidad, tablas…) |
 | **Colores** | `theme.*` (preset, tipografía, paleta) |
-| **Gráficos** | 5 tipos ChartWidget en vivo; estilo moderno/minimal/bold; copia `ChartWidget::make(...)` |
+| **Gráficos** | 5 tipos ChartWidget en vivo; estilo moderno/minimal/bold; aviso `widgets` en config; copia `ChartWidget::make(...)` |
 | **Tu código** | Fragmento `config/panel.php` solo con overrides de sesión |
 | **Avanzado** | Nav lateral por sección técnica; opciones vivas + bloque «solo referencia» |
 
@@ -166,17 +176,41 @@ UX demo:
 | `resources/views/partials/playground-*.blade.php` | Partials UI |
 | `resources/views/partials/chart-mount-runtime.blade.php` | Chart.js mount compartido |
 | `tests/Unit/PanelPlayground*.php` | Tests sesión, zonas, gráficos |
+| `tests/Feature/PlaygroundTest.php` | HTTP público, Livewire, gráficos montados |
+| `src/Support/PanelDoctor.php` | Diagnóstico para `panel:doctor` |
+| `src/Commands/MakeWidgetCommand.php` | Stub widgets dashboard |
 
-### Pendiente / mejoras (no bloquean, pero confunden al usuario si faltan)
+### Completado en v0.25 (ya no pendiente)
 
-- **Inicio** no enlaza explícitamente a pestaña Gráficos (solo Apariencia / Tu código).
-- **ViewWidget** — sin mini-demo interactiva (solo referencia en Avanzado).
-- **PanelSlots** (`sidebar.before`, etc.) — no se ven en el escenario fake.
-- **Auth UI split** — no previsualizable en playground.
-- **Import / permisos / resources** — documentación de referencia, sin preview.
-- **Gráficos** — exportan código de widget, no van en `config/panel.php` (conviene recordarlo en UI).
-- Enlace desde el panel autenticado al playground (opcional, host).
-- **CHANGELOG / README** — sincronizar versión playground con cada release.
+- [x] Botón **Probar gráficos** en pestaña Inicio (`go_charts` → pestaña Gráficos)
+- [x] Aviso en UI: widgets del dashboard van en `config/panel.php` → `widgets`, no en `theme`
+- [x] `panel:doctor` y `panel:make-widget`
+- [x] Sincronización release: `CHANGELOG.md`, `README` roadmap, `Package::VERSION` en v0.25.0
+
+### Pendiente opcional (playground / demo)
+
+Mejoras que **no bloquean** el uso del paquete; solo enriquecen la demo pública:
+
+| Área | Qué falta |
+|------|-----------|
+| **ViewWidget** | Mini-demo interactiva en escenario (hoy solo referencia en Avanzado) |
+| **PanelSlots** | Mostrar `sidebar.before`, `main.after`, etc. en el escenario fake |
+| **Auth UI split** | Previsualización del layout login con imagen lateral |
+| **Import / permisos** | Preview interactivo (hoy documentación de referencia en Avanzado) |
+| **Modos layout** | Preview explícito de `topbar` y `dual` en escenario desktop (sidebar sí; móvil corregido en app real) |
+
+### Roadmap producto (fuera del playground)
+
+Definido en `README.md` — no son carencias del core actual:
+
+- [ ] **Multi-panel** — varios paneles en la misma app (paths, configs y recursos separados)
+- [ ] **Starter kit completo** — plantilla instalable con demo, auth y recursos ya cableados
+
+### Ecosistema (nice-to-have)
+
+- Sitio de documentación o guía «campo/columna/widget custom» end-to-end
+- Smoke tests del host (`panel-demo`) en CI además de los ~121 tests del paquete
+- Ejemplos publicados (blog, SaaS) que muestren `PanelExtensions` en la práctica
 
 ### ViewWidget
 

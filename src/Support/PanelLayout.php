@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace MyLaravelTools\Panel\Support;
 
-use Illuminate\Support\Facades\Route;
-
 final class PanelLayout
 {
     public static function densidad(): string
@@ -51,25 +49,8 @@ final class PanelLayout
     public static function enlacesFooter(): array
     {
         $enlaces = config('panel.layout.footer_links', []);
-        $enlaces = is_array($enlaces) ? $enlaces : [];
 
-        if (! config('panel.documentation.enabled', true) || ! Route::has('panel.playground')) {
-            return $enlaces;
-        }
-
-        foreach ($enlaces as $enlace) {
-            if (($enlace['route'] ?? null) === 'panel.playground') {
-                return $enlaces;
-            }
-        }
-
-        array_unshift($enlaces, [
-            'label' => __('panel::panel.documentation.playground_link'),
-            'route' => 'panel.playground',
-            'external' => true,
-        ]);
-
-        return $enlaces;
+        return is_array($enlaces) ? $enlaces : [];
     }
 
     public static function marca(string $clave, mixed $defecto = null): mixed

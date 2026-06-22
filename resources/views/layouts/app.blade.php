@@ -83,6 +83,12 @@
         @endif
 
         <div class="panel-main-column">
+            @if (PanelLayout::modo() === 'sidebar' && PanelLayout::mostrarMenuMovil())
+                @include('panel::partials.mobile-bar', [
+                    'brandName' => $brandName ?? config('panel.brand.name'),
+                ])
+            @endif
+
             @if (PanelLayout::usaTopbar())
                 @include('panel::partials.topbar')
             @endif

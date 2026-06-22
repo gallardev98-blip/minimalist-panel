@@ -8,6 +8,8 @@
     $panelPath = config('panel.path', 'admin');
     $panelVersion = config('panel.version') ?? ('v'.Package::VERSION);
     $sidebarColapsable = PanelLayout::sidebarColapsable();
+    $sidebarDerecha = PanelLayout::posicionSidebar() === 'right';
+    $esDrawerMovil = PanelLayout::modo() === 'topbar';
     $openGroupIndex = 0;
     $temaDefecto = (string) config('panel.theme.default', 'dark');
     $zonasModificadas = $zonasModificadas ?? [];
@@ -26,14 +28,24 @@
         @if (PanelLayout::usaSidebar() || PanelLayout::modo() === 'topbar')
             <x-panel::playground-zona zona="menu" :$zonasModificadas :$zonaResaltada class="panel-playground-zona--menu">
                 <aside
-                    class="panel-sidebar panel-playground-sidebar flex h-full flex-col {{ PanelLayout::modo() === 'topbar' ? 'panel-sidebar--mobile-drawer' : '' }}"
+                    class="panel-sidebar panel-playground-sidebar flex h-full flex-col {{ $sidebarDerecha ? 'panel-playground-sidebar--right' : '' }} {{ $esDrawerMovil ? 'panel-sidebar--mobile-drawer' : '' }}"
                     :class="{ 'panel-playground-sidebar--open': sidebarOpen }"
                 >
                     <x-panel::playground-zona zona="marca" :$zonasModificadas :$zonaResaltada class="panel-chrome-header panel-border">
-                        @include('panel::partials.brand-mark')
-                        <span class="panel-heading panel-sidebar-brand-text truncate text-base font-bold tracking-tight">{{ $marca }}</span>
+                        <div class="panel-chrome-header-brand">
+                            @include('panel::partials.brand-mark')
+                            <span class="panel-heading panel-sidebar-brand-text truncate text-base font-bold tracking-tight">{{ $marca }}</span>
+                        </div>
+                        <button
+                            type="button"
+                            class="panel-btn-icon panel-sidebar-close-btn lg:hidden"
+                            @click="sidebarOpen = false"
+                            aria-label="{{ __('panel::panel.documentation.close') }}"
+                        >
+                            <x-panel::icon name="x" class="h-5 w-5" />
+                        </button>
                         @if ($sidebarColapsable)
-                            <button type="button" class="panel-btn-icon panel-sidebar-collapse-btn ms-auto hidden lg:inline-flex" @click="toggleSidebarCollapsed()">
+                            <button type="button" class="panel-btn-icon panel-sidebar-collapse-btn hidden lg:inline-flex" @click="toggleSidebarCollapsed()">
                                 <x-panel::icon name="chevron-left" class="h-4 w-4 transition-transform" x-bind:class="{ 'rotate-180': sidebarCollapsed }" />
                             </button>
                         @endif
@@ -70,6 +82,10 @@
         @endif
 
         <div class="panel-main-column">
+            @if (PanelLayout::modo() === 'sidebar' && PanelLayout::mostrarMenuMovil())
+                @include('panel::partials.mobile-bar', ['brandName' => $marca, 'urlInicio' => '#'])
+            @endif
+
             @if (PanelLayout::usaTopbar())
                 <x-panel::playground-zona zona="menu" :$zonasModificadas :$zonaResaltada>
                     @include('panel::partials.topbar')
