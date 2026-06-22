@@ -59,11 +59,23 @@
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    @include('panel::partials.layout-variables')
     @include('panel::partials.theme-styles')
+    @include('panel::partials.custom-head')
     <style>[x-cloak] { display: none !important; }</style>
 </head>
-<body class="panel-body panel-auth-body h-full antialiased">
-    <div class="panel-auth-bg" aria-hidden="true"></div>
+<body class="panel-body panel-auth-body h-full antialiased {{ \MyLaravelTools\Panel\Support\PanelLayout::layoutAuthSplit() ? 'panel-auth-body--split' : '' }}">
+    @php
+        $fondoAuth = \MyLaravelTools\Panel\Support\PanelLayout::urlFondoAuth();
+        $esGradiente = is_string($fondoAuth) && (str_starts_with($fondoAuth, 'linear-gradient') || str_starts_with($fondoAuth, 'radial-gradient'));
+    @endphp
+    <div
+        class="panel-auth-bg"
+        aria-hidden="true"
+        @if ($fondoAuth)
+            style="background: {{ $esGradiente ? $fondoAuth : "url('{$fondoAuth}') center/cover no-repeat" }}"
+        @endif
+    ></div>
 
     @persist('panel-auth-theme-toggle')
         <button
@@ -84,11 +96,11 @@
 
     @if (\MyLaravelTools\Panel\Support\PanelLocale::selectorEnabled())
         <div class="panel-auth-locale">
-            <livewire:panel.locale-switcher />
+            <livewire:panel.locale-switcher menu-placement="down" />
         </div>
     @endif
 
-    <div class="panel-auth-shell">
+    <div class="panel-auth-shell {{ \MyLaravelTools\Panel\Support\PanelLayout::layoutAuthSplit() ? 'panel-auth-shell--split' : '' }}">
         <main class="panel-auth-card">
             <header class="panel-auth-brand">
                 <a
@@ -100,12 +112,21 @@
                     </div>
                     <span class="panel-auth-brand-name">{{ config('panel.brand.name', 'Panel') }}</span>
                 </a>
+                @include('panel::partials.auth-tagline')
             </header>
 
             <div class="panel-auth-card-body">
                 {{ $slot }}
             </div>
         </main>
+
+        @if (\MyLaravelTools\Panel\Support\PanelLayout::layoutAuthSplit())
+            <aside
+                class="panel-auth-split-image"
+                style="background-image: url('{{ \MyLaravelTools\Panel\Support\PanelLayout::urlImagenAuth() }}')"
+                aria-hidden="true"
+            ></aside>
+        @endif
     </div>
 
     @persist('panel-spa-loader')

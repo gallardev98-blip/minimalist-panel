@@ -2,8 +2,14 @@
     $name = $field->getName();
     $type = $field->getType();
     $meta = $field->toArray()['meta'] ?? [];
+    $vistaCampo = ($field instanceof \MyLaravelTools\Panel\Fields\CustomField && $field->getView())
+        ? $field->getView()
+        : \MyLaravelTools\Panel\Facades\PanelExtensions::vistaCampo($type);
 @endphp
 
+@if ($vistaCampo)
+    @include($vistaCampo, ['field' => $field, 'form' => $form])
+@else
 <div>
     <label for="field-{{ $name }}" class="panel-label">
         {{ $field->getLabel() }}
@@ -162,6 +168,98 @@
             >
             @break
 
+        @case('color')
+            <input
+                id="field-{{ $name }}"
+                type="color"
+                wire:model="form.{{ $name }}"
+                @disabled($field->isDisabled())
+                class="panel-input h-10 w-20 cursor-pointer p-1"
+            >
+            @break
+
+        @case('key-value')
+            <div
+                class="space-y-2"
+                x-data="{
+                    filas: [],
+                    initFilas() {
+                        const datos = @js(is_array($form[$name] ?? null) ? $form[$name] : []);
+                        this.filas = Object.entries(datos).map(([c, v]) => ({ c, v }));
+                        if (this.filas.length === 0) this.filas = [{ c: '', v: '' }];
+                    },
+                    sync() {
+                        const out = {};
+                        this.filas.forEach(f => { if (f.c) out[f.c] = f.v; });
+                        $wire.set('form.{{ $name }}', out);
+                    }
+                }"
+                x-init="initFilas()"
+            >
+                <template x-for="(fila, i) in filas" :key="i">
+                    <div class="flex gap-2">
+                        <input type="text" x-model="fila.c" @input="sync()" placeholder="{{ __('panel::panel.key') }}" class="panel-input flex-1">
+                        <input type="text" x-model="fila.v" @input="sync()" placeholder="{{ __('panel::panel.value') }}" class="panel-input flex-1">
+                        <button type="button" @click="filas.splice(i, 1); sync()" class="panel-btn panel-btn-ghost !px-2" aria-label="{{ __('panel::panel.remove') }}">×</button>
+                    </div>
+                </template>
+                <button type="button" @click="filas.push({ c: '', v: '' })" class="panel-btn panel-btn-ghost text-sm">+ {{ __('panel::panel.add_row') }}</button>
+            </div>
+            @break
+
+        @case('repeater')
+            @php
+                $columnas = $meta['columns'] ?? ['value' => __('panel::panel.value')];
+                $maxFilas = (int) ($meta['max'] ?? 20);
+            @endphp
+            <div
+                class="space-y-3"
+                x-data="{
+                    filas: [],
+                    columnas: @js($columnas),
+                    max: {{ $maxFilas }},
+                    initFilas() {
+                        const datos = @js(is_array($form[$name] ?? null) ? $form[$name] : []);
+                        this.filas = Array.isArray(datos) ? datos.map(f => ({ ...f })) : [];
+                        if (this.filas.length === 0) this.anadir();
+                    },
+                    filaVacia() {
+                        const f = {};
+                        Object.keys(this.columnas).forEach(k => f[k] = '');
+                        return f;
+                    },
+                    sync() {
+                        $wire.set('form.{{ $name }}', this.filas.filter(f => Object.values(f).some(v => String(v).trim() !== '')));
+                    },
+                    anadir() {
+                        if (this.filas.length >= this.max) return;
+                        this.filas.push(this.filaVacia());
+                        this.sync();
+                    },
+                    quitar(i) {
+                        this.filas.splice(i, 1);
+                        this.sync();
+                    }
+                }"
+                x-init="initFilas()"
+            >
+                <template x-for="(fila, i) in filas" :key="i">
+                    <div class="panel-card rounded-lg p-3 space-y-2">
+                        <div class="grid gap-2 sm:grid-cols-2">
+                            <template x-for="(etiqueta, clave) in columnas" :key="clave">
+                                <div>
+                                    <label class="panel-label text-xs" x-text="etiqueta"></label>
+                                    <input type="text" class="panel-input" x-model="fila[clave]" @input="sync()">
+                                </div>
+                            </template>
+                        </div>
+                        <button type="button" @click="quitar(i)" class="panel-btn panel-btn-ghost text-xs">× {{ __('panel::panel.remove_row') }}</button>
+                    </div>
+                </template>
+                <button type="button" @click="anadir()" class="panel-btn panel-btn-ghost text-sm">+ {{ __('panel::panel.add_row') }}</button>
+            </div>
+            @break
+
         @default
             <input
                 id="field-{{ $name }}"
@@ -178,3 +276,4 @@
         <p class="mt-1 text-sm text-[rgb(var(--panel-danger))]">{{ $message }}</p>
     @enderror
 </div>
+@endif

@@ -19,6 +19,8 @@ final class ImportColumnHelper
         'permissions',
         'roles',
         'rich-text',
+        'key-value',
+        'repeater',
     ];
 
     /** @param class-string<Resource> $resourceClass */

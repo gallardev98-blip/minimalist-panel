@@ -1,8 +1,12 @@
 @if (count($locales) > 1)
-    <div class="panel-locale-switcher" x-data="{ open: false }" @click.outside="open = false">
+    <div
+        class="panel-locale-switcher panel-locale-switcher--{{ $menuPlacement }}"
+        x-data="{ open: false }"
+        @click.outside="open = false"
+    >
         <button
             type="button"
-            class="panel-btn-icon panel-sidebar-toolbar-btn"
+            class="panel-btn-icon {{ $menuPlacement === 'up' ? 'panel-sidebar-toolbar-btn' : 'panel-topbar-locale-btn' }}"
             @click="open = !open"
             :aria-expanded="open"
             aria-haspopup="listbox"

@@ -24,6 +24,43 @@
 
 **v0.20.0** (2026-06-21): auth UX — redirect completo post-login, botón con puntos animados (`auth-loading-text`), `Package::VERSION` sincronizado.
 
+**v0.23.0** (2026-06-21): `PanelLayout` — densidad, contenido boxed, sidebar colapsable, auth split, `RepeaterField`, `customization.css`.
+
+**v0.24.0** (2026-06-21): personalización máxima — modos layout (`sidebar`|`topbar`|`dual`), `PanelSlots`, import upsert, tablas rayadas/compactas, selector `per_page`, badges en navegación, `theme.presets_file`, `panel:install --demo`.
+
+**Playground público** (2026-06): ruta `GET /playground` (sin login) — demo interactiva de `config/panel.php` y `ChartWidget`; ver sección **Playground** más abajo (regla obligatoria para agentes).
+
+### Personalización máxima (v0.24.0)
+
+- `PanelLayout::modo()` — `sidebar` | `topbar` | `dual`; `posicionSidebar()` left/right
+- `PanelSlots` — singleton; slots: `sidebar.before`, `main.after`, `topbar.end`, etc.
+- Config: `panel.slots`, `panel.extensions.slots`, `panel.layout.mode`, `table_striped`, `table_compact`, `global_search`, `per_page_options`
+- `Resource::navigationBadge()`, `hiddenFromNavigation()`, `importUpsertKey()`, `perPageOptions()`
+- Import upsert: `panel.import.upsert`, `panel.import.upsert_key`
+- `ThemePresets` — fusiona `theme.presets_file` con presets del paquete
+- Vista parcial `partials/topbar.blade.php` + `render-slot.blade.php`
+- `php artisan panel:install --demo` — stubs navigation + PostResource
+
+### Layout y apariencia (v0.23.0)
+
+- `PanelLayout` — `densidad()`, `anchoContenido()`, `sidebarColapsable()`, `enlacesFooter()`, `marca()`, `authUi()`
+- Config: `panel.layout`, `panel.auth_ui`, `panel.customization`, `brand.favicon|logo_height|tagline`
+- Sidebar colapsable en desktop (`layout.sidebar_collapsible`) + `localStorage`
+- Auth split: `auth_ui.layout => split` + `auth_ui.image`
+- `RepeaterField::make('items')->columns(['title' => 'Título'])->minRows(1)`
+
+**v0.22.0** (2026-06-21): extensibilidad — `PanelExtensions`, presets de tema, `ColorField`/`DateTimeField`/`KeyValueField`/`CustomField`, `panel:upgrade-views`.
+
+### Extensibilidad (v0.22.0)
+
+- `MyLaravelTools\Panel\Support\PanelExtensions` — singleton + facade `PanelExtensions`
+- `registrarVistaCampo($tipo, $vista)` / `registrarVistaColumna($tipo, $vista)` / `registrarWidget($obj)`
+- Config: `panel.extensions.field_views`, `column_views`, `widgets`
+- `CustomField::make('x')->type('json')->view('mi-app.panel.campo')` — vista Blade propia
+- `ThemePresets` — `theme.preset` + overrides en `config/panel.php`
+- Presets: `minimal`, `corporate`, `contrast`, `ocean`
+- `php artisan panel:upgrade-views` — compara MD5 vendor vs `resources/views/vendor/panel`
+
 **v0.21.0** (2026-06-21): renombre Packagist `mylaraveltools/panel`; suplantación de usuario — `PanelImpersonation`, RowAction «Entrar como», widget sidebar, config `impersonation`.
 
 ### Suplantación de usuario (v0.21.0)
@@ -70,6 +107,74 @@
 - Partial `partials/widget-chart.blade.php` — runtime centralizado (`panelChartMount`, `panelChartRefreshAll`)
 - Repinta en `panel-theme-changed` (toggle sidebar) y `livewire:navigated`
 - Chart.js CDN solo si hay charts en el dashboard
+
+## Playground público (`/playground`)
+
+Ruta demo **sin autenticación** para que el usuario final pruebe personalización y copie código. Livewire: `MyLaravelTools\Panel\Livewire\PlaygroundApp` (`panel.playground`). Layout: `layouts/playground.blade.php`. Activar/desactivar: `config('panel.documentation.enabled')`.
+
+### Regla obligatoria (agentes y mantenimiento)
+
+**Cada cambio que afecte personalización del panel debe reflejarse también en el playground** cuando sea demostrable:
+
+| Tipo de cambio | Dónde actualizar en el playground |
+|----------------|----------------------------------|
+| Nueva clave en `config/panel.php` interactiva | `PanelDocumentacion` (sección + `vista_previa: true`), `PanelPlayground`, export PHP, zona en `PanelPlaygroundVista` si hay preview visual |
+| Nuevo preset / color / layout / tabla | Pestaña Apariencia o Colores + resaltado de zona en `playground-escenario` / `playground-vista-previa` |
+| `ChartWidget` (tipos, estilos, opciones JS) | `PanelPlaygroundGraficos`, `playground-graficos*.blade.php`, `chart-mount-runtime.blade.php`, export `->options()` |
+| UI nueva en shell (sidebar, topbar, slots) | Escenario fake `playground-escenario.blade.php` o componente `playground-zona` |
+| Solo API PHP / sin preview (comandos, policies) | `PanelDocumentacion::referencia()` en pestaña **Avanzado** |
+| Textos de UI del drawer | `lang/es/panel.php` y `lang/en/panel.php` → clave `documentation.*` |
+| Estilos del playground | `partials/theme-styles.blade.php` (bloque `/* Playground público */`) |
+
+Checklist antes de cerrar un PR de personalización:
+
+1. ¿El usuario puede **ver** el efecto en la demo? Si no → añadir zona, opción o pestaña.
+2. ¿Puede **copiar** código (`Tu código` o bloque PHP del gráfico)?
+3. ¿`PanelDocumentacion::clavesInteractivas()` incluye las claves nuevas?
+4. Tests en `PanelPlaygroundTest`, `PanelPlaygroundVistaTest`, `PanelPlaygroundGraficosTest` si aplica.
+5. En `panel-demo`: `php artisan vendor:publish --tag=panel-views --force` si se tocaron vistas.
+
+### Qué incluye hoy el playground
+
+| Pestaña | Contenido |
+|---------|-----------|
+| **Inicio** | Pasos 1-2-3 + atajos a personalizar / exportar |
+| **Apariencia** | `layout.*`, `brand.*` (menú, marca, modo, densidad, tablas…) |
+| **Colores** | `theme.*` (preset, tipografía, paleta) |
+| **Gráficos** | 5 tipos ChartWidget en vivo; estilo moderno/minimal/bold; copia `ChartWidget::make(...)` |
+| **Tu código** | Fragmento `config/panel.php` solo con overrides de sesión |
+| **Avanzado** | Nav lateral por sección técnica; opciones vivas + bloque «solo referencia» |
+
+UX demo:
+
+- Panel **fake** (sin login) a pantalla completa; drawer lateral de controles.
+- **Zonas resaltadas** (`PanelPlaygroundVista`): marca, menú, contenido, tabla, acentos, tema, gráficos — badge «Cambiado aquí» al editar.
+- Gráficos: `data-panel-chart-config` + `panelPlaygroundSincronizarGraficos()` tras cada commit Livewire (no usar `@push` por canvas suelto).
+
+### Archivos clave
+
+| Archivo | Rol |
+|---------|-----|
+| `src/Livewire/PlaygroundApp.php` | Estado Livewire, secciones, reinicio |
+| `src/Support/PanelPlayground.php` | Sesión `panel.playground`, apply config, export PHP |
+| `src/Support/PanelPlaygroundGraficos.php` | Sesión gráficos, `ChartWidget` demo, export código widget |
+| `src/Support/PanelDocumentacion.php` | Catálogo secciones, `gruposUsuario()`, claves interactivas |
+| `src/Support/PanelPlaygroundVista.php` | Mapa clave → zona visual |
+| `resources/views/livewire/playground-app.blade.php` | Drawer + escenario |
+| `resources/views/partials/playground-*.blade.php` | Partials UI |
+| `resources/views/partials/chart-mount-runtime.blade.php` | Chart.js mount compartido |
+| `tests/Unit/PanelPlayground*.php` | Tests sesión, zonas, gráficos |
+
+### Pendiente / mejoras (no bloquean, pero confunden al usuario si faltan)
+
+- **Inicio** no enlaza explícitamente a pestaña Gráficos (solo Apariencia / Tu código).
+- **ViewWidget** — sin mini-demo interactiva (solo referencia en Avanzado).
+- **PanelSlots** (`sidebar.before`, etc.) — no se ven en el escenario fake.
+- **Auth UI split** — no previsualizable en playground.
+- **Import / permisos / resources** — documentación de referencia, sin preview.
+- **Gráficos** — exportan código de widget, no van en `config/panel.php` (conviene recordarlo en UI).
+- Enlace desde el panel autenticado al playground (opcional, host).
+- **CHANGELOG / README** — sincronizar versión playground con cada release.
 
 ### ViewWidget
 

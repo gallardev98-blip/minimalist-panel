@@ -66,6 +66,33 @@ abstract class Resource
         return [];
     }
 
+    /** Badge en navegación (null = sin badge). */
+    public static function navigationBadge(): ?string
+    {
+        return null;
+    }
+
+    /** Ocultar del menú lateral automático. */
+    public static function hiddenFromNavigation(): bool
+    {
+        return false;
+    }
+
+    /**
+     * Clave única para import upsert (actualizar si existe).
+     * null — solo crear; string — nombre de columna (p. ej. email, sku).
+     */
+    public static function importUpsertKey(): ?string
+    {
+        return null;
+    }
+
+    /** @return list<int> Opciones de paginación en listados (vacío = config global). */
+    public static function perPageOptions(): array
+    {
+        return [];
+    }
+
     /** @return array<int, Filter> */
     public static function filters(): array
     {

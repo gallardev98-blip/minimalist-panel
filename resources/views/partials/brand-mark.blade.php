@@ -11,7 +11,7 @@
     }
 @endphp
 
-<div @class(['panel-brand-mark', 'panel-brand-mark--custom' => $logoUrl !== null])>
+<div @class(['panel-brand-mark', 'panel-brand-mark--custom' => $logoUrl !== null]) style="--panel-brand-logo-height: {{ \MyLaravelTools\Panel\Support\PanelLayout::marca('logo_height', '2rem') }}">
     @if ($logoUrl !== null)
         <img src="{{ $logoUrl }}" alt="" class="panel-brand-logo" />
     @else

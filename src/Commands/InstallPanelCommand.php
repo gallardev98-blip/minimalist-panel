@@ -9,7 +9,7 @@ use Illuminate\Console\Command;
 
 final class InstallPanelCommand extends Command
 {
-    protected $signature = 'panel:install {--force : Sobrescribir archivos publicados}';
+    protected $signature = 'panel:install {--force : Sobrescribir archivos publicados} {--demo : Instalar ejemplo (navigation + resource)}';
 
     protected $description = 'Instala y publica la configuración del panel de administración';
 
@@ -23,6 +23,11 @@ final class InstallPanelCommand extends Command
         ]);
 
         $this->ensurePanelDirectoryExists();
+
+        if ($this->option('demo')) {
+            $this->instalarDemo();
+        }
+
         $this->ensureLivewireConfigPublished();
         $this->printPostInstallInstructions();
 
@@ -75,6 +80,33 @@ final class InstallPanelCommand extends Command
         $this->line('  7. Enlaza storage: php artisan storage:link');
         $this->line('  8. Visita: /' . config('panel.path', 'admin'));
         $this->line('  9. APP_URL en .env debe coincidir con host y puerto (p. ej. http://127.0.0.1:8000)');
+        $this->newLine();
+    }
+
+    private function instalarDemo(): void
+    {
+        $navPath = config_path('panel-navigation.php');
+        $stubNav = dirname(__DIR__, 2).'/stubs/demo/panel-navigation.stub';
+
+        if (! is_file($navPath) && is_file($stubNav)) {
+            copy($stubNav, $navPath);
+            $this->components->info('Creado config/panel-navigation.php (demo)');
+        }
+
+        $resourcePath = app_path('Panel/Resources/PostResource.php');
+        $stubResource = dirname(__DIR__, 2).'/stubs/demo/PostResource.stub';
+
+        if (! is_file($resourcePath) && is_file($stubResource)) {
+            if (! is_dir(dirname($resourcePath))) {
+                mkdir(dirname($resourcePath), 0755, true);
+            }
+
+            copy($stubResource, $resourcePath);
+            $this->components->info('Creado app/Panel/Resources/PostResource.php (demo)');
+        }
+
+        $this->line('  Demo: añade en config/panel.php → \'navigation\' => require __DIR__.\'/panel-navigation.php\'');
+        $this->line('  Demo: crea modelo Post + migración si usas PostResource');
         $this->newLine();
     }
 }

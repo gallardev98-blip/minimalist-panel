@@ -1,8 +1,13 @@
 @php
     $value = $column->resolve($record);
+    $tipo = $column->getType();
+    $vistaColumna = \MyLaravelTools\Panel\Facades\PanelExtensions::vistaColumna($tipo);
 @endphp
 
-@switch($column->getType())
+@if ($vistaColumna)
+    @include($vistaColumna, ['column' => $column, 'record' => $record, 'value' => $value])
+@else
+@switch($tipo)
     @case('boolean')
         <span class="panel-badge {{ $value ? 'panel-badge-success' : 'panel-badge-muted' }}">
             {{ $value ? __('panel::panel.yes') : __('panel::panel.no') }}
@@ -47,6 +52,17 @@
         @endif
         @break
 
+    @case('color')
+        @if ($value)
+            <span class="inline-flex items-center gap-2">
+                <span class="h-5 w-5 rounded border border-[rgb(var(--panel-border))]" style="background-color: {{ $value }}"></span>
+                <span class="font-mono text-xs">{{ $value }}</span>
+            </span>
+        @else
+            <span class="panel-muted">—</span>
+        @endif
+        @break
+
     @default
         @if (is_string($value) && str_contains($value, '<'))
             <div class="prose prose-sm max-w-none dark:prose-invert">{!! $value !!}</div>
@@ -54,3 +70,4 @@
             {{ $value ?? '—' }}
         @endif
 @endswitch
+@endif

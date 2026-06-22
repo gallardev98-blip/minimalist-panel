@@ -182,6 +182,8 @@ Toda la configuración vive en este archivo (compatible con `config:cache`). No 
 | `widgets` | Dashboard | `[]` |
 | `import` | Import CSV/Excel | `enabled` + `preview` |
 | `impersonation` | Suplantar usuarios | `disabled` |
+| `theme.preset` | Preset visual (`minimal`, `corporate`, `contrast`, `ocean`) | `minimal` |
+| `extensions` | Vistas custom de campos/columnas y widgets | `[]` |
 | `version` | Texto en sidebar (`null` = paquete) | `null` |
 
 ### Tema monocromático
@@ -204,6 +206,186 @@ Toda la configuración vive en este archivo (compatible con `config:cache`). No 
 ```
 
 Variables CSS: `--panel-primary`, `--panel-bg`, etc. Toggle claro/oscuro en el footer del sidebar (persiste en `localStorage`).
+
+### Presets de tema
+
+```php
+'theme' => [
+    'preset' => 'corporate',  // minimal | corporate | contrast | ocean
+    'colors' => [
+        'primary' => '#ff0000',  // sobrescribe solo el preset
+    ],
+],
+```
+
+### Extensibilidad (campos, columnas, widgets)
+
+**Por config** (`config/panel.php` → `extensions`):
+
+```php
+'extensions' => [
+    'field_views' => ['rating' => 'panel-custom.fields.rating'],
+    'column_views' => ['rating' => 'panel-custom.columns.rating'],
+    'widgets' => [],
+],
+```
+
+**Por código** (`AppServiceProvider::boot`):
+
+```php
+use MyLaravelTools\Panel\Facades\PanelExtensions;
+
+PanelExtensions::registrarVistaCampo('rating', 'panel-custom.fields.rating');
+PanelExtensions::registrarWidget(StatWidget::make('Total', fn () => Model::count()));
+```
+
+**Campo custom en un Resource:**
+
+```php
+CustomField::make('payload')
+    ->type('json-editor')
+    ->view('panel-custom.fields.json-editor')
+    ->label('Datos JSON'),
+```
+
+**Campos integrados nuevos:** `ColorField`, `DateTimeField`, `KeyValueField` (pares clave/valor → JSON).
+
+**Actualizar vistas publicadas:**
+
+```bash
+php artisan panel:upgrade-views --dry-run
+php artisan panel:upgrade-views --force
+```
+
+### Layout y apariencia
+
+```php
+'layout' => [
+    'density' => 'compact',           // comfortable | compact
+    'content_width' => 'boxed',       // full | boxed
+    'sidebar_collapsible' => true,
+    'show_breadcrumbs' => true,
+    'footer_links' => [
+        ['label' => 'Ayuda', 'route' => 'panel.dashboard'],
+        ['label' => 'Web', 'url' => 'https://ejemplo.com', 'external' => true],
+    ],
+],
+
+'brand' => [
+    'name' => 'Mi Panel',
+    'logo' => '/img/logo.svg',
+    'logo_height' => '2.5rem',
+    'favicon' => '/favicon.ico',
+    'tagline' => 'Gestiona tu negocio',
+],
+
+'auth_ui' => [
+    'layout' => 'split',              // centered | split
+    'image' => '/img/auth-side.jpg',
+    'background' => 'linear-gradient(135deg, #0f172a, #1e3a5f)',
+    'show_tagline' => true,
+],
+
+'customization' => [
+    'css' => '.panel-sidebar { border-right-width: 2px; }',
+    'head_view' => 'panel-custom.head',
+],
+```
+
+**RepeaterField** — filas con varias columnas (JSON):
+
+```php
+RepeaterField::make('lineas')
+    ->columns(['concepto' => 'Concepto', 'importe' => 'Importe'])
+    ->minRows(1)
+    ->maxRows(10),
+```
+
+### Máxima personalización (v0.24)
+
+**Modos de layout** — `sidebar` (por defecto), `topbar` o `dual` (barra superior + lateral):
+
+```php
+'layout' => [
+    'mode' => 'sidebar',              // sidebar | topbar | dual
+    'sidebar_position' => 'left',     // left | right
+    'table_striped' => true,
+    'table_compact' => false,
+    'global_search' => true,
+    'per_page_options' => [15, 25, 50, 100],
+],
+```
+
+**Slots Blade** — inyecta vistas en puntos del layout sin publicar todo el paquete:
+
+```php
+'slots' => [
+    'sidebar.before' => 'mi-app.panel.slots.aviso',
+    'main.after' => 'mi-app.panel.slots.analytics',
+    'topbar.end' => 'mi-app.panel.slots.acciones',
+],
+```
+
+Slots disponibles: `sidebar.before`, `sidebar.after`, `main.before`, `main.after`, `topbar.start`, `topbar.end`, `footer.before`.
+
+También vía código en `AppServiceProvider`:
+
+```php
+use MyLaravelTools\Panel\Support\PanelExtensions;
+
+PanelExtensions::registrarSlot('main.before', 'mi-app.panel.banner');
+```
+
+**Import upsert** — actualiza registros existentes en lugar de fallar:
+
+```php
+'import' => [
+    'upsert' => true,
+    'upsert_key' => 'email',          // global; el Resource puede sobreescribir
+],
+```
+
+```php
+// En tu Resource
+public static function importUpsertKey(): ?string
+{
+    return 'sku';
+}
+```
+
+**Hooks en Resources:**
+
+```php
+public static function navigationBadge(): ?string
+{
+    return (string) static::model()::where('is_active', false)->count();
+}
+
+public static function hiddenFromNavigation(): bool
+{
+    return ! auth()->user()?->can('view settings');
+}
+
+public static function perPageOptions(): array
+{
+    return [10, 25, 50];
+}
+```
+
+**Presets de tema propios** — archivo PHP que devuelve un array de presets:
+
+```php
+'theme' => [
+    'preset' => 'mi-marca',
+    'presets_file' => config_path('panel-theme-presets.php'),
+],
+```
+
+**Instalación con demo:**
+
+```bash
+php artisan panel:install --demo
+```
 
 ---
 
@@ -332,12 +514,15 @@ Botones **CSV**, **XLSX** y **PDF** en listados. Con filas seleccionadas, export
 'import' => [
     'enabled' => true,
     'preview' => true,
+    'upsert' => true,
+    'upsert_key' => null,
 ],
 ```
 
 1. Botón **Importar** en el listado (permiso `create`).
 2. Sube `.csv`, `.txt`, `.xlsx`, `.xls`.
 3. Revisa filas válidas/errores → confirma.
+4. Con `upsert` activo: crea nuevos y actualiza existentes según `importUpsertKey()` del Resource.
 
 Personaliza columnas con `Field::importable(false)` o `Resource::import()`.
 
@@ -391,9 +576,9 @@ public static function relations(): array
 
 ### Fields y Columns
 
-**Fields:** `TextField`, `EmailField`, `PasswordField`, `TextareaField`, `BooleanField`, `SelectField`, `BelongsToField`, `NumberField`, `DateField`, `FileField`, `ImageField`, `RichTextField`, `RolesField`, `PermissionsField`.
+**Fields:** `TextField`, `EmailField`, `PasswordField`, `TextareaField`, `BooleanField`, `SelectField`, `BelongsToField`, `NumberField`, `DateField`, `DateTimeField`, `ColorField`, `KeyValueField`, `CustomField`, `FileField`, `ImageField`, `RichTextField`, `RolesField`, `PermissionsField`.
 
-**Columns:** `TextColumn`, `BooleanColumn`, `DateTimeColumn`, `BadgeColumn`, `BelongsToColumn`, `ImageColumn`, `RolesColumn`, `PermissionsColumn`.
+**Columns:** `TextColumn`, `BooleanColumn`, `DateTimeColumn`, `BadgeColumn`, `ColorColumn`, `BelongsToColumn`, `ImageColumn`, `RolesColumn`, `PermissionsColumn`.
 
 **Filtros:** `SelectFilter`, `BooleanFilter`, `DateRangeFilter`, `MultiSelectFilter`.
 
@@ -406,11 +591,23 @@ public static function relations(): array
 | Comando | Descripción |
 |---------|-------------|
 | `php artisan panel:install` | Instalar panel |
+| `php artisan panel:install --demo` | Instalar + navigation stub y PostResource ejemplo |
 | `php artisan panel:make-resource Name` | Crear Resource |
 | `php artisan panel:make-page Name` | Crear página custom |
 | `php artisan panel:make-policy Name` | Crear Policy |
+| `php artisan panel:upgrade-views` | Actualizar vistas publicadas |
 | `php artisan vendor:publish --tag=panel-config` | Publicar config |
 | `php artisan vendor:publish --tag=panel-views` | Publicar vistas Blade |
+| `php artisan vendor:publish --tag=panel-documentation` | Copiar `documentation/panel/` al proyecto |
+
+### Documentación interactiva (playground)
+
+Ruta pública **`/playground`** (sin login) — `documentation.enabled` y `documentation.path`:
+
+- Panel **FAKE** a pantalla completa + controles laterales
+- Catálogo de todas las opciones de `config/panel.php`
+- Vista previa en vivo (layout, marca, tema…)
+- Markdown: `documentation/panel/README.md`
 
 ---
 
@@ -486,6 +683,10 @@ composer test
 - [x] Import con preview, ChartWidget, ViewWidget, email verify
 - [x] Auth UX (v0.20), suplantación de usuario (v0.21)
 - [x] Packagist — `mylaraveltools/panel`
+- [x] Extensibilidad — presets tema, PanelExtensions, campos custom (v0.22)
+- [x] Layout — densidad, boxed, sidebar colapsable, auth split, RepeaterField (v0.23)
+- [x] Máxima personalización — topbar/dual, slots, upsert, tablas, presets propios (v0.24)
+- [ ] Multi-panel, starter kit completo
 
 ---
 

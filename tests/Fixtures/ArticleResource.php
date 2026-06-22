@@ -18,6 +18,11 @@ final class ArticleResource extends Resource
 
     protected static ?string $slug = 'articles';
 
+    public static function importUpsertKey(): ?string
+    {
+        return 'title';
+    }
+
     public static function form(): array
     {
         return [

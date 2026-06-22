@@ -68,11 +68,23 @@ final class ResourceIndex extends Component
     /** @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile|null */
     public $importFile = null;
 
+    #[Url(as: 'per_page')]
+    public int $perPage = 0;
+
     public function mount(string $resource): void
     {
         $this->resource = $resource;
         $this->resourceClass = $this->resolveResource($resource, 'viewAny');
         $this->initializeFilterDefaults();
+
+        if ($this->perPage < 1) {
+            $this->perPage = (int) config('panel.per_page', 15);
+        }
+    }
+
+    public function updatedPerPage(): void
+    {
+        $this->resetPage();
     }
 
     public function updatingSearch(): void
@@ -484,10 +496,12 @@ final class ResourceIndex extends Component
         $this->finishImportResult($result);
     }
 
-    /** @param array{imported: int, failed: int, errors: list<string>} $result */
+    /** @param array{imported: int, updated?: int, failed: int, errors: list<string>} $result */
     private function finishImportResult(array $result): void
     {
-        if ($result['imported'] === 0 && $result['failed'] === 0 && $result['errors'] !== []) {
+        $actualizados = (int) ($result['updated'] ?? 0);
+
+        if ($result['imported'] === 0 && $actualizados === 0 && $result['failed'] === 0 && $result['errors'] !== []) {
             $this->toastError($result['errors'][0]);
 
             return;
@@ -502,7 +516,15 @@ final class ResourceIndex extends Component
             return;
         }
 
-        $this->toastSuccess(__('panel::panel.import.success', ['count' => $result['imported']]));
+        if ($actualizados > 0) {
+            $this->toastSuccess(__('panel::panel.import.upsert_success', [
+                'imported' => $result['imported'],
+                'updated' => $actualizados,
+            ]));
+        } else {
+            $this->toastSuccess(__('panel::panel.import.success', ['count' => $result['imported']]));
+        }
+
         $this->resetPage();
     }
 
@@ -523,6 +545,8 @@ final class ResourceIndex extends Component
             'filters' => $resourceClass::filters(),
             'rowActions' => $resourceClass::rowActions(),
             'bulkActions' => $this->visibleBulkActions(),
+            'tableClasses' => \MyLaravelTools\Panel\Support\PanelLayout::clasesTabla(),
+            'perPageOptions' => $this->perPageOptions(),
             'records' => $this->paginateRecords(),
             'hasBulkActions' => $this->visibleBulkActions() !== [],
             'selectedCount' => count($this->selected),
@@ -562,7 +586,16 @@ final class ResourceIndex extends Component
             sortColumn: $this->sortColumn,
             sortDirection: $this->sortDirection,
             trashed: $this->trashed,
+            perPage: $this->perPage,
         );
+    }
+
+    /** @return list<int> */
+    private function perPageOptions(): array
+    {
+        $opciones = $this->resourceClass::perPageOptions();
+
+        return $opciones !== [] ? $opciones : \MyLaravelTools\Panel\Support\PanelLayout::opcionesPorPagina();
     }
 
     private function initializeFilterDefaults(): void

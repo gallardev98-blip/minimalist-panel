@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Panel\Resources;
+
+use App\Models\Post;
+use MyLaravelTools\Panel\Columns\TextColumn;
+use MyLaravelTools\Panel\Fields\TextField;
+use MyLaravelTools\Panel\Resources\Resource;
+
+final class PostResource extends Resource
+{
+    protected static string $model = Post::class;
+
+    protected static ?string $label = 'Posts';
+
+    protected static ?string $icon = 'file-text';
+
+    public static function importUpsertKey(): ?string
+    {
+        return 'title';
+    }
+
+    public static function form(): array
+    {
+        return [
+            TextField::make('title')->label('Título')->required(),
+        ];
+    }
+
+    public static function table(): array
+    {
+        return [
+            TextColumn::make('title')->label('Título')->searchable()->sortable(),
+        ];
+    }
+}

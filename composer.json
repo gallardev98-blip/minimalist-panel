@@ -52,7 +52,8 @@
                 "MyLaravelTools\\Panel\\PanelServiceProvider"
             ],
             "aliases": {
-                "Panel": "MyLaravelTools\\Panel\\Facades\\Panel"
+                "Panel": "MyLaravelTools\\Panel\\Facades\\Panel",
+                "PanelExtensions": "MyLaravelTools\\Panel\\Facades\\PanelExtensions"
             }
         }
     },
@@ -61,6 +62,6 @@
     },
     "prefer-stable": true,
     "replace": {
-        "mylaraveltools/minimalist": "0.21.0"
+        "mylaraveltools/minimalist": "0.24.0"
     }
 }

@@ -9,6 +9,8 @@ use Livewire\Component;
 
 final class LocaleSwitcher extends Component
 {
+    public string $menuPlacement = 'up';
+
     public function setLocale(string $locale): void
     {
         PanelLocale::set($locale);
@@ -21,6 +23,7 @@ final class LocaleSwitcher extends Component
         return view('panel::livewire.locale-switcher', [
             'locales' => PanelLocale::available(),
             'current' => PanelLocale::resolve() ?? app()->getLocale(),
+            'menuPlacement' => in_array($this->menuPlacement, ['up', 'down'], true) ? $this->menuPlacement : 'up',
         ]);
     }
 }

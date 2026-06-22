@@ -141,9 +141,9 @@
         @include('panel::partials.skeleton-table')
     </div>
 
-    <div class="panel-table-wrap" wire:loading.delay.class="opacity-50" wire:target="search,filterValues,trashed,sortBy,gotoPage,nextPage,previousPage">
+    <div class="panel-table-wrap {{ $tableClasses ?? '' }}" wire:loading.delay.class="opacity-50" wire:target="search,filterValues,trashed,sortBy,gotoPage,nextPage,previousPage,perPage">
         <div class="overflow-x-auto">
-            <table class="panel-table">
+            <table class="panel-table {{ $tableClasses ?? '' }}">
                 <thead>
                     <tr>
                         @if ($hasBulkActions)
@@ -211,9 +211,23 @@
             </table>
         </div>
 
-        @if ($records->hasPages())
-            <div class="panel-border border-t px-4 py-3">
-                {{ $records->links() }}
+        @if ($records->hasPages() || count($perPageOptions ?? []) > 1)
+            <div class="panel-border flex flex-wrap items-center justify-between gap-3 border-t px-4 py-3">
+                @if (count($perPageOptions ?? []) > 1)
+                    <label class="panel-muted flex items-center gap-2 text-sm">
+                        <span>{{ __('panel::panel.per_page') }}</span>
+                        <select wire:model.live="perPage" class="panel-input !w-auto !py-1 text-sm">
+                            @foreach ($perPageOptions as $opcion)
+                                <option value="{{ $opcion }}">{{ $opcion }}</option>
+                            @endforeach
+                        </select>
+                    </label>
+                @else
+                    <span></span>
+                @endif
+                @if ($records->hasPages())
+                    {{ $records->links() }}
+                @endif
             </div>
         @endif
     </div>

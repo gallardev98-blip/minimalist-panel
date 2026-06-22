@@ -201,6 +201,93 @@ return [
     'brand' => [
         'name' => 'Panel',
         'logo' => null,
+        'logo_height' => '2rem',
+        'favicon' => null,
+        'tagline' => null,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Layout del panel
+    |--------------------------------------------------------------------------
+    |
+    | mode — sidebar | topbar | dual
+    | sidebar_position — left | right
+    | table_striped / table_compact — estilo de tablas
+    | global_search — Cmd/Ctrl+K y componente de búsqueda
+    | per_page_options — selector en listados
+    | title_prefix / title_suffix — <title> del layout
+    |
+    */
+
+    'layout' => [
+        'mode' => 'sidebar',
+        'sidebar_position' => 'left',
+        'density' => 'comfortable',
+        'content_width' => 'full',
+        'sidebar_collapsible' => false,
+        'sidebar_collapsed_width' => '4.5rem',
+        'table_striped' => false,
+        'table_compact' => false,
+        'global_search' => true,
+        'global_search_shortcut' => true,
+        'show_version' => true,
+        'show_breadcrumbs' => true,
+        'show_mobile_menu' => true,
+        'title_prefix' => null,
+        'title_suffix' => null,
+        'per_page_options' => [15, 25, 50, 100],
+        'footer_links' => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Slots Blade (inyectar HTML en zonas del layout)
+    |--------------------------------------------------------------------------
+    |
+    | sidebar.before | sidebar.after | main.before | main.after | topbar.end
+    |
+    */
+
+    'slots' => [
+        'sidebar.before' => null,
+        'sidebar.after' => null,
+        'main.before' => null,
+        'main.after' => null,
+        'topbar.end' => null,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Auth — apariencia (login, registro, reset)
+    |--------------------------------------------------------------------------
+    |
+    | layout — centered | split (split requiere image)
+    | background — URL, ruta asset o gradiente CSS para el fondo
+    | image — imagen lateral en layout split
+    |
+    */
+
+    'auth_ui' => [
+        'layout' => 'centered',
+        'background' => null,
+        'image' => null,
+        'show_tagline' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Personalización avanzada
+    |--------------------------------------------------------------------------
+    |
+    | css — CSS inline inyectado en <head>
+    | head_view — vista Blade extra en <head> (analytics, fuentes propias…)
+    |
+    */
+
+    'customization' => [
+        'css' => null,
+        'head_view' => null,
     ],
 
     /*
@@ -242,6 +329,8 @@ return [
     'import' => [
         'enabled' => true,
         'preview' => true,
+        'upsert' => false,
+        'upsert_key' => null,
     ],
 
     /*
@@ -266,9 +355,15 @@ return [
     |
     | Paleta monocromática por defecto. Modo claro: :root | oscuro: .dark (html.dark)
     |
+    | preset — minimal | corporate | contrast | ocean (ver config/panel-theme-presets.php del paquete).
+    | presets_file — ruta a PHP con presets propios (se fusionan con los del paquete).
+    | Los valores de este array sobrescriben el preset elegido.
+    |
     */
 
     'theme' => [
+        'preset' => 'minimal',
+        'presets_file' => null,
         'default' => 'dark',
         'font' => 'Plus Jakarta Sans',
         'radius' => '0.75rem',
@@ -323,6 +418,26 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Extensiones (campos, columnas y widgets custom)
+    |--------------------------------------------------------------------------
+    |
+    | También puedes registrar en AppServiceProvider con PanelExtensions::registrarVistaCampo().
+    |
+    | 'field_views' => ['mi-tipo' => 'mi-app.panel.fields.mi-tipo'],
+    | 'column_views' => ['mi-columna' => 'mi-app.panel.columns.mi-columna'],
+    | 'widgets' => [StatWidget::make('Total', fn () => 42)],
+    |
+    */
+
+    'extensions' => [
+        'field_views' => [],
+        'column_views' => [],
+        'widgets' => [],
+        'slots' => [],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Integraciones opcionales
     |--------------------------------------------------------------------------
     |
@@ -333,6 +448,22 @@ return [
 
     'integrations' => [
         'alertas' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Documentación interactiva
+    |--------------------------------------------------------------------------
+    |
+    | Página /pages/documentacion con playground y vista previa en vivo.
+    | Archivo estático: documentation/panel/README.md en el paquete.
+    |
+    */
+
+    'documentation' => [
+        'enabled' => true,
+        'path' => 'playground',
+        'middleware' => ['web'],
     ],
 
 ];

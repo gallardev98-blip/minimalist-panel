@@ -8,7 +8,7 @@
     <span class="panel-nav-icon">
         <x-panel::icon name="layout-dashboard" class="h-4 w-4" />
     </span>
-    <span class="min-w-0 flex-1 truncate">{{ __('panel::panel.breadcrumbs.dashboard') }}</span>
+    <span class="panel-nav-text min-w-0 flex-1 truncate">{{ __('panel::panel.breadcrumbs.dashboard') }}</span>
 </a>
 
 <div x-data="{ openGroup: @json($openGroupIndex ?? null) }">
@@ -25,7 +25,7 @@
                     <span class="panel-nav-icon">
                         <x-panel::icon :name="$item['icon'] ?? 'folder'" class="h-4 w-4" />
                     </span>
-                    <span class="min-w-0 flex-1 truncate text-left">{{ $item['label'] }}</span>
+                    <span class="panel-nav-text min-w-0 flex-1 truncate text-left">{{ $item['label'] }}</span>
                     <x-panel::icon
                         name="chevron-down"
                         class="panel-nav-group-chevron h-4 w-4 shrink-0 transition-transform"
@@ -45,7 +45,7 @@
                             @click="openGroup = {{ $index }}; sidebarOpen = false"
                             class="panel-nav-sublink {{ $isCurrent ? 'panel-nav-sublink-active' : '' }}"
                         >
-                            <span class="min-w-0 flex-1 truncate">{{ $child['label'] }}</span>
+                            <span class="panel-nav-text min-w-0 flex-1 truncate">{{ $child['label'] }}</span>
                         </a>
                     @endforeach
                 </div>
@@ -61,11 +61,12 @@
                 wire:navigate.hover
                 @click="sidebarOpen = false"
                 class="panel-nav-link {{ $isCurrent ? 'panel-nav-link-active' : '' }}"
+                title="{{ $item['label'] }}"
             >
                 <span class="panel-nav-icon">
                     <x-panel::icon :name="$iconName" class="h-4 w-4" />
                 </span>
-                <span class="min-w-0 flex-1 truncate">{{ $item['label'] }}</span>
+                <span class="panel-nav-text min-w-0 flex-1 truncate">{{ $item['label'] }}</span>
             </a>
         @endif
     @endforeach

@@ -37,7 +37,7 @@ final class NavigationBuilder
         $items = [];
 
         foreach ($registry->all() as $resourceClass) {
-            if (! $resourceClass::authorize('viewAny')) {
+            if ($resourceClass::hiddenFromNavigation() || ! $resourceClass::authorize('viewAny')) {
                 continue;
             }
 
@@ -56,6 +56,7 @@ final class NavigationBuilder
             'slug' => $resourceClass::slug(),
             'icon' => $resourceClass::icon(),
             'url' => route('panel.resources.index', ['resource' => $resourceClass::slug()]),
+            'badge' => $resourceClass::navigationBadge(),
         ];
     }
 
@@ -68,6 +69,7 @@ final class NavigationBuilder
             'slug' => $pageClass::slug(),
             'icon' => $pageClass::icon(),
             'url' => $pageClass::url(),
+            'badge' => method_exists($pageClass, 'navigationBadge') ? $pageClass::navigationBadge() : null,
         ];
     }
 
@@ -207,6 +209,18 @@ final class NavigationBuilder
         }
 
         foreach ($children as $child) {
+            if (self::linkIsCurrent($child)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** @param array<string, mixed> $item */
+    public static function groupHasCurrentChild(array $item): bool
+    {
+        foreach ($item['children'] ?? [] as $child) {
             if (self::linkIsCurrent($child)) {
                 return true;
             }

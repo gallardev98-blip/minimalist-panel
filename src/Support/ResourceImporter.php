@@ -13,14 +13,14 @@ final class ResourceImporter
 {
     /**
      * @param class-string<Resource> $resourceClass
-     * @return array{imported: int, failed: int, errors: list<string>}
+     * @return array{imported: int, updated: int, failed: int, errors: list<string>}
      */
     public function fromPath(string $resourceClass, string $path, string $extension): array
     {
         $analysis = $this->analyzePath($resourceClass, $path, $extension);
 
         if ($analysis['rows'] === [] && $analysis['errors'] !== []) {
-            return ['imported' => 0, 'failed' => 0, 'errors' => $analysis['errors']];
+            return ['imported' => 0, 'updated' => 0, 'failed' => 0, 'errors' => $analysis['errors']];
         }
 
         $payloads = array_values(array_filter(
@@ -97,7 +97,7 @@ final class ResourceImporter
     /**
      * @param class-string<Resource> $resourceClass
      * @param list<array<string, mixed>> $payloads
-     * @return array{imported: int, failed: int, errors: list<string>}
+     * @return array{imported: int, updated: int, failed: int, errors: list<string>}
      */
     public function importPayloads(string $resourceClass, array $payloads): array
     {
@@ -105,6 +105,7 @@ final class ResourceImporter
 
         $fields = ImportColumnHelper::importableFields($resourceClass);
         $imported = 0;
+        $updated = 0;
         $failed = 0;
         $errors = [];
 
@@ -117,11 +118,17 @@ final class ResourceImporter
                 continue;
             }
 
+            if ($result === '__upsert_updated__') {
+                $updated++;
+
+                continue;
+            }
+
             $failed++;
             $errors[] = $result;
         }
 
-        return compact('imported', 'failed', 'errors');
+        return compact('imported', 'updated', 'failed', 'errors');
     }
 
     /** @return list<list<string>> */
@@ -304,9 +311,51 @@ final class ResourceImporter
         $validated = Validator::make($payload, $rules, $resourceClass::validationMessages())->validated();
         $stored = FieldPayload::fromValidated($fields, $validated);
         $modelClass = $resourceClass::modelClass();
+        $claveUpsert = $this->claveUpsert($resourceClass, $stored);
+
+        if ($claveUpsert !== null) {
+            $existente = $modelClass::query()->where($claveUpsert, $stored[$claveUpsert] ?? null)->first();
+
+            if ($existente !== null) {
+                if (! $resourceClass::authorize('update', $existente)) {
+                    return __('panel::panel.import.upsert_denied', ['row' => $rowNumber]);
+                }
+
+                $existente->update($stored);
+                FieldPayload::persistAfterSave($fields, $validated, $existente);
+
+                return '__upsert_updated__';
+            }
+        }
+
         $record = $modelClass::query()->create($stored);
         FieldPayload::persistAfterSave($fields, $validated, $record);
 
         return null;
+    }
+
+    /**
+     * @param class-string<Resource> $resourceClass
+     * @param array<string, mixed> $stored
+     */
+    private function claveUpsert(string $resourceClass, array $stored): ?string
+    {
+        if (! (bool) config('panel.import.upsert', false)) {
+            return null;
+        }
+
+        $clave = $resourceClass::importUpsertKey() ?? config('panel.import.upsert_key');
+
+        if (! is_string($clave) || $clave === '' || ! array_key_exists($clave, $stored)) {
+            return null;
+        }
+
+        $valor = $stored[$clave];
+
+        if ($valor === null || $valor === '') {
+            return null;
+        }
+
+        return $clave;
     }
 }

@@ -9,7 +9,7 @@ final class ThemeResolver
     /** @return array<string, string> */
     public static function lightVariables(): array
     {
-        $theme = config('panel.theme', []);
+        $theme = ThemePresets::resolver();
         $colors = $theme['colors'] ?? [];
         $light = $theme['light'] ?? [];
 
@@ -45,7 +45,7 @@ final class ThemeResolver
     /** @return array<string, string> */
     public static function darkVariables(): array
     {
-        $theme = config('panel.theme', []);
+        $theme = ThemePresets::resolver();
         $colors = $theme['colors'] ?? [];
         $dark = $theme['dark'] ?? [];
 
@@ -77,14 +77,14 @@ final class ThemeResolver
 
     public static function fontFamily(): string
     {
-        $font = (string) config('panel.theme.font', 'Plus Jakarta Sans');
+        $font = (string) (ThemePresets::resolver()['font'] ?? 'Plus Jakarta Sans');
 
         return "'{$font}', ui-sans-serif, system-ui, sans-serif";
     }
 
     public static function googleFontsUrl(): string
     {
-        $font = (string) config('panel.theme.font', 'Plus Jakarta Sans');
+        $font = (string) (ThemePresets::resolver()['font'] ?? 'Plus Jakarta Sans');
         $query = str_replace(' ', '+', $font);
 
         return "https://fonts.googleapis.com/css2?family={$query}:wght@400;500;600;700&display=swap";
@@ -93,8 +93,9 @@ final class ThemeResolver
     /** @return array<string, string> */
     public static function themeColorMap(): array
     {
-        $colors = config('panel.theme.colors', []);
-        $light = config('panel.theme.light', []);
+        $theme = ThemePresets::resolver();
+        $colors = $theme['colors'] ?? [];
+        $light = $theme['light'] ?? [];
 
         return [
             'primary' => (string) ($colors['primary'] ?? '#000000'),

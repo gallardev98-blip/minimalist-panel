@@ -10,9 +10,12 @@ use MyLaravelTools\Panel\Widgets\StatWidget;
 
 final class WidgetRegistry
 {
-    /** @return array<int, StatWidget|ResourceCountWidget|ChartWidget> */
+    /** @return array<int, StatWidget|ResourceCountWidget|ChartWidget|\MyLaravelTools\Panel\Widgets\ViewWidget|object> */
     public function all(): array
     {
-        return config('panel.widgets', []);
+        $config = config('panel.widgets', []);
+        $registrados = app(PanelExtensions::class)->widgetsRegistrados();
+
+        return array_merge($config, $registrados);
     }
 }

@@ -78,6 +78,9 @@
         @case('chevron-right')
             <path d="m9 18 6-6-6-6"/>
             @break
+        @case('chevron-left')
+            <path d="m15 18-6-6 6-6"/>
+            @break
         @case('rotate-ccw')
             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
             @break
@@ -128,6 +131,12 @@
             @break
         @case('clipboard-list')
             <rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/>
+            @break
+        @case('copy')
+            <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+            @break
+        @case('check')
+            <path d="M20 6 9 17l-5-5"/>
             @break
         @case('bell')
             <path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/>

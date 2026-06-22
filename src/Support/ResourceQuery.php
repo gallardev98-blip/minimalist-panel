@@ -56,9 +56,12 @@ final class ResourceQuery
         string $sortColumn = '',
         string $sortDirection = 'asc',
         string $trashed = '',
+        ?int $perPage = null,
     ): LengthAwarePaginator {
+        $porPagina = $perPage ?? (int) config('panel.per_page', 15);
+
         return $this->build($columns, $filters, $filterValues, $search, $sortColumn, $sortDirection, $trashed)
-            ->paginate((int) config('panel.per_page', 15));
+            ->paginate(max(1, $porPagina));
     }
 
     private function applyTrashed(Builder $query, string $trashed): void

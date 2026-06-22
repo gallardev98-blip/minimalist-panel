@@ -48,8 +48,24 @@ final class ResourceImporterTest extends TestCase
         ]);
 
         $this->assertSame(2, $result['imported']);
+        $this->assertSame(0, $result['updated'] ?? 0);
         $this->assertSame(0, $result['failed']);
         $this->assertSame(2, Article::query()->whereIn('title', ['Importado A', 'Importado B'])->count());
+    }
+
+    public function test_import_upsert_actualiza_registro_existente(): void
+    {
+        config()->set('panel.import.upsert', true);
+
+        Article::query()->create(['title' => 'Existente', 'published' => false]);
+
+        $result = app(ResourceImporter::class)->importPayloads(ArticleResource::class, [
+            ['title' => 'Existente'],
+        ]);
+
+        $this->assertSame(0, $result['imported']);
+        $this->assertSame(1, $result['updated']);
+        $this->assertSame(1, Article::query()->where('title', 'Existente')->count());
     }
 
     private function tempCsv(string $content): string

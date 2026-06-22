@@ -4,6 +4,56 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.24.0] - 2026-06-21
+
+### Added
+
+- **Layout modes** — `sidebar` | `topbar` | `dual` + `sidebar_position` left/right
+- **PanelSlots** — inyectar vistas en `sidebar.before`, `main.after`, `topbar.end`, etc.
+- **Import upsert** — `import.upsert`, `import.upsert_key`, `Resource::importUpsertKey()`
+- **Tablas** — `table_striped`, `table_compact`, selector `per_page` en listados
+- **Resource hooks** — `navigationBadge()`, `hiddenFromNavigation()`, `perPageOptions()`
+- **Tema** — `theme.presets_file` para presets propios en la app
+- **`panel:install --demo`** — navigation stub + PostResource ejemplo
+- Tests upsert + layout
+
+### Changed
+
+- Títulos HTML con `title_prefix` / `title_suffix`
+- Búsqueda global desactivable (`global_search`)
+
+## [0.23.0] - 2026-06-21
+
+### Added
+
+- **`PanelLayout`** — densidad, ancho contenido, sidebar colapsable, breadcrumbs, enlaces footer
+- **`auth_ui`** — layout `centered`|`split`, fondo, imagen lateral, tagline de marca
+- **`customization`** — CSS inline y vista Blade en `<head>`
+- **Marca ampliada** — `favicon`, `logo_height`, `tagline`
+- **`RepeaterField`** — filas repetibles con columnas configurables (JSON)
+- Tests `PanelLayoutTest`
+
+### Changed
+
+- Sidebar con botón colapsar (escritorio), persistencia en `localStorage`
+- Login split con imagen lateral opcional
+
+## [0.22.0] - 2026-06-21
+
+### Added
+
+- **Extensibilidad** — `PanelExtensions` facade: registrar vistas de campos/columnas y widgets desde código o `config/panel.php` → `extensions`
+- **Presets de tema** — `theme.preset`: `minimal`, `corporate`, `contrast`, `ocean` (`config/panel-theme-presets.php`)
+- **Campos nuevos** — `ColorField`, `DateTimeField`, `KeyValueField`, `CustomField`
+- **Columna** — `ColorColumn`
+- Comando **`panel:upgrade-views`** — detecta vistas publicadas desactualizadas (`--dry-run`, `--force`)
+- Tests `ExtensibilityTest`
+
+### Changed
+
+- `ThemeResolver` resuelve tema vía `ThemePresets` (preset + overrides)
+- `WidgetRegistry` fusiona widgets de config y extensiones registradas
+
 ## [0.21.0] - 2026-06-21
 
 ### Added

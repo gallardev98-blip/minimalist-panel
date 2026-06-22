@@ -8,12 +8,13 @@ use MyLaravelTools\Panel\Commands\InstallPanelCommand;
 use MyLaravelTools\Panel\Commands\MakePageCommand;
 use MyLaravelTools\Panel\Commands\MakePolicyCommand;
 use MyLaravelTools\Panel\Commands\MakeResourceCommand;
+use MyLaravelTools\Panel\Commands\UpgradeViewsCommand;
 use MyLaravelTools\Panel\Livewire\Auth\ForgotPassword;
 use MyLaravelTools\Panel\Livewire\Auth\Login as PanelLogin;
 use MyLaravelTools\Panel\Livewire\Auth\Register as PanelRegister;
 use MyLaravelTools\Panel\Livewire\Auth\ResetPassword;
 use MyLaravelTools\Panel\Livewire\Auth\VerifyEmail;
-use MyLaravelTools\Panel\Livewire\Dashboard;
+use MyLaravelTools\Panel\Livewire\PlaygroundApp;
 use MyLaravelTools\Panel\Livewire\LocaleSwitcher;
 use MyLaravelTools\Panel\Livewire\PanelPage;
 use MyLaravelTools\Panel\Livewire\Profile;
@@ -22,6 +23,8 @@ use MyLaravelTools\Panel\Livewire\RelationPanel;
 use MyLaravelTools\Panel\Livewire\ResourceForm;
 use MyLaravelTools\Panel\Livewire\ResourceIndex;
 use MyLaravelTools\Panel\Livewire\ResourceShow;
+use MyLaravelTools\Panel\Support\PanelExtensions;
+use MyLaravelTools\Panel\Support\PanelSlots;
 use MyLaravelTools\Panel\Support\CsvExporter;
 use MyLaravelTools\Panel\Support\PanelLocale;
 use MyLaravelTools\Panel\Support\ExcelExporter;
@@ -49,6 +52,8 @@ final class PanelServiceProvider extends ServiceProvider
         $this->app->singleton(PageRegistry::class);
         $this->app->singleton(ResourceAuthorizer::class);
         $this->app->singleton(WidgetRegistry::class);
+        $this->app->singleton(PanelExtensions::class);
+        $this->app->singleton(PanelSlots::class);
         $this->app->singleton(CsvExporter::class);
         $this->app->singleton(ExcelExporter::class);
         $this->app->singleton(ResourceImporter::class);
@@ -58,6 +63,7 @@ final class PanelServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        $this->registerExtensions();
         $this->registerPublishing();
         $this->registerCommands();
         $this->registerViews();
@@ -85,11 +91,21 @@ final class PanelServiceProvider extends ServiceProvider
         $this->app->make(PolicyRegistrar::class)->register();
     }
 
+    private function registerExtensions(): void
+    {
+        $this->app->make(PanelExtensions::class)->aplicarDesdeConfig();
+        $this->app->make(PanelSlots::class)->aplicarDesdeConfig();
+    }
+
     private function registerPublishing(): void
     {
         if (! $this->app->runningInConsole()) {
             return;
         }
+
+        $this->publishes([
+            __DIR__ . '/../documentation/panel' => base_path('documentation/panel'),
+        ], 'panel-documentation');
 
         $this->publishes([
             __DIR__ . '/../config/panel.php' => config_path('panel.php'),
@@ -119,6 +135,7 @@ final class PanelServiceProvider extends ServiceProvider
             MakeResourceCommand::class,
             MakePageCommand::class,
             MakePolicyCommand::class,
+            UpgradeViewsCommand::class,
         ]);
     }
 
@@ -148,6 +165,7 @@ final class PanelServiceProvider extends ServiceProvider
         Livewire::component('panel.forgot-password', ForgotPassword::class);
         Livewire::component('panel.reset-password', ResetPassword::class);
         Livewire::component('panel.verify-email', VerifyEmail::class);
+        Livewire::component('panel.playground', PlaygroundApp::class);
         Livewire::component('panel.locale-switcher', LocaleSwitcher::class);
         Livewire::component('panel.dashboard', Dashboard::class);
         Livewire::component('panel.profile', Profile::class);
@@ -176,5 +194,9 @@ final class PanelServiceProvider extends ServiceProvider
         ], function (): void {
             $this->loadRoutesFrom(__DIR__ . '/../routes/panel.php');
         });
+
+        if (config('panel.documentation.enabled', true)) {
+            $this->loadRoutesFrom(__DIR__ . '/../routes/playground.php');
+        }
     }
 }

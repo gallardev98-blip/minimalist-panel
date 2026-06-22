@@ -1,10 +1,12 @@
 @php
     use MyLaravelTools\Panel\Support\Package;
+    use MyLaravelTools\Panel\Support\PanelLayout;
     use MyLaravelTools\Panel\Support\ResourceRegistry;
 
     $panelPath = config('panel.path', 'admin');
     $navigation = app(ResourceRegistry::class)->navigation();
     $panelVersion = config('panel.version') ?? ('v'.Package::VERSION);
+    $sidebarColapsable = PanelLayout::sidebarColapsable();
 
     $openGroupIndex = null;
 
@@ -18,27 +20,39 @@
 @endphp
 
 <aside
-    class="panel-sidebar fixed inset-y-0 left-0 z-50 flex -translate-x-full flex-col transition-transform duration-200 lg:translate-x-0"
+    class="panel-sidebar fixed inset-y-0 left-0 z-50 flex -translate-x-full flex-col transition-transform duration-200 lg:translate-x-0 {{ \MyLaravelTools\Panel\Support\PanelLayout::modo() === 'topbar' ? 'panel-sidebar--mobile-drawer' : '' }}"
     :class="{ 'translate-x-0': sidebarOpen }"
 >
-    <div class="panel-border flex h-16 items-center gap-3 border-b px-5">
+    <div class="panel-chrome-header panel-border">
         @include('panel::partials.brand-mark')
         <a
             href="{{ route('panel.dashboard') }}"
             wire:navigate
             wire:navigate.hover
-            class="panel-heading truncate text-base font-bold tracking-tight"
+            class="panel-heading panel-sidebar-brand-text truncate text-base font-bold tracking-tight"
         >
             {{ $brandName }}
         </a>
+        @if ($sidebarColapsable)
+            <button
+                type="button"
+                class="panel-btn-icon panel-sidebar-collapse-btn ms-auto hidden lg:inline-flex"
+                @click="toggleSidebarCollapsed()"
+                :aria-label="sidebarCollapsed ? '{{ __('panel::panel.sidebar_expand') }}' : '{{ __('panel::panel.sidebar_collapse') }}'"
+            >
+                <x-panel::icon name="chevron-left" class="h-4 w-4 transition-transform" x-bind:class="{ 'rotate-180': sidebarCollapsed }" />
+            </button>
+        @endif
     </div>
 
     <nav class="panel-nav-scroll flex-1 space-y-0.5 overflow-y-auto p-3">
+        @include('panel::partials.render-slot', ['nombre' => 'sidebar.before'])
         @include('panel::partials.nav-links', [
             'navigation' => $navigation,
             'panelPath' => $panelPath,
             'openGroupIndex' => $openGroupIndex,
         ])
+        @include('panel::partials.render-slot', ['nombre' => 'sidebar.after'])
     </nav>
 
     <div class="panel-border panel-sidebar-footer border-t p-4">
@@ -71,6 +85,8 @@
                 </a>
             @endif
 
+            @include('panel::partials.sidebar-footer-links')
+
             <div class="panel-sidebar-toolbar">
                 @if (\MyLaravelTools\Panel\Support\PanelLocale::selectorEnabled())
                     <livewire:panel.locale-switcher />
@@ -90,7 +106,9 @@
                     </span>
                 </button>
 
-                <span class="panel-sidebar-version panel-muted">{{ $panelVersion }}</span>
+                @if (PanelLayout::mostrarVersion())
+                    <span class="panel-sidebar-version panel-muted">{{ $panelVersion }}</span>
+                @endif
 
                 <form method="POST" action="{{ route(\MyLaravelTools\Panel\Support\PanelAuth::logoutRouteName()) }}" class="panel-sidebar-logout-form">
                     @csrf
