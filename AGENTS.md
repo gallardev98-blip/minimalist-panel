@@ -28,7 +28,9 @@
 
 **v0.24.0** (2026-06-21): personalización máxima — modos layout (`sidebar`|`topbar`|`dual`), `PanelSlots`, import upsert, tablas rayadas/compactas, selector `per_page`, badges en navegación, `theme.presets_file`, `panel:install --demo`.
 
-**v0.25.0** (2026-06-20): playground público completo (gráficos, zonas, export), `panel:doctor`, `panel:make-widget`, enlace playground en sidebar.
+**v0.25.0** (2026-06-20): playground público completo (gráficos, zonas, export), `panel:doctor`, `panel:make-widget`.
+
+**v0.26.0** (2026-06-20): layout móvil — `mobile-bar`, drawer sidebar/topbar/dual, UX del menú (X, footer limpio, sin hamburguesa duplicada).
 
 **Playground público** (v0.25): ruta `GET /playground` (sin login) — demo interactiva de `config/panel.php` y `ChartWidget`; ver sección **Playground** más abajo (regla obligatoria para agentes).
 

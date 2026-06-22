@@ -4,6 +4,24 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.26.0] - 2026-06-20
+
+### Added
+
+- **`mobile-bar`** — barra sticky con hamburguesa en modo `sidebar` (móvil)
+- Botón **cerrar (X)** en el drawer del sidebar; marca y logo agrupados en el header
+
+### Fixed
+
+- **Layout móvil** en `sidebar`, `topbar` y `dual`: columna flex, menú off-canvas; grid de `dual` solo en desktop
+- **Sidebar derecho** — drawer desde la derecha en pantallas pequeñas
+- **Hamburguesa duplicada** en `dual`/`topbar` (eliminada del `page-header`)
+
+### Changed
+
+- `footer_links` del sidebar ocultos en móvil; sin enlace automático al playground en el footer
+- Escenario del playground alineado con el layout móvil del panel real
+
 ## [0.25.0] - 2026-06-20
 
 ### Added

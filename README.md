@@ -689,6 +689,7 @@ composer test
 - [x] Layout — densidad, boxed, sidebar colapsable, auth split, RepeaterField (v0.23)
 - [x] Máxima personalización — topbar/dual, slots, upsert, tablas, presets propios (v0.24)
 - [x] Playground público, gráficos interactivos, `panel:doctor`, `panel:make-widget` (v0.25)
+- [x] Layout móvil pulido — `mobile-bar`, drawer, modos sidebar/topbar/dual (v0.26)
 - [ ] Multi-panel, starter kit completo
 
 ---
