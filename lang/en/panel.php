@@ -70,6 +70,7 @@ return [
     'active' => 'Active',
     'trashed' => 'Trash',
     'all' => 'All',
+    'reset_filters' => 'Reset filters',
     'in_trash' => 'In trash',
     'restore' => 'Restore',
     'add' => 'Add',

@@ -737,6 +737,23 @@
         border-top: 1px solid rgb(var(--panel-border));
     }
 
+    .panel-cell-thumb {
+        width: 2.5rem;
+        height: 2.5rem;
+        flex-shrink: 0;
+        overflow: hidden;
+        border-radius: 0.375rem;
+        border: 1px solid rgb(var(--panel-border));
+        background-color: rgb(var(--panel-elevated));
+    }
+
+    .panel-cell-thumb img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
     .panel-table tbody tr {
         transition: background-color 0.1s;
     }

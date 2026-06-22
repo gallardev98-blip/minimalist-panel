@@ -103,6 +103,49 @@ final class ResourceIndex extends Component
         $this->selected = [];
     }
 
+    public function resetFilters(): void
+    {
+        $this->filterValues = [];
+        $this->search = '';
+        $this->initializeFilterDefaults();
+        $this->resetPage();
+        $this->selected = [];
+    }
+
+    public function hasActiveFilters(): bool
+    {
+        if ($this->search !== '') {
+            return true;
+        }
+
+        foreach ($this->resourceClass::filters() as $filter) {
+            $name = $filter->getName();
+            $value = $this->filterValues[$name] ?? null;
+
+            if ($filter->getType() === 'date-range') {
+                if (($value['from'] ?? '') !== '' || ($value['to'] ?? '') !== '') {
+                    return true;
+                }
+
+                continue;
+            }
+
+            if ($filter->getType() === 'multi-select') {
+                if (is_array($value) && $value !== []) {
+                    return true;
+                }
+
+                continue;
+            }
+
+            if ($value !== null && $value !== '') {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function sortBy(string $column): void
     {
         if ($this->sortColumn === $column) {
@@ -543,6 +586,7 @@ final class ResourceIndex extends Component
             'usesSoftDeletes' => $resourceClass::usesSoftDeletes(),
             'columns' => $resourceClass::table(),
             'filters' => $resourceClass::filters(),
+            'hasActiveFilters' => $this->hasActiveFilters(),
             'rowActions' => $resourceClass::rowActions(),
             'bulkActions' => $this->visibleBulkActions(),
             'tableClasses' => \MyLaravelTools\Panel\Support\PanelLayout::clasesTabla(),

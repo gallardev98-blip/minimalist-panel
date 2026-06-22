@@ -70,6 +70,7 @@ return [
     'active' => 'Activos',
     'trashed' => 'Papelera',
     'all' => 'Todos',
+    'reset_filters' => 'Restablecer filtros',
     'in_trash' => 'En papelera',
     'restore' => 'Restaurar',
     'add' => 'Añadir',

@@ -137,11 +137,11 @@
         @include('panel::partials.filters', ['filters' => $filters])
     </div>
 
-    <div wire:loading.delay.class.remove="hidden" wire:target="search,filterValues,trashed,sortBy,gotoPage,nextPage,previousPage" class="hidden">
+    <div wire:loading.delay.class.remove="hidden" wire:target="search,filterValues,resetFilters,trashed,sortBy,gotoPage,nextPage,previousPage" class="hidden">
         @include('panel::partials.skeleton-table')
     </div>
 
-    <div class="panel-table-wrap {{ $tableClasses ?? '' }}" wire:loading.delay.class="opacity-50" wire:target="search,filterValues,trashed,sortBy,gotoPage,nextPage,previousPage,perPage">
+    <div class="panel-table-wrap {{ $tableClasses ?? '' }}" wire:loading.delay.class="opacity-50" wire:target="search,filterValues,resetFilters,trashed,sortBy,gotoPage,nextPage,previousPage,perPage">
         <div class="overflow-x-auto">
             <table class="panel-table {{ $tableClasses ?? '' }}">
                 <thead>

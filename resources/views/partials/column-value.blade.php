@@ -46,7 +46,9 @@
 
     @case('image')
         @if ($value)
-            <img src="{{ $value }}" alt="" class="h-10 w-10 rounded-md object-cover ring-1 ring-[rgb(var(--panel-border))]">
+            <div class="panel-cell-thumb">
+                <img src="{{ $value }}" alt="">
+            </div>
         @else
             <span class="panel-muted">—</span>
         @endif

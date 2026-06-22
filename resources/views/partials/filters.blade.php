@@ -1,5 +1,5 @@
 @if ($filters !== [])
-    <div class="flex flex-wrap gap-4">
+    <div class="flex flex-wrap items-end gap-4">
         @foreach ($filters as $filter)
             @php
                 $name = $filter->getName();
@@ -48,5 +48,17 @@
                 @endif
             </div>
         @endforeach
+
+        @if ($hasActiveFilters ?? false)
+            <button
+                type="button"
+                wire:click="resetFilters"
+                class="panel-btn panel-btn-ghost panel-btn-compact shrink-0"
+                aria-label="{{ __('panel::panel.reset_filters') }}"
+            >
+                <x-panel::icon name="rotate-ccw" class="h-4 w-4" />
+                {{ __('panel::panel.reset_filters') }}
+            </button>
+        @endif
     </div>
 @endif
