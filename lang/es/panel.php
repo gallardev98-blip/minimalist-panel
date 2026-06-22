@@ -188,6 +188,16 @@ return [
             'verified' => 'Correo verificado correctamente.',
         ],
     ],
+    'impersonate' => [
+        'action' => 'Entrar como',
+        'confirm' => '¿Entrar al panel como este usuario?',
+        'banner' => 'Navegando como :name (:email)',
+        'float_label' => 'Simulando',
+        'float_hint' => 'Vista como este usuario',
+        'leave' => 'Volver a mi cuenta',
+        'leave_short' => 'Salir',
+        'failed' => 'No se pudo suplantar a este usuario.',
+    ],
     'validation' => [
         'required' => 'El campo :attribute es obligatorio.',
         'email' => 'El campo :attribute debe ser un correo electrónico válido.',

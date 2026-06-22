@@ -188,6 +188,16 @@ return [
             'verified' => 'Email verified successfully.',
         ],
     ],
+    'impersonate' => [
+        'action' => 'Impersonate',
+        'confirm' => 'Open the panel as this user?',
+        'banner' => 'Browsing as :name (:email)',
+        'float_label' => 'Simulating',
+        'float_hint' => 'Viewing as this user',
+        'leave' => 'Return to my account',
+        'leave_short' => 'Exit',
+        'failed' => 'Could not impersonate this user.',
+    ],
     'validation' => [
         'required' => 'The :attribute field is required.',
         'email' => 'The :attribute field must be a valid email address.',

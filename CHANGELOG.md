@@ -4,6 +4,11 @@ All notable changes to `mylaraveltools/minimalist` are documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **Suplantación de usuario** — `PanelImpersonation`, config `impersonation`, RowAction «Entrar como», banner, ruta `impersonation.leave`
+- Tests `PanelImpersonationTest`
+
 ## [0.20.0] - 2026-06-21
 
 ### Added

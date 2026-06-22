@@ -20,7 +20,9 @@
 
 **v0.18.0** (2026-06-20): `ViewWidget`, tipo `progression`, `ChartWidget::themeColors()`, gráficos reactivos al tema y SPA, docs demo al día.
 
-**v0.20.0** (2026-06-21): auth UX — redirect completo post-login (sin loader SPA), botón con puntos animados (`auth-loading-text`), `Package::VERSION` sincronizado.
+**v0.20.0** (2026-06-21): auth UX — redirect completo post-login, botón con puntos animados (`auth-loading-text`), `Package::VERSION` sincronizado.
+
+**v0.21.0** (pendiente): suplantación de usuario — `PanelImpersonation`, RowAction «Entrar como», banner, config `impersonation`.
 
 **v0.19.0** (2026-06-20): import con **vista previa** (`import.preview`), demo hasOne/morphMany en Productos.
 

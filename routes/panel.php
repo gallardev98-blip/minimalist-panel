@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use MyLaravelTools\Panel\Http\Controllers\ImpersonationController;
 use MyLaravelTools\Panel\Livewire\Dashboard;
 use MyLaravelTools\Panel\Livewire\PanelPage;
 use MyLaravelTools\Panel\Livewire\ResourceForm;
@@ -10,6 +11,11 @@ use MyLaravelTools\Panel\Livewire\ResourceShow;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', Dashboard::class)->name('dashboard');
+
+if (config('panel.impersonation.enabled', false)) {
+    Route::post('/impersonation/leave', [ImpersonationController::class, 'leave'])
+        ->name('impersonation.leave');
+}
 
 if (config('panel.profile.enabled', true)) {
     Route::get('/profile', \MyLaravelTools\Panel\Livewire\Profile::class)->name('profile');

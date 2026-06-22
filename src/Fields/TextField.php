@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace MyLaravelTools\Panel\Fields;
 
-final class TextField extends Field
+class TextField extends Field
 {
     protected ?string $placeholder = null;
 

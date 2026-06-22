@@ -107,6 +107,25 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Suplantación de usuario (impersonation)
+    |--------------------------------------------------------------------------
+    |
+    | Permite a un admin navegar el panel como otro usuario (permisos, menú, policies).
+    | RowAction "Entrar como" en el resource del modelo User.
+    | permission — Spatie/Gate; solo usuarios con ese permiso pueden suplantar.
+    | exclude_ids — IDs que nunca se pueden suplantar.
+    |
+    */
+
+    'impersonation' => [
+        'enabled' => false,
+        'permission' => 'impersonate users',
+        'exclude_ids' => [],
+        'banner' => true,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Resources (CRUD)
     |--------------------------------------------------------------------------
     */

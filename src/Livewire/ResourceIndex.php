@@ -16,7 +16,7 @@ use MyLaravelTools\Panel\Support\ExcelExporter;
 use MyLaravelTools\Panel\Support\FormSchema;
 use MyLaravelTools\Panel\Support\ImportTemplateExporter;
 use MyLaravelTools\Panel\Support\PdfExporter;
-use MyLaravelTools\Panel\Support\ResourceImporter;
+use MyLaravelTools\Panel\Support\PanelImpersonation;
 use MyLaravelTools\Panel\Support\ResourceQuery;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -142,11 +142,23 @@ final class ResourceIndex extends Component
             'delete' => $this->delete($recordId),
             'restore' => $this->restore($recordId),
             'forceDelete' => $this->forceDelete($recordId),
+            'impersonate' => $this->impersonate($record),
             default => tap(null, function () use ($action, $record): void {
                 $action->run($record);
                 $this->toastSuccess(__('panel::panel.action_completed'));
             }),
         };
+    }
+
+    private function impersonate(Model $record): void
+    {
+        if (! PanelImpersonation::start($record)) {
+            $this->toastError(__('panel::panel.impersonate.failed'));
+
+            return;
+        }
+
+        $this->redirect(route('panel.dashboard', [], false), navigate: false);
     }
 
     public function delete(int|string $recordId): void

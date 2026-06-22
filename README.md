@@ -77,6 +77,21 @@ Ruta `/admin/profile` — el usuario logueado edita su cuenta:
 
 Desactivar con `'enabled' => false` si no lo necesitas.
 
+### Suplantación de usuario (impersonation)
+
+Navega el panel **como otro usuario** (mismos permisos, menú y policies). Desactivado por defecto.
+
+```php
+'impersonation' => [
+    'enabled' => true,
+    'permission' => 'impersonate users', // Spatie/Gate
+    'exclude_ids' => [],
+    'banner' => true,
+],
+```
+
+En el resource del modelo `User` aparece la acción **Entrar como** (RowAction). Banner superior con **Volver a mi cuenta**. Requiere permiso Spatie o Gate.
+
 ### 3. Tailwind (app host)
 
 Incluye las vistas del paquete en `tailwind.config.js`:

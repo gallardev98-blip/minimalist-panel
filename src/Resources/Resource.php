@@ -11,6 +11,8 @@ use MyLaravelTools\Panel\Fields\Field;
 use MyLaravelTools\Panel\Filters\Filter;
 use MyLaravelTools\Panel\Relations\RelationManager;
 use MyLaravelTools\Panel\Support\FormSchema;
+use MyLaravelTools\Panel\Support\PanelAuth;
+use MyLaravelTools\Panel\Support\PanelImpersonation;
 use MyLaravelTools\Panel\Support\ResourceAuthorizer;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -97,6 +99,10 @@ abstract class Resource
         if (static::usesSoftDeletes()) {
             $actions[] = RowAction::restore();
             $actions[] = RowAction::forceDelete();
+        }
+
+        if (PanelImpersonation::enabled() && static::modelClass() === PanelAuth::userModel()) {
+            $actions[] = RowAction::impersonate();
         }
 
         return $actions;

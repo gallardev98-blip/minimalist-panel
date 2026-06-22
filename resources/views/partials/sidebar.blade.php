@@ -48,6 +48,10 @@
                 $initial = strtoupper(substr($user?->name ?? $user?->email ?? '?', 0, 1));
             @endphp
 
+            @if (\MyLaravelTools\Panel\Support\PanelImpersonation::bannerEnabled() && \MyLaravelTools\Panel\Support\PanelImpersonation::isActive())
+                @include('panel::partials.impersonation-banner')
+            @endif
+
             @if (\MyLaravelTools\Panel\Support\PanelAuth::profileEnabled())
                 <a
                     href="{{ route('panel.profile') }}"

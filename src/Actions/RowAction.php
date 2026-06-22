@@ -6,6 +6,7 @@ namespace MyLaravelTools\Panel\Actions;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
+use MyLaravelTools\Panel\Support\PanelImpersonation;
 
 final class RowAction
 {
@@ -92,6 +93,17 @@ final class RowAction
             ->confirm(__('panel::panel.confirm_force_delete'))
             ->visible(fn (Model $record): bool => method_exists($record, 'trashed') && $record->trashed())
             ->authorize(fn (Model $record, string $resourceClass): bool => $resourceClass::authorize('forceDelete', $record));
+    }
+
+    public static function impersonate(): self
+    {
+        return self::make('impersonate')
+            ->label(__('panel::panel.impersonate.action'))
+            ->icon('user')
+            ->color('primary')
+            ->confirm(__('panel::panel.impersonate.confirm'))
+            ->visible(fn (Model $record, string $resourceClass): bool => PanelImpersonation::canImpersonate($record))
+            ->authorize(fn (Model $record, string $resourceClass): bool => PanelImpersonation::canImpersonate($record));
     }
 
     public function label(string $label): self
