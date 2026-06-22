@@ -4,6 +4,10 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Layout desktop sidebar** — `grid-area: main` en `.panel-main-column` (no en `.panel-main` anidado); el contenido ya no queda debajo del menú lateral en PC
+
 ## [0.26.0] - 2026-06-20
 
 ### Added

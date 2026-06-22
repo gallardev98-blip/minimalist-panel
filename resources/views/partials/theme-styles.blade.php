@@ -99,8 +99,13 @@
             max-height: 100dvh;
         }
 
-        .panel-main {
+        .panel-main-column {
             grid-area: main;
+            min-height: 0;
+        }
+
+        .panel-main {
+            min-height: 0;
         }
     }
 
