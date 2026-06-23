@@ -1,5 +1,9 @@
 # Panel (`mylaraveltools/panel`)
 
+[![Packagist Version](https://img.shields.io/packagist/v/mylaraveltools/panel)](https://packagist.org/packages/mylaraveltools/panel)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/mylaraveltools/panel)](https://packagist.org/packages/mylaraveltools/panel)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 Panel de administración declarativo y monocromático para **Laravel**. API de **Resources** al estilo Filament/Nova, con **Livewire 3**, **Tailwind CSS**, auth integrada, permisos Spatie, import/export y navegación SPA.
 
 Parte del ecosistema **[My Laravel Tools](https://packagist.org/packages/mylaraveltools/)** (junto con `mylaraveltools/alertas`).
@@ -207,6 +211,22 @@ Toda la configuración vive en este archivo (compatible con `config:cache`). No 
 
 Variables CSS: `--panel-primary`, `--panel-bg`, etc. Toggle claro/oscuro en el footer del sidebar (persiste en `localStorage`).
 
+### Multi-panel (varios paneles en la misma app)
+
+```php
+// config/panel.php
+'default' => 'admin',
+'panels' => [
+    'admin' => require __DIR__.'/panel-admin.php',
+    'cliente' => require __DIR__.'/panel-cliente.php',
+],
+```
+
+- Sin `panels` (o vacío): un panel, rutas `panel.*` (comportamiento actual).
+- Con 2+ paneles: rutas `panel.admin.dashboard`, `panel.cliente.login`, etc.
+- Helper: `panel_route('dashboard')` — usa el panel del request actual.
+- Stub ejemplo: `stubs/multi/panel-cliente.stub.php`
+
 ### Presets de tema
 
 ```php
@@ -256,6 +276,16 @@ CustomField::make('payload')
 php artisan panel:upgrade-views --dry-run
 php artisan panel:upgrade-views --force
 ```
+
+**Actualizar config tras `composer update`:**
+
+```bash
+php artisan panel:upgrade-config --dry-run
+php artisan panel:upgrade-config
+php artisan panel:doctor
+```
+
+Fusiona claves nuevas del paquete en `config/panel.php` (crea backup `.bak`). `panel:doctor` avisa si faltan claves respecto a la versión instalada.
 
 ### Layout y apariencia
 
@@ -592,11 +622,16 @@ public static function relations(): array
 |---------|-------------|
 | `php artisan panel:install` | Instalar panel |
 | `php artisan panel:install --demo` | Instalar + navigation stub y PostResource ejemplo |
+| `php artisan panel:install --starter` | Kit completo: demo + modelo Post + migración + widget dashboard |
+| `php artisan panel:install --saas` | Kit SaaS: tenant + extensiones + vistas + widget |
+| `php artisan panel:install --multi` | Multi-panel: `panel-admin.php`, `panel-cliente.php` y raíz `panels` |
+| `php artisan panel:scaffold Name --policy --widget=resource-count` | Resource + policy + widget en un paso |
 | `php artisan panel:make-resource Name` | Crear Resource |
 | `php artisan panel:make-page Name` | Crear página custom |
 | `php artisan panel:make-policy Name` | Crear Policy |
 | `php artisan panel:make-widget Name --type=chart` | Crear clase widget para el dashboard |
 | `php artisan panel:doctor` | Diagnosticar instalación del panel |
+| `php artisan panel:upgrade-config` | Fusionar config con claves nuevas del paquete |
 | `php artisan panel:upgrade-views` | Actualizar vistas publicadas |
 | `php artisan vendor:publish --tag=panel-config` | Publicar config |
 | `php artisan vendor:publish --tag=panel-views` | Publicar vistas Blade |
@@ -646,6 +681,8 @@ Si no publicas vistas, Laravel usa las del vendor directamente (recomendado hast
 
 Carpeta `panel-demo/` con catálogo, ventas, Spatie, gráficos, import y suplantación.
 
+**Demo online:** despliega con [panel-demo/DEPLOY.md](../panel-demo/DEPLOY.md) y `render.yaml` (Render.com). Playground público en `/playground`.
+
 ```bash
 cd panel-demo
 composer install && npm install && npm run build
@@ -670,7 +707,7 @@ composer test
 ```
 
 - Contexto para agentes/IA: [AGENTS.md](AGENTS.md)
-- Publicar en Packagist: [PUBLISHING.md](PUBLISHING.md)
+- Publicar en Packagist: [PUBLISHING.md](PUBLISHING.md) — `composer release:check` antes de etiquetar
 - Historial: [CHANGELOG.md](CHANGELOG.md)
 
 ---
@@ -690,7 +727,18 @@ composer test
 - [x] Máxima personalización — topbar/dual, slots, upsert, tablas, presets propios (v0.24)
 - [x] Playground público, gráficos interactivos, `panel:doctor`, `panel:make-widget` (v0.25)
 - [x] Layout móvil pulido — `mobile-bar`, drawer, modos sidebar/topbar/dual (v0.26)
-- [ ] Multi-panel, starter kit completo
+- [x] Starter kit — `panel:install --starter`, `panel:scaffold` (v0.27)
+- [x] Playground ampliado — auth interactivo, ViewWidget, slots visuales (v0.27)
+- [x] Multi-panel — `panels` + `panel_route()` + contexto por request (v0.28)
+- [x] Instalador multi — `panel:install --multi` + doctor multi-panel + slots playground (v0.29)
+- [x] Playground import/permisos + shell layout topbar/dual (v0.30)
+- [x] Guía extensiones + smoke CI panel-demo (v0.31)
+- [x] Kit SaaS — `panel:install --saas` (v0.32)
+- [x] Upgrade config + smoke ampliado — `panel:upgrade-config` (v0.33)
+- [x] Doctor config + install tests + playground panel-demo (v0.34)
+- [x] panel-demo auth unificada + smoke import/suplantación (v0.35)
+- [x] Playground RelationManager + multi-panel (v0.36)
+- [x] Publicación Packagist + demo online (PUBLISHING, DEPLOY, render.yaml) (v0.37.0)
 
 ---
 

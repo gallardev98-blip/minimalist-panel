@@ -24,7 +24,7 @@
 
         @if ($passwordResetEnabled)
             <div class="panel-auth-forgot">
-                <a href="{{ route('panel.password.request') }}" class="panel-auth-forgot-link" wire:navigate>
+                <a href="{{ panel_route('password.request') }}" class="panel-auth-forgot-link" wire:navigate>
                     {{ __('panel::panel.auth.forgot_password') }}
                 </a>
             </div>
@@ -50,7 +50,7 @@
     @if ($registrationEnabled)
         <div class="panel-auth-footer">
             <span class="panel-auth-footer-text">{{ __('panel::panel.auth.no_account') }}</span>
-            <a href="{{ route('panel.register') }}" class="panel-auth-footer-link" wire:navigate>
+            <a href="{{ panel_route('register') }}" class="panel-auth-footer-link" wire:navigate>
                 {{ __('panel::panel.auth.register_action') }}
             </a>
         </div>

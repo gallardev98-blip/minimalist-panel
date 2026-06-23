@@ -18,7 +18,7 @@ final class VerifyEmail extends Component
         $user = PanelAuth::user();
 
         if ($user === null || ! method_exists($user, 'hasVerifiedEmail') || $user->hasVerifiedEmail()) {
-            $this->redirect(route('panel.dashboard', [], false), navigate: false);
+            $this->redirect(\panel_route('dashboard', [], false), navigate: false);
 
             return;
         }

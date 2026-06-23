@@ -1,6 +1,6 @@
 <div>
     <x-panel::page-header class="mb-6">
-        <a href="{{ route('panel.resources.index', ['resource' => $resourceSlug]) }}" class="panel-back-link" wire:navigate wire:navigate.hover>
+        <a href="{{ panel_route('resources.index', ['resource' => $resourceSlug]) }}" class="panel-back-link" wire:navigate wire:navigate.hover>
             <x-panel::icon name="arrow-left" class="h-4 w-4" />
             {{ __('panel::panel.back_to', ['label' => $resourceLabel]) }}
         </a>
@@ -14,7 +14,7 @@
     @if ($canEdit && ! $isTrashed)
         <div class="mb-6 flex justify-end">
             <a
-                href="{{ route('panel.resources.edit', ['resource' => $resourceSlug, 'record' => $record->getKey()]) }}"
+                href="{{ panel_route('resources.edit', ['resource' => $resourceSlug, 'record' => $record->getKey()]) }}"
                 class="panel-btn panel-btn-primary panel-btn-compact shrink-0"
                 wire:navigate
                 wire:navigate.hover

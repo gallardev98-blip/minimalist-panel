@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MyLaravelTools\Panel;
 
+use MyLaravelTools\Panel\Commands\MakeScaffoldCommand;
 use MyLaravelTools\Panel\Commands\InstallPanelCommand;
 use MyLaravelTools\Panel\Commands\DoctorPanelCommand;
 use MyLaravelTools\Panel\Commands\MakePageCommand;
@@ -11,6 +12,8 @@ use MyLaravelTools\Panel\Commands\MakeWidgetCommand;
 use MyLaravelTools\Panel\Commands\MakePolicyCommand;
 use MyLaravelTools\Panel\Commands\MakeResourceCommand;
 use MyLaravelTools\Panel\Commands\UpgradeViewsCommand;
+use MyLaravelTools\Panel\Commands\UpgradeConfigCommand;
+use MyLaravelTools\Panel\Http\Middleware\SetCurrentPanel;
 use MyLaravelTools\Panel\Livewire\Auth\ForgotPassword;
 use MyLaravelTools\Panel\Livewire\Auth\Login as PanelLogin;
 use MyLaravelTools\Panel\Livewire\Auth\Register as PanelRegister;
@@ -26,6 +29,7 @@ use MyLaravelTools\Panel\Livewire\ResourceForm;
 use MyLaravelTools\Panel\Livewire\ResourceIndex;
 use MyLaravelTools\Panel\Livewire\ResourceShow;
 use MyLaravelTools\Panel\Support\PanelExtensions;
+use MyLaravelTools\Panel\Support\PanelManager;
 use MyLaravelTools\Panel\Support\PanelSlots;
 use MyLaravelTools\Panel\Support\CsvExporter;
 use MyLaravelTools\Panel\Support\PanelLocale;
@@ -48,6 +52,8 @@ final class PanelServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        require_once __DIR__.'/helpers.php';
+
         $this->mergeConfigFrom(__DIR__ . '/../config/panel.php', 'panel');
 
         $this->app->singleton(ResourceRegistry::class);
@@ -65,6 +71,7 @@ final class PanelServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        PanelManager::establecerContexto(PanelManager::idPorDefecto());
         $this->registerExtensions();
         $this->registerPublishing();
         $this->registerCommands();
@@ -135,10 +142,12 @@ final class PanelServiceProvider extends ServiceProvider
         $this->commands([
             InstallPanelCommand::class,
             MakeResourceCommand::class,
+            MakeScaffoldCommand::class,
             MakePageCommand::class,
             MakeWidgetCommand::class,
             MakePolicyCommand::class,
             UpgradeViewsCommand::class,
+            UpgradeConfigCommand::class,
             DoctorPanelCommand::class,
         ]);
     }
@@ -182,25 +191,42 @@ final class PanelServiceProvider extends ServiceProvider
 
     private function registerRoutes(): void
     {
-        $prefix = config('panel.path', 'admin');
+        foreach (PanelManager::definiciones() as $id => $definicion) {
+            PanelManager::establecerContexto($id);
 
-        Route::group([
-            'prefix' => $prefix,
-            'as' => 'panel.',
-        ], function (): void {
-            $this->loadRoutesFrom(__DIR__ . '/../routes/panel-auth.php');
-        });
+            $prefijo = PanelManager::prefijoRuta($id);
+            $path = (string) ($definicion['path'] ?? 'admin');
+            $contexto = SetCurrentPanel::class.':'.$id;
 
-        Route::group([
-            'prefix' => $prefix,
-            'middleware' => config('panel.middleware', ['web']),
-            'as' => 'panel.',
-        ], function (): void {
-            $this->loadRoutesFrom(__DIR__ . '/../routes/panel.php');
-        });
+            Route::group([
+                'prefix' => $path,
+                'as' => $prefijo,
+                'middleware' => ['web', $contexto],
+            ], function (): void {
+                $this->loadRoutesFrom(__DIR__ . '/../routes/panel-auth.php');
+            });
+
+            $middleware = $definicion['middleware'] ?? ['web'];
+            $middleware = is_array($middleware) ? $middleware : ['web'];
+            $middleware = array_values(array_filter(
+                $middleware,
+                fn (mixed $item): bool => $item !== SetCurrentPanel::class,
+            ));
+            array_unshift($middleware, $contexto);
+
+            Route::group([
+                'prefix' => $path,
+                'middleware' => $middleware,
+                'as' => $prefijo,
+            ], function (): void {
+                $this->loadRoutesFrom(__DIR__ . '/../routes/panel.php');
+            });
+        }
 
         if (config('panel.documentation.enabled', true)) {
             $this->loadRoutesFrom(__DIR__ . '/../routes/playground.php');
         }
+
+        PanelManager::establecerContexto(PanelManager::idPorDefecto());
     }
 }

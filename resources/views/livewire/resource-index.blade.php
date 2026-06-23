@@ -66,7 +66,7 @@
                         </button>
                     @else
                         <a
-                            href="{{ route('panel.resources.create', ['resource' => $resourceSlug]) }}"
+                            href="{{ panel_route('resources.create', ['resource' => $resourceSlug]) }}"
                             class="panel-btn panel-btn-primary panel-btn-compact"
                             wire:navigate wire:navigate.hover
                         >

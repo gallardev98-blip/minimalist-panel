@@ -32,9 +32,89 @@
 
 **v0.26.0** (2026-06-20): layout móvil — `mobile-bar`, drawer sidebar/topbar/dual, UX del menú (X, footer limpio, sin hamburguesa duplicada).
 
+**v0.27.0** (2026-06-23): `panel:scaffold`, `panel:install --starter`, playground Auth interactivo, demo ViewWidget, slots visuales, badge modo layout.
+
+**v0.28.0** (2026-06-23): **multi-panel** — `panels` + `default`, `PanelManager`, `panel_route()`, middleware `SetCurrentPanel`.
+
+**v0.29.0** (2026-06-23): `panel:install --multi`, `panel:doctor` multi-panel, playground slots ampliados (`sidebar.after`, `main.before`, `topbar.end`).
+
+**v0.30.0** (2026-06-23): playground — shell layout (sidebar/topbar/dual), preview import y preview permisos en Avanzado.
+
+**v0.31.0** (2026-06-23): `PanelExtensionesGuia` (campo → columna → widget); smoke `panel-demo` + CI `smoke-panel-demo`.
+
+**v0.32.0** (2026-06-23): `panel:install --saas` — kit tenant + extensiones; `PanelSaasGuia` en playground.
+
+**v0.33.0** (2026-06-23): `panel:upgrade-config`, doctor `panel_route()`, smoke `panel-demo` ampliado.
+
+**v0.34.0** (2026-06-23): doctor config desactualizada; tests install starter/multi; playground en panel-demo; CI smoke 8.2–8.4.
+
+**panel-demo (post-v0.34):** rutas Breeze redirigen a `/admin/*`; smoke ampliado (import CSV, suplantación, redirects auth).
+
+**v0.35.0** (2026-06-23): fix redirect suplantación/logout con Livewire; panel-demo auth unificada.
+
+**v0.36.0** (2026-06-23): playground guías RelationManager + multi-panel.
+
+**v0.37.0** (2026-06-23): `PUBLISHING.md`, `composer release:check`, `panel-demo/DEPLOY.md`, `render.yaml`, workflow release.
+
 **Playground público** (v0.25): ruta `GET /playground` (sin login) — demo interactiva de `config/panel.php` y `ChartWidget`; ver sección **Playground** más abajo (regla obligatoria para agentes).
 
-**Estado del producto (v0.25):** la librería se considera **completa para uso en producción** en proyectos Laravel que buscan un panel minimalista y config-first. Lo único explícito en roadmap global: **multi-panel** y **starter kit completo** (ver README). El resto son mejoras opcionales del playground o de ecosistema (docs, ejemplos).
+**Estado del producto (v0.34):** librería **completa para producción**. Ciclo install → upgrade → doctor cubierto.
+
+### Herramientas DX (v0.37.0)
+
+- `composer release:check` — alinea VERSION, CHANGELOG y README antes del tag
+- `PUBLISHING.md` — guía Packagist actualizada
+- `panel-demo/DEPLOY.md` + `render.yaml` — demo online (Render)
+- `.github/workflows/release.yml` — tests al pushear tag `v*`
+
+### Herramientas DX (v0.36.0)
+
+- Playground Avanzado → **Resource (hooks)**: `PanelRelacionesGuia` (hasOne / morphMany / belongsToMany)
+- Playground Avanzado → **Multi-panel**: `PanelMultiPanelGuia` + diagrama `/admin` + `/cliente`
+
+### Herramientas DX (v0.35.0)
+
+- `panel:doctor` — detecta config desactualizada y sugiere `panel:upgrade-config`
+- Tests `InstallPanelStarterTest`, `InstallPanelMultiTest`
+- `panel-demo` con `/playground` activo; smoke en PHP 8.2–8.4
+
+### Herramientas DX (v0.33.0)
+
+- `php artisan panel:upgrade-config` — fusiona claves nuevas del paquete (`--dry-run`, backup `.bak`)
+- `panel:doctor` — comprueba `panel_route()` operativa
+- Smoke `panel-demo`: import, permisos, página custom
+
+### Herramientas DX (v0.32.0)
+
+- `php artisan panel:install --saas` — Tenant, TenantResource, vistas `panel/saas/*`, extensions + slot + widget
+- `PanelSaasGuia` — documentación CLI en playground (Extensiones)
+
+### Herramientas DX (v0.31.0)
+
+- `PanelExtensionesGuia` — receta end-to-end en Avanzado (extensions, campos, widgets)
+- Smoke `panel-demo`: `PanelSmokeTest` + job CI `smoke-panel-demo`
+
+### Herramientas DX (v0.30.0)
+
+- Playground: diagrama shell layout en escenario desktop (sidebar / topbar / dual)
+- Playground Avanzado: preview interactivo de **Importación** y **Permisos**
+
+### Herramientas DX (v0.29.0)
+
+- `php artisan panel:install --multi` — `panel-admin.php`, `panel-cliente.php`, raíz `panels` en `config/panel.php`
+- `panel:doctor` — comprueba paths únicos y recuento de paneles en modo multi
+- Playground: marcadores visuales de slots `sidebar.after`, `main.before`, `topbar.end`
+
+### Herramientas DX (v0.28.0)
+
+- **Multi-panel** — `panels` + `default` en config; `PanelManager`, `panel_route()`, middleware `SetCurrentPanel`
+- Rutas: 1 panel → `panel.*`; 2+ paneles → `panel.{id}.*`
+- Helper global `panel_route()` — cargado vía `helpers.php` + `PanelServiceProvider`; en PHP namespaced usar `\panel_route()`
+
+### Herramientas DX (v0.27.0)
+
+- `php artisan panel:scaffold Nombre --policy --widget=stat|chart|resource-count` — resource + policy + widget opcionales; registra widget en config
+- `php artisan panel:install --starter` — PostResource, modelo, migración, PostCountWidget, navigation y parche de config
 
 ### Herramientas DX (v0.25.0)
 
@@ -156,8 +236,9 @@ Checklist antes de cerrar un PR de personalización:
 | **Apariencia** | `layout.*`, `brand.*` (menú, marca, modo, densidad, tablas…) |
 | **Colores** | `theme.*` (preset, tipografía, paleta) |
 | **Gráficos** | 5 tipos ChartWidget en vivo; estilo moderno/minimal/bold; aviso `widgets` en config; copia `ChartWidget::make(...)` |
+| **Auth** | `auth_ui.*` interactivo; mini preview login centered/split en escenario |
 | **Tu código** | Fragmento `config/panel.php` solo con overrides de sesión |
-| **Avanzado** | Nav lateral por sección técnica; opciones vivas + bloque «solo referencia» |
+| **Avanzado** | Nav lateral por sección técnica; opciones vivas + bloque «solo referencia»; guías import, permisos, extensiones, SaaS, **RelationManager**, **multi-panel** |
 
 UX demo:
 
@@ -195,24 +276,28 @@ Mejoras que **no bloquean** el uso del paquete; solo enriquecen la demo pública
 
 | Área | Qué falta |
 |------|-----------|
-| **ViewWidget** | Mini-demo interactiva en escenario (hoy solo referencia en Avanzado) |
-| **PanelSlots** | Mostrar `sidebar.before`, `main.after`, etc. en el escenario fake |
-| **Auth UI split** | Previsualización del layout login con imagen lateral |
-| **Import / permisos** | Preview interactivo (hoy documentación de referencia en Avanzado) |
-| **Modos layout** | Preview explícito de `topbar` y `dual` en escenario desktop (sidebar sí; móvil corregido en app real) |
+| **PanelSlots** | ~~Preview de más slots~~ — hecho en v0.29 |
+| **Import / permisos** | ~~Preview interactivo~~ — hecho en v0.30 (Avanzado) |
+| **Modos layout** | ~~Preview explícito topbar/dual~~ — shell layout en escenario (v0.30) |
 
 ### Roadmap producto (fuera del playground)
 
 Definido en `README.md` — no son carencias del core actual:
 
-- [ ] **Multi-panel** — varios paneles en la misma app (paths, configs y recursos separados)
-- [ ] **Starter kit completo** — plantilla instalable con demo, auth y recursos ya cableados
+- [x] **Multi-panel** — `panels`, `default`, `PanelManager`, `panel_route()` (v0.28)
+- [x] **Instalador multi** — `panel:install --multi` (v0.29)
+- [x] **Starter kit** — `panel:install --starter` + `panel:scaffold` (v0.27)
 
 ### Ecosistema (nice-to-have)
 
-- Sitio de documentación o guía «campo/columna/widget custom» end-to-end
-- Smoke tests del host (`panel-demo`) en CI además de los ~121 tests del paquete
-- Ejemplos publicados (blog, SaaS) que muestren `PanelExtensions` en la práctica
+- [x] Guía «campo/columna/widget custom» end-to-end — `PanelExtensionesGuia` en playground (v0.31)
+- [x] Smoke tests del host (`panel-demo`) en CI — `PanelSmokeTest` + job `smoke-panel-demo` (v0.31)
+- [x] Kit SaaS — `panel:install --saas` + `PanelSaasGuia` (v0.32)
+- [x] Upgrade config — `panel:upgrade-config` + doctor `panel_route()` (v0.33)
+- [x] Doctor config desactualizada + tests install starter/multi + playground panel-demo (v0.34)
+- [x] panel-demo: auth unificada (Breeze → panel) + smoke import/suplantación (v0.35 demo)
+- [x] Playground RelationManager + multi-panel (v0.36)
+- [x] Publicación + demo online — PUBLISHING, DEPLOY, render.yaml (v0.37)
 
 ### ViewWidget
 

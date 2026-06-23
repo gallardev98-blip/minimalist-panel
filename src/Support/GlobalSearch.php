@@ -96,7 +96,7 @@ final class GlobalSearch
                 'type' => 'record',
                 'label' => $this->recordLabel($resourceClass, $record),
                 'description' => $resourceClass::label(),
-                'url' => route('panel.resources.show', [
+                'url' => \panel_route('resources.show', [
                     'resource' => $resourceClass::slug(),
                     'record' => $record->getKey(),
                 ]),

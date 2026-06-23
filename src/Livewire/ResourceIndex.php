@@ -213,7 +213,7 @@ final class ResourceIndex extends Component
             return;
         }
 
-        $this->redirect(route('panel.dashboard', [], false), navigate: false);
+        $this->redirect(\panel_route('dashboard', [], false), navigate: false);
     }
 
     public function delete(int|string $recordId): void

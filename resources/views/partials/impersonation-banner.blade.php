@@ -31,7 +31,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('panel.impersonation.leave', [], false) }}" class="panel-impersonation-sidebar-form">
+        <form method="POST" action="{{ panel_route('impersonation.leave', [], false) }}" class="panel-impersonation-sidebar-form">
             @csrf
             <button type="submit" class="panel-impersonation-sidebar-exit" title="{{ __('panel::panel.impersonate.leave') }}">
                 <x-panel::icon name="arrow-left" class="h-4 w-4 shrink-0" />

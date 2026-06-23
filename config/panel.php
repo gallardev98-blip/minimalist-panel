@@ -19,6 +19,28 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Multi-panel (opcional)
+    |--------------------------------------------------------------------------
+    |
+    | Varios paneles en la misma app: define `panels` y el ID en `default`.
+    | Cada entrada es config completa del panel o `require` de un archivo PHP.
+    |
+    | 'panels' => [
+    |     'admin' => require __DIR__.'/panel-admin.php',
+    |     'cliente' => require __DIR__.'/panel-cliente.php',
+    | ],
+    |
+    | Sin `panels` (o vacío): un solo panel; rutas `panel.*`.
+    | Con 2+ paneles: rutas `panel.{id}.*` (ej. panel.admin.dashboard).
+    |
+    */
+
+    'default' => 'admin',
+
+    'panels' => [],
+
+    /*
+    |--------------------------------------------------------------------------
     | Ruta y acceso
     |--------------------------------------------------------------------------
     */

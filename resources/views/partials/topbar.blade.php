@@ -13,7 +13,7 @@
         @if (PanelLayout::muestraMarcaTopbar())
             <div class="panel-topbar-brand">
                 @include('panel::partials.brand-mark')
-                <a href="{{ route('panel.dashboard') }}" wire:navigate class="panel-heading truncate font-bold">
+                <a href="{{ panel_route('dashboard') }}" wire:navigate class="panel-heading truncate font-bold">
                     {{ config('panel.brand.name', 'Panel') }}
                 </a>
             </div>

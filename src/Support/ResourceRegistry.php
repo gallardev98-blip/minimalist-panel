@@ -10,24 +10,30 @@ use InvalidArgumentException;
 
 final class ResourceRegistry
 {
-    /** @var array<int, class-string<Resource>> */
-    private array $resources;
-
-  public function __construct()
-    {
-        $this->resources = $this->resolveResources();
-    }
+    /** @var array<string, array<int, class-string<Resource>>> */
+    private array $cache = [];
 
     /** @return array<int, class-string<Resource>> */
     public function all(): array
     {
-        return $this->resources;
+        $id = PanelManager::idActual();
+
+        if (! isset($this->cache[$id])) {
+            $this->cache[$id] = $this->resolveResources();
+        }
+
+        return $this->cache[$id];
+    }
+
+    public function limpiarCache(): void
+    {
+        $this->cache = [];
     }
 
     /** @return class-string<Resource>|null */
     public function findBySlug(string $slug): ?string
     {
-        foreach ($this->resources as $resourceClass) {
+        foreach ($this->all() as $resourceClass) {
             if ($resourceClass::slug() === $slug) {
                 return $resourceClass;
             }

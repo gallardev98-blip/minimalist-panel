@@ -67,4 +67,72 @@ final class PlaygroundTest extends TestCase
             ->call('seleccionarTipoGrafico', 'line')
             ->assertSet('graficos.tipo_activo', 'line');
     }
+
+    public function test_playground_muestra_shell_layout(): void
+    {
+        $this->withSession(['panel.playground' => ['layout.mode' => 'dual']])
+            ->get('/playground')
+            ->assertOk()
+            ->assertSee('panel-playground-layout-shell', false);
+    }
+
+    public function test_playground_preview_import_en_avanzado(): void
+    {
+        Livewire::test(PlaygroundApp::class)
+            ->set('mostrarControles', true)
+            ->call('seleccionarSeccion', 'mas')
+            ->call('seleccionarSeccionTecnica', 'import')
+            ->assertSee(__('panel::panel.documentation.import_preview_title'), false);
+    }
+
+    public function test_playground_preview_permisos_reacciona(): void
+    {
+        Livewire::test(PlaygroundApp::class)
+            ->set('mostrarControles', true)
+            ->set('valores.permissions.enabled', true)
+            ->call('seleccionarSeccion', 'mas')
+            ->call('seleccionarSeccionTecnica', 'permissions')
+            ->assertSee(__('panel::panel.documentation.perm_preview_title'), false)
+            ->assertSee('manage users', false);
+    }
+
+    public function test_playground_guia_extensiones(): void
+    {
+        Livewire::test(PlaygroundApp::class)
+            ->set('mostrarControles', true)
+            ->call('seleccionarSeccion', 'mas')
+            ->call('seleccionarSeccionTecnica', 'extensions')
+            ->assertSee(__('panel::panel.documentation.ext_guide_title'), false)
+            ->assertSee('CustomField::make', false);
+    }
+
+    public function test_playground_guia_saas(): void
+    {
+        Livewire::test(PlaygroundApp::class)
+            ->set('mostrarControles', true)
+            ->call('seleccionarSeccion', 'mas')
+            ->call('seleccionarSeccionTecnica', 'extensions')
+            ->assertSee(__('panel::panel.documentation.saas_guide_title'), false)
+            ->assertSee('panel:install --saas', false);
+    }
+
+    public function test_playground_guia_relaciones(): void
+    {
+        Livewire::test(PlaygroundApp::class)
+            ->set('mostrarControles', true)
+            ->call('seleccionarSeccion', 'mas')
+            ->call('seleccionarSeccionTecnica', 'resources')
+            ->assertSee(__('panel::panel.documentation.rel_guide_title'), false)
+            ->assertSee('RelationManager::hasOne', false);
+    }
+
+    public function test_playground_guia_multi_panel(): void
+    {
+        Livewire::test(PlaygroundApp::class)
+            ->set('mostrarControles', true)
+            ->call('seleccionarSeccion', 'mas')
+            ->call('seleccionarSeccionTecnica', 'multi_panel')
+            ->assertSee(__('panel::panel.documentation.multi_guide_title'), false)
+            ->assertSee('panel:install --multi', false);
+    }
 }

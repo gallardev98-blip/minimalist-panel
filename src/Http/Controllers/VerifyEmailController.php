@@ -13,7 +13,7 @@ final class VerifyEmailController
     {
         $request->fulfill();
 
-        return redirect()->route('panel.dashboard', [], false)
+        return redirect(\panel_route('dashboard', [], false))
             ->with('status', __('panel::panel.auth.verification.verified'));
     }
 }

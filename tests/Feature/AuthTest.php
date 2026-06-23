@@ -54,7 +54,7 @@ final class AuthTest extends TestCase
     public function test_guest_is_redirected_from_dashboard_to_login(): void
     {
         $this->get('/admin')
-            ->assertRedirect(route('panel.login'));
+            ->assertRedirect(panel_route('login'));
     }
 
     public function test_invalid_login_does_not_redirect(): void
@@ -110,7 +110,7 @@ final class AuthTest extends TestCase
             ->set('email', 'admin@test.com')
             ->set('password', 'secret-password')
             ->call('login')
-            ->assertRedirect(route('panel.dashboard'));
+            ->assertRedirect(panel_route('dashboard'));
 
         $this->assertAuthenticatedAs(
             PanelUser::query()->where('email', 'admin@test.com')->first(),
@@ -125,7 +125,7 @@ final class AuthTest extends TestCase
             ->set('password', 'password123')
             ->set('password_confirmation', 'password123')
             ->call('register')
-            ->assertRedirect(route('panel.dashboard'));
+            ->assertRedirect(panel_route('dashboard'));
 
         $this->assertDatabaseHas('users', [
             'email' => 'new@test.com',
@@ -145,7 +145,7 @@ final class AuthTest extends TestCase
 
         $this->actingAs($user)
             ->get('/admin/login')
-            ->assertRedirect(route('panel.dashboard'));
+            ->assertRedirect(panel_route('dashboard'));
     }
 
     public function test_logout_redirects_to_login(): void
@@ -158,7 +158,7 @@ final class AuthTest extends TestCase
 
         $this->actingAs($user)
             ->post('/admin/logout')
-            ->assertRedirect(route('panel.login'));
+            ->assertRedirect(panel_route('login'));
 
         $this->assertGuest();
     }
@@ -198,7 +198,7 @@ final class AuthTest extends TestCase
             ->set('password', 'new-password-123')
             ->set('password_confirmation', 'new-password-123')
             ->call('resetPassword')
-            ->assertRedirect(route('panel.login'));
+            ->assertRedirect(panel_route('login'));
 
         $user = PanelUser::query()->where('email', 'admin@test.com')->first();
 

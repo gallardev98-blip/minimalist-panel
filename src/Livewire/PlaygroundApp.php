@@ -270,7 +270,7 @@ final class PlaygroundApp extends Component
 
     {
 
-        return str_starts_with($clave, 'layout.') || str_starts_with($clave, 'brand.');
+        return str_starts_with($clave, 'layout.') || str_starts_with($clave, 'brand.') || str_starts_with($clave, 'auth_ui.');
 
     }
 
@@ -302,6 +302,20 @@ final class PlaygroundApp extends Component
 
         $this->seccionTecnica = $seccion;
 
+        $zona = match ($seccion) {
+            'import' => 'import',
+            'permissions' => 'permisos',
+            'resources' => 'relaciones',
+            'multi_panel' => 'multipanel',
+            'extensions', 'campos', 'widgets' => 'extensiones',
+            default => null,
+        };
+
+        if ($zona !== null) {
+            $this->zonaResaltada = $zona;
+            $this->dispatch('playground-resaltar-zona', zona: $zona);
+        }
+
     }
 
 
@@ -319,6 +333,16 @@ final class PlaygroundApp extends Component
             $this->zonaResaltada = 'graficos';
 
             $this->dispatch('playground-resaltar-zona', zona: 'graficos');
+
+        }
+
+
+
+        if ($seccion === 'auth') {
+
+            $this->zonaResaltada = 'auth';
+
+            $this->dispatch('playground-resaltar-zona', zona: 'auth');
 
         }
 

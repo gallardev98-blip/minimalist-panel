@@ -35,7 +35,7 @@
     </form>
 
     <div class="panel-auth-footer">
-        <a href="{{ route('panel.login') }}" class="panel-auth-footer-link" wire:navigate>
+        <a href="{{ panel_route('login') }}" class="panel-auth-footer-link" wire:navigate>
             {{ __('panel::panel.auth.back_to_login') }}
         </a>
     </div>

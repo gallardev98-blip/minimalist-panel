@@ -23,6 +23,6 @@ final class LogoutController
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route(PanelAuth::loginRouteName());
+        return new RedirectResponse(route(PanelAuth::loginRouteName()));
     }
 }

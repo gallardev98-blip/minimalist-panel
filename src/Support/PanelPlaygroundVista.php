@@ -40,6 +40,10 @@ final class PanelPlaygroundVista
             in_array($clave, ['layout.content_width', 'layout.density', 'layout.show_breadcrumbs'], true) => 'contenido',
             str_starts_with($clave, 'theme.colors.') => 'acentos',
             str_starts_with($clave, 'theme.') => 'tema',
+            str_starts_with($clave, 'auth_ui.') => 'auth',
+            str_starts_with($clave, 'import.') => 'import',
+            str_starts_with($clave, 'permissions.') => 'permisos',
+            str_starts_with($clave, 'extensions.') => 'extensiones',
             str_starts_with($clave, 'layout.') => 'panel',
             default => 'panel',
         };

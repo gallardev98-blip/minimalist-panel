@@ -15,7 +15,7 @@ final class LocaleSwitcher extends Component
     {
         PanelLocale::set($locale);
         PanelLocale::apply();
-        $this->redirect(request()->header('Referer', route('panel.dashboard', [], false)), navigate: true);
+        $this->redirect(request()->header('Referer', \panel_route('dashboard', [], false)), navigate: true);
     }
 
     public function render(): mixed

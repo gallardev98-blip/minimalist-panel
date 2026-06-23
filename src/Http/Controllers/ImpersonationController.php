@@ -16,6 +16,6 @@ final class ImpersonationController
             abort(403);
         }
 
-        return redirect()->to(route('panel.dashboard', [], false));
+        return new RedirectResponse(\panel_route('dashboard', [], false));
     }
 }

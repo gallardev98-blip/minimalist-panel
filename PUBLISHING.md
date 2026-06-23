@@ -1,74 +1,128 @@
 # Publicar `mylaraveltools/panel` en Packagist
 
-Guía para instalar con `composer require mylaraveltools/panel` sin path repository.
+Instalación pública: `composer require mylaraveltools/panel`.
 
-> **Vendor Packagist:** `mylaraveltools/panel` (marca **My Laravel Tools**, alineada con `mylaraveltools/alertas`). El namespace PHP sigue siendo `MyLaravelTools\Panel`.
+| Recurso | URL |
+|---------|-----|
+| Packagist | https://packagist.org/packages/mylaraveltools/panel |
+| Repositorio | https://github.com/gallardev98-blip/minimalist-panel |
+| Demo local | `panel-demo/` en el monorepo (ver `panel-demo/DEPLOY.md` para online) |
 
-> **Migración:** el paquete anterior `mylaraveltools/minimalist` queda reemplazado por `mylaraveltools/panel` vía `composer replace`. Registra el nuevo nombre en Packagist (mismo repo Git).
+> **Vendor:** `mylaraveltools/panel` (ecosistema **My Laravel Tools**, como `mylaraveltools/alertas`).  
+> **Namespace PHP:** `MyLaravelTools\Panel` (sin cambios respecto a `mylaraveltools/minimalist`).
 
-## Requisitos previos
+---
 
-- Repositorio Git **público** en GitHub/GitLab
-- Cuenta en [packagist.org](https://packagist.org)
-- Tests en verde: `composer test`
-
-## 1. Repositorio y tags
+## Checklist rápido (cada release)
 
 ```bash
 cd minimalist-panel-library
 composer test
-
-git tag -a v0.21.0 -m "v0.21.0 — rename to mylaraveltools/panel, impersonation"
-git push origin main v0.21.0
+php scripts/verificar-release.php
 ```
 
-Repo: `https://github.com/gallardev98-blip/minimalist-panel`
+- [ ] `Package::VERSION` = tag (p. ej. `0.36.0`)
+- [ ] Entrada en `CHANGELOG.md` para esa versión
+- [ ] `README.md` / `AGENTS.md` si cambia alcance
+- [ ] Tests en verde (CI monorepo: `.github/workflows/panel-tests.yml`)
+- [ ] Tag anotado y push a GitHub
+- [ ] Packagist actualizado (webhook o **Update** manual)
+- [ ] Probar en proyecto limpio: `composer require mylaraveltools/panel:^0.36`
 
-## 2. Registrar en Packagist
+---
 
-1. Inicia sesión en [packagist.org](https://packagist.org)
-2. **Submit** → URL del repo: `https://github.com/gallardev98-blip/minimalist-panel`
-3. Packagist detecta `mylaraveltools/panel` desde `composer.json`
+## 1. Etiquetar release
 
-Si ya tenías `mylaraveltools/minimalist`, añade el nuevo paquete o marca el antiguo como abandonado con `mylaraveltools/panel` como sucesor.
-
-## 3. Auto-update (recomendado)
-
-Packagist → tu paquete → **Settings** → activa **GitHub Service Hook**.
-
-## 4. Instalar en un proyecto Laravel
+Versión actual del paquete: ver `src/Support/Package.php` → `VERSION`.
 
 ```bash
-composer require mylaraveltools/panel:^0.21
-php artisan panel:install
-```
-
-## 5. Versionado
-
-| Tag | Contenido principal |
-|-----|---------------------|
-| `v0.9.0` | Pages custom, `PanelPermission`, Spatie opcional |
-| `v0.10.0` | Auth integrada (`/admin/login`, `/register`) |
-| `v0.17.0` | Import, locale, ChartWidget, email verify |
-| `v0.18.0` | ViewWidget, progression, themeColors |
-| `v0.19.0` | Import con vista previa |
-| `v0.20.0` | Auth UX — redirect post-login, botón con puntos animados |
-| `v0.21.0` | Rename `mylaraveltools/panel`, suplantación de usuario |
-
-Última release: **`v0.21.0`**. Tras cambios, etiqueta y push:
-
-```bash
+cd minimalist-panel-library
 composer test
-git tag -a v0.21.0 -m "v0.21.0 — panel rename + impersonation"
-git push origin main v0.21.0
+php scripts/verificar-release.php
+
+git add -A
+git commit -m "chore: release v0.36.0"
+git tag -a v0.36.0 -m "v0.36.0 — playground RelationManager + multi-panel"
+git push origin main
+git push origin v0.36.0
 ```
 
-## Checklist
+Convención: tag **`v` + semver** (`v0.36.0`). Packagist lee tags de Git, no el campo `version` en `composer.json`.
 
-- [ ] `composer.json` — `name: mylaraveltools/panel`, `replace` del nombre antiguo
-- [ ] `README.md` y `CHANGELOG.md` actualizados
-- [ ] `Package::VERSION` coincide con el tag
-- [ ] `composer test` pasa
-- [ ] Tag pusheado a GitHub
-- [ ] Paquete actualizado en Packagist (hook o Update)
-- [ ] `panel-demo` probado con `composer require mylaraveltools/panel:^0.21`
+---
+
+## 2. Registrar / actualizar Packagist
+
+### Primera vez
+
+1. Cuenta en [packagist.org](https://packagist.org)
+2. **Submit** → `https://github.com/gallardev98-blip/minimalist-panel`
+3. Confirma nombre `mylaraveltools/panel`
+
+### Migración desde `mylaraveltools/minimalist`
+
+`composer.json` incluye `"replace": { "mylaraveltools/minimalist": "0.24.0" }`.  
+Marca el paquete antiguo como **abandoned** con sucesor `mylaraveltools/panel`.
+
+### Auto-update (recomendado)
+
+Packagist → paquete → **Settings** → **GitHub Service Hook** activado.
+
+---
+
+## 3. Instalar en Laravel (producción)
+
+```bash
+composer require mylaraveltools/panel:^0.36
+php artisan panel:install
+php artisan migrate
+npm install && npm run build
+```
+
+Opcional: `mylaraveltools/alertas`, `spatie/laravel-permission`.
+
+Tras `composer update`:
+
+```bash
+php artisan panel:upgrade-config --dry-run
+php artisan panel:upgrade-config
+php artisan panel:doctor
+```
+
+---
+
+## 4. Historial de versiones (resumen)
+
+| Rango | Hitos |
+|-------|--------|
+| v0.21–v0.24 | Rename a `panel`, suplantación, layout topbar/dual, slots |
+| v0.25–v0.27 | Playground, `panel:doctor`, starter/scaffold |
+| v0.28–v0.29 | Multi-panel, `panel_route()`, `install --multi` |
+| v0.30–v0.31 | Playground import/permisos, guía extensiones, smoke CI |
+| v0.32–v0.33 | `install --saas`, `panel:upgrade-config` |
+| v0.34–v0.36 | Doctor config, panel-demo unificado, RelationManager/multi en playground |
+
+Detalle completo: [CHANGELOG.md](CHANGELOG.md).
+
+---
+
+## 5. Demo online (`panel-demo`)
+
+El host de prueba vive en `../panel-demo` (monorepo local). Para publicarlo:
+
+1. Sube **monorepo** o carpeta `panel-demo` a un repo Git
+2. En producción usa **Packagist**, no path repository (ver [panel-demo/DEPLOY.md](../panel-demo/DEPLOY.md))
+3. Despliegue listo: `panel-demo/render.yaml` (Render.com)
+
+Playground público: `GET /playground` (`documentation.enabled` en config).
+
+---
+
+## 6. Solución de problemas
+
+| Problema | Acción |
+|----------|--------|
+| Packagist no ve el tag | `git push origin vX.Y.Z`; Update manual en Packagist |
+| `composer require` versión antigua | `composer clear-cache`; comprueba tag en GitHub |
+| Clase no encontrada tras update | `php artisan panel:upgrade-config` + `composer dump-autoload` |
+| Vistas desactualizadas | `php artisan panel:upgrade-views --force` |

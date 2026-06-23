@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MyLaravelTools\Panel\Support;
 
+use MyLaravelTools\Panel\Support\PanelManager;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\Finder\Finder;
@@ -16,6 +17,9 @@ final class PanelDoctor
         $resultados = [];
 
         $resultados[] = self::comprobarConfig();
+        $resultados[] = self::comprobarConfigActualizada();
+        $resultados[] = self::comprobarPanelRoute();
+        $resultados[] = self::comprobarMultiPanel();
         $resultados[] = self::comprobarRutaPlayground();
         $resultados[] = self::comprobarLivewireNavigate();
         $resultados[] = self::comprobarTailwind();
@@ -34,6 +38,86 @@ final class PanelDoctor
         }
 
         return ['nivel' => 'ok', 'mensaje' => 'config/panel.php presente'];
+    }
+
+    /** @return array{nivel: string, mensaje: string} */
+    private static function comprobarConfigActualizada(): array
+    {
+        if (! is_file(config_path('panel.php'))) {
+            return ['nivel' => 'ok', 'mensaje' => 'Config actualizada (sin archivo que comparar)'];
+        }
+
+        $actual = require config_path('panel.php');
+
+        if (! is_array($actual)) {
+            return ['nivel' => 'warn', 'mensaje' => 'config/panel.php no devuelve array'];
+        }
+
+        $fusionado = PanelConfigUpgrader::fusionar($actual);
+        $faltantes = PanelConfigUpgrader::clavesAnadidas($actual, $fusionado);
+
+        if ($faltantes === []) {
+            return ['nivel' => 'ok', 'mensaje' => 'Config al día con el paquete'];
+        }
+
+        return [
+            'nivel' => 'warn',
+            'mensaje' => count($faltantes).' clave(s) nueva(s) en el paquete — ejecuta php artisan panel:upgrade-config --dry-run',
+        ];
+    }
+
+    /** @return array{nivel: string, mensaje: string} */
+    private static function comprobarPanelRoute(): array
+    {
+        if (! function_exists('panel_route')) {
+            return ['nivel' => 'error', 'mensaje' => 'panel_route() no cargada — composer dump-autoload'];
+        }
+
+        try {
+            $url = \panel_route('dashboard', [], false);
+        } catch (\Throwable $e) {
+            return ['nivel' => 'error', 'mensaje' => 'panel_route() falló: '.$e->getMessage()];
+        }
+
+        if (! is_string($url) || $url === '') {
+            return ['nivel' => 'error', 'mensaje' => 'panel_route() devolvió URL vacía'];
+        }
+
+        return ['nivel' => 'ok', 'mensaje' => 'panel_route() operativa'];
+    }
+
+    /** @return array{nivel: string, mensaje: string} */
+    private static function comprobarMultiPanel(): array
+    {
+        PanelManager::sincronizarConfigInicial();
+        $panels = config('panel.panels');
+
+        if (! is_array($panels) || $panels === []) {
+            return ['nivel' => 'ok', 'mensaje' => 'Modo panel único (sin panels en config)'];
+        }
+
+        if (count($panels) < 2) {
+            return ['nivel' => 'warn', 'mensaje' => 'panels tiene un solo panel — usa config plana o añade otro panel'];
+        }
+
+        $paths = [];
+        $ids = [];
+
+        foreach (PanelManager::definiciones() as $id => $definicion) {
+            $ids[] = $id;
+            $path = (string) ($definicion['path'] ?? $id);
+
+            if (in_array($path, $paths, true)) {
+                return ['nivel' => 'error', 'mensaje' => "Path duplicado en panels: /{$path}"];
+            }
+
+            $paths[] = $path;
+        }
+
+        return [
+            'nivel' => 'ok',
+            'mensaje' => 'Multi-panel: '.count($panels).' paneles ('.implode(', ', $ids).') en /'.implode(', /', $paths),
+        ];
     }
 
     /** @return array{nivel: string, mensaje: string} */

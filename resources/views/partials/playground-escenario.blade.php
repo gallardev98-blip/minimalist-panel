@@ -25,6 +25,7 @@
 
     <x-panel::playground-zona zona="tema" :$zonasModificadas :$zonaResaltada class="panel-playground-zona--shell h-full">
     <div class="panel-shell panel-playground-shell {{ PanelLayout::claseModo() }} {{ PanelLayout::clasePosicionSidebar() }}">
+        @include('panel::partials.playground-layout-shell', ['modo' => PanelLayout::modo()])
         @if (PanelLayout::usaSidebar() || PanelLayout::modo() === 'topbar')
             <x-panel::playground-zona zona="menu" :$zonasModificadas :$zonaResaltada class="panel-playground-zona--menu">
                 <aside
@@ -52,11 +53,13 @@
                     </x-panel::playground-zona>
 
                     <nav class="panel-nav-scroll flex-1 space-y-0.5 overflow-y-auto p-3">
+                        @include('panel::partials.playground-slots-demo', ['ubicacion' => 'sidebar.before'])
                         @include('panel::partials.nav-links', [
                             'navigation' => $navigation,
                             'panelPath' => $panelPath,
                             'openGroupIndex' => $openGroupIndex,
                         ])
+                        @include('panel::partials.playground-slots-demo', ['ubicacion' => 'sidebar.after'])
                     </nav>
 
                     <div class="panel-border panel-sidebar-footer border-t p-4">
@@ -89,10 +92,12 @@
             @if (PanelLayout::usaTopbar())
                 <x-panel::playground-zona zona="menu" :$zonasModificadas :$zonaResaltada>
                     @include('panel::partials.topbar')
+                    @include('panel::partials.playground-slots-demo', ['ubicacion' => 'topbar.end'])
                 </x-panel::playground-zona>
             @endif
 
             <main class="panel-main panel-playground-main p-6 lg:p-8">
+                @include('panel::partials.playground-slots-demo', ['ubicacion' => 'main.before'])
                 <div class="panel-playground-fake-badge">{{ __('panel::panel.documentation.fake_badge') }}</div>
                 @include('panel::pages.playground-vista-previa', [
                     'marca' => $marca,
@@ -104,6 +109,7 @@
                     'graficos' => $graficos,
                     'revisionGraficos' => $revisionGraficos,
                 ])
+                @include('panel::partials.playground-slots-demo', ['ubicacion' => 'main.after'])
             </main>
         </div>
     </div>

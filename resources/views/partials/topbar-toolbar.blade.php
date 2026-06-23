@@ -46,7 +46,7 @@
 
     <div x-show="abierto" x-cloak class="panel-topbar-dropdown-panel panel-topbar-user-panel" role="menu">
         @if (PanelAuth::profileEnabled())
-            <a href="{{ route('panel.profile') }}" wire:navigate class="panel-topbar-sublink" role="menuitem" @click="abierto = false">
+            <a href="{{ panel_route('profile') }}" wire:navigate class="panel-topbar-sublink" role="menuitem" @click="abierto = false">
                 <x-panel::icon name="user" class="h-4 w-4 shrink-0" />
                 <span>{{ __('panel::panel.profile.title') }}</span>
             </a>

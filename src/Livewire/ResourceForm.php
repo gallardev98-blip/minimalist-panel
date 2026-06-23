@@ -148,7 +148,7 @@ final class ResourceForm extends Component
 
 
 
-        $this->redirectRoute('panel.resources.index', ['resource' => $this->resource], navigate: true);
+        $this->redirect(\panel_route('resources.index', ['resource' => $this->resource], false), navigate: true);
 
     }
 

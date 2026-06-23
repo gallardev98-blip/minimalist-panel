@@ -27,7 +27,7 @@ final class Breadcrumbs
         $crumbs = [
             [
                 'label' => __('panel::panel.breadcrumbs.dashboard'),
-                'url' => route('panel.dashboard'),
+                'url' => \panel_route('dashboard'),
             ],
         ];
 
@@ -66,7 +66,7 @@ final class Breadcrumbs
 
         /** @var class-string<Resource> $resourceClass */
         $resourceLabel = $resourceClass::label();
-        $indexUrl = route('panel.resources.index', ['resource' => $resourceSlug]);
+        $indexUrl = \panel_route('resources.index', ['resource' => $resourceSlug]);
 
         $crumbs[] = [
             'label' => $resourceLabel,

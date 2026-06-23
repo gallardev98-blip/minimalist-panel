@@ -38,7 +38,7 @@ final class ProfileTest extends TestCase
     public function test_guest_is_redirected_from_profile(): void
     {
         $this->get('/admin/profile')
-            ->assertRedirect(route('panel.login'));
+            ->assertRedirect(panel_route('login'));
     }
 
     public function test_authenticated_user_can_view_profile(): void

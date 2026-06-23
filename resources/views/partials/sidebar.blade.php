@@ -29,7 +29,7 @@
         <div class="panel-chrome-header-brand">
             @include('panel::partials.brand-mark')
             <a
-                href="{{ route('panel.dashboard') }}"
+                href="{{ panel_route('dashboard') }}"
                 wire:navigate
                 wire:navigate.hover
                 class="panel-heading panel-sidebar-brand-text truncate text-base font-bold tracking-tight"
@@ -80,7 +80,7 @@
 
             @if (\MyLaravelTools\Panel\Support\PanelAuth::profileEnabled())
                 <a
-                    href="{{ route('panel.profile') }}"
+                    href="{{ panel_route('profile') }}"
                     wire:navigate
                     wire:navigate.hover
                     class="panel-profile-link"

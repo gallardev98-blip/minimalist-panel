@@ -4,9 +4,139 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.37.0] - 2026-06-23
+
+### Added
+
+- `scripts/verificar-release.php` + `composer release:check`
+- CI `.github/workflows/release.yml` en tags `v*`
+- `panel-demo/DEPLOY.md` + `render.yaml` (Render.com)
+- Badges Packagist en README
+
+### Changed
+
+- `PUBLISHING.md` actualizado a v0.36+ (checklist, upgrade-config, demo online)
+
+## [0.36.0] - 2026-06-23
+
+### Added
+
+- Playground Avanzado: guía **RelationManager** (`PanelRelacionesGuia`) con preview de pestañas
+- Playground Avanzado: guía **multi-panel** (`PanelMultiPanelGuia`) con diagrama y código copiable
+- Sección técnica `multi_panel` en `PanelDocumentacion`
+- Tests `PanelRelacionesGuiaTest`, `PanelMultiPanelGuiaTest`, playground relations/multi
+
+## [0.35.0] - 2026-06-23
+
 ### Fixed
 
-- **Layout desktop sidebar** — `grid-area: main` en `.panel-main-column` (no en `.panel-main` anidado); el contenido ya no queda debajo del menú lateral en PC
+- `ImpersonationController` / `LogoutController` — `Redirect::` en lugar de `redirect()` (conflicto con Livewire Redirector)
+
+### Changed
+
+- **panel-demo**: auth unificada (Breeze → `/admin/*`); smoke import CSV y suplantación
+
+## [0.34.0] - 2026-06-23
+
+### Added
+
+- **`panel:doctor`** — avisa si faltan claves en config (`panel:upgrade-config --dry-run`)
+- Tests `InstallPanelStarterTest`, `InstallPanelMultiTest`
+- `panel-demo`: playground en `/playground` + smoke test
+- CI smoke `panel-demo` en PHP 8.2, 8.3 y 8.4
+
+### Changed
+
+- README: sección actualizar config tras `composer update`
+
+## [0.33.0] - 2026-06-23
+
+### Added
+
+- **`panel:upgrade-config`** — fusiona `config/panel.php` con claves nuevas del paquete (`--dry-run`, backup `.bak`)
+- **`PanelConfigUpgrader`** — fusión recursiva y listado de claves añadidas
+- **`panel:doctor`** — comprueba que `panel_route()` esté cargada y operativa
+- Smoke `panel-demo` ampliado: import, página custom, permisos editor/admin, `upgrade-config`
+- Tests: `PanelConfigUpgraderTest`, `UpgradeConfigCommandTest`, `NavigationBuilderTest`
+
+## [0.32.0] - 2026-06-23
+
+### Added
+
+- **`panel:install --saas`** — Tenant, TenantResource, vistas `panel/saas/*`, extensiones `saas-plan`, slot y widget
+- **`PanelSaasGuia`** — guía CLI en playground Avanzado → Extensiones
+- Stubs en `stubs/saas/`
+- Test `InstallPanelSaasTest`
+
+### Fixed
+
+- **`panel_route()`** — definición correcta en `helpers.php` y prefijo `\` en llamadas desde namespaces PHP
+
+## [0.31.0] - 2026-06-23
+
+### Added
+
+- **`PanelExtensionesGuia`** — receta end-to-end campo → columna → widget (tipo «rating») en playground Avanzado
+- **Smoke tests `panel-demo`** — `PanelSmokeTest` (login, dashboard, productos, `panel:doctor`)
+- **CI** — job `smoke-panel-demo` en `.github/workflows/panel-tests.yml`
+
+## [0.30.0] - 2026-06-23
+
+### Added
+
+- **Playground layout shell** — diagrama Sidebar / Topbar / Main en el escenario según `layout.mode`
+- **Preview import** — tabla de validación interactiva en Avanzado → Importación
+- **Preview permisos** — menú simulado con ítems bloqueados en Avanzado → Permisos
+- Zonas `import` y `permisos` en resaltado del playground
+
+### Changed
+
+- `PlaygroundDemo` — datos demo para import y permisos
+- `seleccionarSeccionTecnica()` resalta la zona al abrir import o permissions
+
+## [0.29.0] - 2026-06-23
+
+### Added
+
+- **`panel:install --multi`** — genera `panel-admin.php`, `panel-cliente.php` y raíz `panels` en `config/panel.php`
+- **`panel:doctor`** — comprueba multi-panel (paths únicos, recuento de paneles)
+- **Playground slots** — marcadores `sidebar.after`, `main.before`, `topbar.end` en el escenario demo
+- Stub `stubs/multi/panel-admin.stub.php`
+
+### Changed
+
+- `panel:install --multi` migra la config actual a `panel-admin.php` si aún no existe
+
+## [0.28.0] - 2026-06-23
+
+### Added
+
+- **Multi-panel** — varios paneles en la misma app vía `config/panel.php` → `panels` + `default`
+- **`PanelManager`** — contexto por panel (config, resources, widgets, slots)
+- **`panel_route()`** — helper de rutas consciente del panel actual (`panel.*` o `panel.{id}.*`)
+- Middleware **`SetCurrentPanel`** — aplica config del panel en cada request
+- Stub ejemplo `stubs/multi/panel-cliente.stub.php`
+
+### Changed
+
+- Rutas con 2+ paneles: `panel.admin.dashboard`, `panel.cliente.login`, etc.
+- Un solo panel (sin `panels` o vacío): rutas legacy `panel.*` sin cambios
+- `ResourceRegistry` y `PageRegistry` con caché por panel
+
+## [0.27.0] - 2026-06-23
+
+### Added
+
+- **`panel:scaffold`** — resource + policy opcional + widget opcional en un comando (`--policy`, `--widget=stat|chart|resource-count`)
+- **`panel:install --starter`** — kit completo: navigation, PostResource, modelo Post, migración, PostCountWidget y parche automático de `config/panel.php`
+- **Playground Auth** — pestaña interactiva con vista previa del login (centered/split, fondo, imagen)
+- **Playground ViewWidget** — demo en vivo con timeline Blade en el escenario
+- **Playground slots** — marcadores visuales `sidebar.before` y `main.after`
+- Badge de **modo layout** (sidebar/topbar/dual) en la vista previa del dashboard
+
+### Changed
+
+- `panel:install --demo` sigue disponible; `--starter` lo amplía con modelo, migración y widget
 
 ## [0.26.0] - 2026-06-20
 

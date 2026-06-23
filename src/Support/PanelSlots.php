@@ -19,6 +19,12 @@ final class PanelSlots
         return $this->vistas[$nombre] ?? null;
     }
 
+    public function reiniciarDesdeConfig(): void
+    {
+        $this->vistas = [];
+        $this->aplicarDesdeConfig();
+    }
+
     public function aplicarDesdeConfig(): void
     {
         $slots = array_merge(

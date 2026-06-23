@@ -223,11 +223,11 @@ final class RowAction
         }
 
         return match ($this->name) {
-            'view' => route('panel.resources.show', [
+            'view' => \panel_route('resources.show', [
                 'resource' => $resourceSlug,
                 'record' => $record->getKey(),
             ]),
-            'edit' => route('panel.resources.edit', [
+            'edit' => \panel_route('resources.edit', [
                 'resource' => $resourceSlug,
                 'record' => $record->getKey(),
             ]),

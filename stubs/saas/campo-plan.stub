@@ -1,0 +1,10 @@
+@php
+    $nombre = $field->getName();
+    $planes = ['free' => 'Free', 'pro' => 'Pro', 'enterprise' => 'Enterprise'];
+@endphp
+
+<select wire:model="form.{{ $nombre }}" class="panel-input w-full" id="field-{{ $nombre }}">
+    @foreach ($planes as $clave => $etiqueta)
+        <option value="{{ $clave }}">{{ $etiqueta }}</option>
+    @endforeach
+</select>

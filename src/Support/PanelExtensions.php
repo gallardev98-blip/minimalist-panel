@@ -51,6 +51,14 @@ final class PanelExtensions
         return $this->widgets;
     }
 
+    public function reiniciarDesdeConfig(): void
+    {
+        $this->vistasCampos = [];
+        $this->vistasColumnas = [];
+        $this->widgets = [];
+        $this->aplicarDesdeConfig();
+    }
+
     public function aplicarDesdeConfig(): void
     {
         $extensiones = config('panel.extensions', []);

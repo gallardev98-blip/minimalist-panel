@@ -55,7 +55,7 @@ final class NavigationBuilder
             'label' => $resourceClass::label(),
             'slug' => $resourceClass::slug(),
             'icon' => $resourceClass::icon(),
-            'url' => route('panel.resources.index', ['resource' => $resourceClass::slug()]),
+            'url' => \panel_route('resources.index', ['resource' => $resourceClass::slug()]),
             'badge' => $resourceClass::navigationBadge(),
         ];
     }

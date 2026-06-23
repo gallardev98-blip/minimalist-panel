@@ -3795,4 +3795,246 @@
     .panel-playground-range {
         accent-color: rgb(var(--panel-primary));
     }
+
+    .panel-playground-slot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        padding: 0.5rem 0.625rem;
+        border: 1px dashed rgb(var(--panel-primary) / 0.35);
+        border-radius: 0.5rem;
+        background: rgb(var(--panel-primary) / 0.06);
+    }
+
+    .panel-playground-layout-shell {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.375rem 0.625rem;
+        border-bottom: 1px dashed rgb(var(--panel-primary) / 0.25);
+        background: rgb(var(--panel-primary) / 0.04);
+    }
+
+    .panel-playground-layout-shell-label {
+        font-size: 0.625rem;
+        font-weight: 600;
+        color: rgb(var(--panel-heading));
+        white-space: nowrap;
+    }
+
+    .panel-playground-layout-shell-grid {
+        display: flex;
+        gap: 0.25rem;
+        flex: 1;
+        justify-content: flex-end;
+        min-width: 0;
+    }
+
+    .panel-playground-layout-shell-grid--sidebar .panel-playground-layout-shell-block--sidebar,
+    .panel-playground-layout-shell-grid--topbar .panel-playground-layout-shell-block--topbar,
+    .panel-playground-layout-shell-grid--dual .panel-playground-layout-shell-block--sidebar,
+    .panel-playground-layout-shell-grid--dual .panel-playground-layout-shell-block--topbar {
+        opacity: 1;
+    }
+
+    .panel-playground-layout-shell-block {
+        flex: 1;
+        max-width: 4.5rem;
+        padding: 0.25rem 0.375rem;
+        border: 1px solid rgb(var(--panel-border));
+        border-radius: 0.25rem;
+        font-size: 0.5625rem;
+        font-weight: 600;
+        text-align: center;
+        color: rgb(var(--panel-muted));
+        background: rgb(var(--panel-surface));
+        opacity: 0.35;
+    }
+
+    .panel-playground-layout-shell-block--active {
+        opacity: 1;
+        color: rgb(var(--panel-heading));
+        border-color: rgb(var(--panel-primary) / 0.45);
+        background: rgb(var(--panel-primary) / 0.1);
+    }
+
+    .panel-playground-layout-shell-block--main {
+        max-width: 5rem;
+    }
+
+    .panel-playground-perm-menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .panel-playground-perm-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.625rem;
+        border: 1px solid rgb(var(--panel-border));
+        border-radius: 0.5rem;
+        background: rgb(var(--panel-card));
+    }
+
+    .panel-playground-perm-item--hidden {
+        opacity: 0.55;
+        border-style: dashed;
+    }
+
+    .panel-playground-perm-code {
+        margin-left: auto;
+        font-size: 0.5625rem;
+        color: rgb(var(--panel-muted));
+    }
+
+    .panel-playground-import-upload {
+        max-width: 16rem;
+    }
+
+    .panel-playground-ext-guia-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+        padding: 0.75rem 1rem 0;
+        border-bottom: 1px solid rgb(var(--panel-border));
+    }
+
+    .panel-playground-ext-guia-tab {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.625rem;
+        border: 1px solid rgb(var(--panel-border));
+        border-radius: 0.5rem;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        color: rgb(var(--panel-muted));
+        background: rgb(var(--panel-surface));
+        cursor: pointer;
+    }
+
+    .panel-playground-ext-guia-tab--active {
+        color: rgb(var(--panel-heading));
+        border-color: rgb(var(--panel-primary) / 0.45);
+        background: rgb(var(--panel-primary) / 0.08);
+    }
+
+    .panel-playground-ext-guia-step {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.125rem;
+        height: 1.125rem;
+        border-radius: 9999px;
+        font-size: 0.5625rem;
+        background: rgb(var(--panel-primary) / 0.15);
+        color: rgb(var(--panel-heading));
+    }
+
+    .panel-playground-ext-guia-panel {
+        padding: 1rem;
+    }
+
+    .panel-playground-slot--main-after,
+    .panel-playground-slot--sidebar-after {
+        margin-top: 0.5rem;
+    }
+
+    .panel-playground-slot--main-before {
+        margin-bottom: 0.75rem;
+    }
+
+    .panel-playground-slot--topbar-end {
+        margin-top: 0.25rem;
+    }
+
+    .panel-playground-slot-label {
+        font-size: 0.625rem;
+        font-weight: 600;
+        color: rgb(var(--panel-heading));
+    }
+
+    .panel-playground-slot-code {
+        font-size: 0.5625rem;
+        color: rgb(var(--panel-muted));
+    }
+
+    .panel-playground-auth-preview {
+        padding: 1rem;
+        background: var(--panel-auth-preview-bg, rgb(var(--panel-surface)));
+    }
+
+    .panel-playground-auth-preview-shell {
+        display: flex;
+        justify-content: center;
+        min-height: 8rem;
+    }
+
+    .panel-playground-auth-preview-shell--split {
+        gap: 0.5rem;
+    }
+
+    .panel-playground-auth-preview-card {
+        flex: 1;
+        max-width: 14rem;
+        padding: 0.875rem;
+        border: 1px solid rgb(var(--panel-border));
+        border-radius: 0.75rem;
+        background: rgb(var(--panel-card));
+    }
+
+    .panel-playground-auth-preview-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .panel-playground-auth-preview-logo {
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 0.375rem;
+        background: rgb(var(--panel-primary));
+    }
+
+    .panel-playground-auth-preview-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+
+    .panel-playground-auth-preview-field {
+        display: block;
+        height: 0.625rem;
+        border-radius: 0.25rem;
+        background: rgb(var(--panel-border) / 0.5);
+    }
+
+    .panel-playground-auth-preview-btn {
+        display: block;
+        height: 0.75rem;
+        margin-top: 0.25rem;
+        border-radius: 0.25rem;
+        background: rgb(var(--panel-primary) / 0.65);
+    }
+
+    .panel-playground-auth-preview-image {
+        flex: 1;
+        min-height: 8rem;
+        border-radius: 0.75rem;
+    }
+
+    .panel-playground-timeline-item {
+        padding: 0.375rem 0;
+        border-bottom: 1px solid rgb(var(--panel-border) / 0.5);
+    }
+
+    .panel-playground-timeline-item:last-child {
+        border-bottom: 0;
+    }
 </style>

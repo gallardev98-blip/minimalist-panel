@@ -13,7 +13,7 @@
     </button>
 
     <a
-        href="{{ $urlInicio ?? route('panel.dashboard') }}"
+        href="{{ $urlInicio ?? panel_route('dashboard') }}"
         @if (! isset($urlInicio))
             wire:navigate
         @endif

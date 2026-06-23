@@ -1,0 +1,4 @@
+<div class="panel-card mb-4 border border-dashed border-violet-500/40 bg-violet-500/5 px-4 py-3 text-sm">
+  <span class="panel-heading font-semibold">SaaS demo</span>
+  <span class="panel-muted"> — slot <code>main.before</code> registrado en <code>config/panel.php</code></span>
+</div>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MyLaravelTools\Panel\Tests;
 
 use MyLaravelTools\Panel\PanelServiceProvider;
+use MyLaravelTools\Panel\Support\PanelManager;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
 use Livewire\LivewireServiceProvider;
@@ -22,15 +23,20 @@ abstract class TestCase extends Orchestra
 
     protected function setUp(): void
     {
+        PanelManager::reiniciarDefiniciones();
+
         parent::setUp();
 
         Blade::directive('vite', fn (): string => '<?php /* vite disabled in tests */ ?>');
 
+        $sobreescrituras = $this->app['config']->get('panel', []);
         $configHost = config_path('panel.php');
-        if (! is_file($configHost)) {
-            File::ensureDirectoryExists(dirname($configHost));
-            File::copy(dirname(__DIR__).'/config/panel.php', $configHost);
-        }
+        File::ensureDirectoryExists(dirname($configHost));
+        File::copy(dirname(__DIR__).'/config/panel.php', $configHost);
+        $this->app['config']->set('panel', array_replace_recursive(require $configHost, $sobreescrituras));
+        PanelManager::reiniciarDefiniciones();
+        PanelManager::sincronizarConfigInicial();
+        PanelManager::establecerContexto(PanelManager::idPorDefecto());
     }
 
     protected function defineEnvironment($app): void

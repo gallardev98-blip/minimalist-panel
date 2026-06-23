@@ -52,7 +52,7 @@
 
     <div class="panel-auth-footer">
         <span class="panel-auth-footer-text">{{ __('panel::panel.auth.has_account') }}</span>
-        <a href="{{ route('panel.login') }}" class="panel-auth-footer-link" wire:navigate>
+        <a href="{{ panel_route('login') }}" class="panel-auth-footer-link" wire:navigate>
             {{ __('panel::panel.auth.login_action') }}
         </a>
     </div>

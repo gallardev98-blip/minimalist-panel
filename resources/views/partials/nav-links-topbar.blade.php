@@ -18,7 +18,7 @@
     @click.outside="openGroup = null"
 >
     <a
-        href="{{ route('panel.dashboard') }}"
+        href="{{ panel_route('dashboard') }}"
         wire:navigate
         wire:navigate.hover
         class="panel-topbar-trigger {{ request()->routeIs('panel.dashboard') ? 'panel-topbar-trigger-active' : '' }}"

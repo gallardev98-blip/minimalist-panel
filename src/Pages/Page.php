@@ -66,6 +66,6 @@ abstract class Page
 
     public static function url(): string
     {
-        return route('panel.pages.show', ['page' => static::slug()]);
+        return \panel_route('pages.show', ['page' => static::slug()]);
     }
 }

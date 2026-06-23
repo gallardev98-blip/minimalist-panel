@@ -22,6 +22,9 @@ final class PanelPlaygroundVistaTest extends TestCase
         $this->assertSame('marca', PanelPlaygroundVista::zonaPorClave('brand.name'));
         $this->assertSame('tabla', PanelPlaygroundVista::zonaPorClave('layout.table_striped'));
         $this->assertSame('menu', PanelPlaygroundVista::zonaPorClave('layout.mode'));
+        $this->assertSame('auth', PanelPlaygroundVista::zonaPorClave('auth_ui.layout'));
+        $this->assertSame('import', PanelPlaygroundVista::zonaPorClave('import.preview'));
+        $this->assertSame('permisos', PanelPlaygroundVista::zonaPorClave('permissions.enabled'));
         $this->assertSame('acentos', PanelPlaygroundVista::zonaPorClave('theme.colors.primary'));
         $this->assertSame('tema', PanelPlaygroundVista::zonaPorClave('theme.preset'));
     }

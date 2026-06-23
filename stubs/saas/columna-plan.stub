@@ -1,0 +1,9 @@
+@php
+    $clases = match ($value ?? 'free') {
+        'pro' => 'panel-badge-primary',
+        'enterprise' => 'panel-badge-success',
+        default => 'panel-badge-muted',
+    };
+@endphp
+
+<span class="panel-badge {{ $clases }} text-xs uppercase">{{ $value ?? 'free' }}</span>

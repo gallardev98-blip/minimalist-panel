@@ -64,6 +64,27 @@
                     </div>
                 </details>
             @endif
+
+            @if ($seccionTecnica === 'import')
+                @include('panel::partials.playground-import-preview', compact('zonasModificadas', 'zonaResaltada'))
+            @endif
+
+            @if ($seccionTecnica === 'permissions')
+                @include('panel::partials.playground-permissions-preview', compact('zonasModificadas', 'zonaResaltada'))
+            @endif
+
+            @if (in_array($seccionTecnica, ['extensions', 'campos', 'widgets'], true))
+                @include('panel::partials.playground-extensiones-guia', compact('zonasModificadas', 'zonaResaltada'))
+                @include('panel::partials.playground-saas-guia', compact('zonasModificadas', 'zonaResaltada'))
+            @endif
+
+            @if ($seccionTecnica === 'resources')
+                @include('panel::partials.playground-relaciones-guia', compact('zonasModificadas', 'zonaResaltada'))
+            @endif
+
+            @if ($seccionTecnica === 'multi_panel')
+                @include('panel::partials.playground-multi-panel-guia', compact('zonasModificadas', 'zonaResaltada'))
+            @endif
         @endif
     </div>
 </div>

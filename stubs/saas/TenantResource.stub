@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Panel\Resources;
+
+use App\Models\Tenant;
+use MyLaravelTools\Panel\Columns\BooleanColumn;
+use MyLaravelTools\Panel\Columns\TextColumn;
+use MyLaravelTools\Panel\Fields\BooleanField;
+use MyLaravelTools\Panel\Fields\CustomField;
+use MyLaravelTools\Panel\Fields\TextField;
+use MyLaravelTools\Panel\Resources\Resource;
+
+final class TenantResource extends Resource
+{
+    protected static string $model = Tenant::class;
+
+    protected static ?string $label = 'Tenants';
+
+    protected static ?string $icon = 'building';
+
+    public static function form(): array
+    {
+        return [
+            TextField::make('name')->label('Nombre')->required(),
+            CustomField::make('plan', 'Plan')
+                ->type('saas-plan')
+                ->rules(['required', 'in:free,pro,enterprise']),
+            BooleanField::make('is_active')->label('Activo')->default(true),
+        ];
+    }
+
+    public static function table(): array
+    {
+        return [
+            TextColumn::make('name')->label('Nombre')->searchable()->sortable(),
+            TextColumn::make('plan', 'Plan')->type('saas-plan')->sortable(),
+            BooleanColumn::make('is_active')->label('Activo'),
+        ];
+    }
+}

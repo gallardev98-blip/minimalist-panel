@@ -32,6 +32,9 @@
         <button type="button" wire:click="seleccionarSeccion('graficos')" class="panel-btn panel-btn-ghost w-full text-sm">
             {{ __('panel::panel.documentation.go_charts') }}
         </button>
+        <button type="button" wire:click="seleccionarSeccion('auth')" class="panel-btn panel-btn-ghost w-full text-sm">
+            {{ __('panel::panel.documentation.go_auth') }}
+        </button>
         <button type="button" wire:click="seleccionarSeccion('codigo')" class="panel-btn panel-btn-ghost w-full text-sm">
             {{ __('panel::panel.documentation.go_export') }}
         </button>

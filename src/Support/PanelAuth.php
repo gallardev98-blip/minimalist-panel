@@ -50,7 +50,7 @@ final class PanelAuth
 
     public static function profileRouteName(): string
     {
-        return 'panel.profile';
+        return PanelRutas::nombre('profile');
     }
 
     public static function user(): ?Authenticatable
@@ -75,7 +75,7 @@ final class PanelAuth
     public static function loginRouteName(): string
     {
         if (static::enabled()) {
-            return 'panel.login';
+            return PanelRutas::nombre('login');
         }
 
         return (string) config('panel.login_route', 'login');
@@ -84,7 +84,7 @@ final class PanelAuth
     public static function logoutRouteName(): string
     {
         if (static::enabled()) {
-            return 'panel.logout';
+            return PanelRutas::nombre('logout');
         }
 
         return (string) config('panel.logout_route', 'logout');
@@ -98,7 +98,7 @@ final class PanelAuth
             return $route;
         }
 
-        return 'panel.dashboard';
+        return PanelRutas::nombre('dashboard');
     }
 
     public static function redirectAfterRegister(): string

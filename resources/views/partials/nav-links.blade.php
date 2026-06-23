@@ -1,5 +1,5 @@
 <a
-    href="{{ route('panel.dashboard') }}"
+    href="{{ panel_route('dashboard') }}"
     wire:navigate
     wire:navigate.hover
     @click="sidebarOpen = false"

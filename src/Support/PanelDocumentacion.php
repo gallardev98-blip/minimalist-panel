@@ -21,6 +21,7 @@ final class PanelDocumentacion
             self::seccionPerfilSuplantacion(),
             self::seccionPermisos(),
             self::seccionNavegacion(),
+            self::seccionMultiPanel(),
             self::seccionResources(),
             self::seccionPages(),
             self::seccionExtensiones(),
@@ -71,6 +72,14 @@ final class PanelDocumentacion
                 'tipo' => 'opciones',
                 'descripcion' => 'Tema, tipografía y paleta de colores.',
                 'secciones' => ['theme'],
+            ],
+            [
+                'id' => 'auth',
+                'titulo' => 'Auth',
+                'icono' => 'lock',
+                'tipo' => 'opciones',
+                'descripcion' => 'Layout del login y pantallas de acceso.',
+                'secciones' => ['auth_ui'],
             ],
             [
                 'id' => 'graficos',
@@ -212,10 +221,10 @@ final class PanelDocumentacion
             'titulo' => 'Auth — apariencia',
             'descripcion' => 'Pantallas login, registro y recuperar contraseña.',
             'opciones' => [
-                self::select('auth_ui.layout', 'Layout auth', ['centered' => 'Centrado', 'split' => 'Split con imagen'], 'centered', 'split requiere auth_ui.image.', false),
-                self::texto('auth_ui.background', 'Fondo', '', 'URL, asset o gradiente CSS.', false),
-                self::texto('auth_ui.image', 'Imagen lateral', '', 'Solo layout split.', false),
-                self::booleano('auth_ui.show_tagline', 'Mostrar tagline', true, 'Tagline de brand en auth.', false),
+                self::select('auth_ui.layout', 'Layout auth', ['centered' => 'Centrado', 'split' => 'Split con imagen'], 'centered', 'split requiere auth_ui.image.', true),
+                self::texto('auth_ui.background', 'Fondo', '', 'URL, asset o gradiente CSS.', true),
+                self::texto('auth_ui.image', 'Imagen lateral', '', 'Solo layout split.', true),
+                self::booleano('auth_ui.show_tagline', 'Mostrar tagline', true, 'Tagline de brand en auth.', true),
             ],
         ];
     }
@@ -343,6 +352,22 @@ final class PanelDocumentacion
     }
 
     /** @return array{id: string, titulo: string, descripcion: string, opciones: list<array<string, mixed>>} */
+    private static function seccionMultiPanel(): array
+    {
+        return [
+            'id' => 'multi_panel',
+            'titulo' => 'Multi-panel',
+            'descripcion' => 'Varios backoffice en una app (/admin, /cliente…).',
+            'opciones' => [
+                self::referencia('panels', 'Paneles', 'array', "'admin' => ['path' => 'admin']", 'Vacío = panel único.'),
+                self::referencia('default', 'Panel por defecto', 'string', 'admin', 'Contexto sin prefijo en URL.'),
+                self::referencia('panel_route()', 'Helper rutas', '—', "panel_route('dashboard', panel: 'cliente')", 'Usar \\panel_route() en namespaces.'),
+                self::referencia('panel:install --multi', 'Instalador', '—', 'configs panel-*.php', 'Scaffold multi-panel.'),
+            ],
+        ];
+    }
+
+    /** @return array{id: string, titulo: string, descripcion: string, opciones: list<array<string, mixed>>} */
     private static function seccionResources(): array
     {
         return [
@@ -439,10 +464,12 @@ final class PanelDocumentacion
             'titulo' => 'Comandos Artisan',
             'descripcion' => 'CLI del paquete.',
             'opciones' => [
-                self::referencia('panel:install', 'Instalar', '—', '--demo para stubs', ''),
+                self::referencia('panel:install', 'Instalar', '—', '--demo, --starter, --saas o --multi', ''),
+                self::referencia('panel:scaffold', 'Scaffold', '—', 'Resource + policy + widget', ''),
                 self::referencia('panel:make-resource', 'Resource', '—', 'Nombre del modelo', ''),
                 self::referencia('panel:make-page', 'Page', '—', 'Página custom', ''),
                 self::referencia('panel:make-policy', 'Policy', '—', 'Extiende ResourcePolicy', ''),
+                self::referencia('panel:upgrade-config', 'Actualizar config', '—', '--dry-run --force', 'Fusiona claves nuevas del paquete.'),
                 self::referencia('panel:upgrade-views', 'Vistas', '—', '--dry-run --force', 'Actualizar vendor/panel.'),
             ],
         ];

@@ -31,6 +31,6 @@ final class EnsurePanelEmailVerified
             return $next($request);
         }
 
-        return redirect()->route('panel.verification.notice', [], false);
+        return redirect(\panel_route('verification.notice', [], false));
     }
 }

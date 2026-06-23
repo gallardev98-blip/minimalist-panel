@@ -44,7 +44,7 @@ final class Register extends Component
 
         if (PanelAuth::emailVerificationEnabled()) {
             PanelAuth::login($user);
-            $this->redirect(route('panel.verification.notice', [], false), navigate: false);
+            $this->redirect(\panel_route('verification.notice', [], false), navigate: false);
 
             return;
         }

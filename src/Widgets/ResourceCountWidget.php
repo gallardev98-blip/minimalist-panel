@@ -62,7 +62,7 @@ final class ResourceCountWidget
             return null;
         }
 
-        return route('panel.resources.index', ['resource' => $this->resourceClass::slug()]);
+        return \panel_route('resources.index', ['resource' => $this->resourceClass::slug()]);
     }
 
     public function getColor(): string
