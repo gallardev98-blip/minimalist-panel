@@ -43,18 +43,26 @@
             --panel-shadow-lg: 0 10px 40px -10px rgb(0 0 0 / 0.35);
         }
 
-        html, body {
+        html {
             height: 100%;
+            font-family: var(--panel-font);
+            line-height: 1.5;
+            -webkit-text-size-adjust: 100%;
+            tab-size: 4;
         }
 
         body {
             font-family: var(--panel-font);
+            font-feature-settings: normal;
+            font-variation-settings: normal;
             background-color: rgb(var(--panel-bg));
             color: rgb(var(--panel-text));
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            line-height: inherit;
         }
 
         .panel-error-page {
@@ -224,7 +232,7 @@
             height: 1rem;
         }
 
-        @media (max-width: 480px) {
+        @@media (max-width: 480px) {
             .panel-error-card {
                 padding: 2rem 1.5rem;
             }

@@ -4,6 +4,12 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.39.2] - 2026-06-25
+
+### Fixed
+
+- **Error pages — iconos y fuente** — iconos cambiados a `stroke-width="2"` con paths Lucide (igual que el componente `x-panel::icon`); normalización tipográfica en `html` (`line-height`, `font-feature-settings`, `-moz-osx-font-smoothing`); `@@media` escapado en Blade; fuente aplicada a `html` además de `body`
+
 ## [0.39.1] - 2026-06-25
 
 ### Fixed
