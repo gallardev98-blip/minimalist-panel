@@ -81,7 +81,10 @@ final class SpaLoaderTest extends TestCase
             ->assertSee('PROGRESS_CAP', false)
             ->assertSee('AUTH_MIN_VISIBLE_MS', false)
             ->assertSee('finishProgress', false)
-            ->assertSee('event.detail?.cached', false);
+            ->assertSee('event.detail?.cached', false)
+            ->assertSee('WATCHDOG_MS', false)
+            ->assertSee('forceHideLoader', false)
+            ->assertSee('window.panelSpaLoader', false);
     }
 
     public function test_dashboard_uses_page_header_with_breadcrumbs_row(): void

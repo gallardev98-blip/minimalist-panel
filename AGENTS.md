@@ -445,6 +445,7 @@ Tab::make('General', [
 - Sidebar footer: perfil arriba; fila inferior con tema (izq.), versión (centro) y logout (der.)
 - Sidebar `fixed` en móvil, `relative` en grid desktop
 - SPA loader (`partials/spa-loader.blade.php` + `spa-navigation.blade.php`): porcentaje entero en el anillo (`0%`→`100%`); progreso simulado (Livewire no expone % real de fetch); si `event.detail.cached`, salta a `100%`
+- **Watchdog SPA:** `layout.spa_loader_timeout_ms` (default 20s) fuerza ocultar si `livewire:navigated` no llega; `Escape` o `window.panelSpaLoader.ocultar()`; desactivar con `layout.spa_loader => false`
 - **Loader en auth:** `@persist('panel-spa-loader')` entre guest y app (un solo loader, sin reinicio al entrar); fullscreen vía JS + `body.panel-auth-body`; tiempos más cortos en transición login→panel
 - Livewire: mantener `navigate.show_progress_bar = true` en `config/livewire.php` — si es `false`, Livewire añade `data-no-progress-bar` y lanza `Alpine is not defined` al cargar; la barra NProgress se oculta vía CSS (`#nprogress` en theme-styles)
 - **`panelApp()` en `<head>`** del layout app — definir antes de `@livewireScripts` para que Alpine resuelva `x-data` en `<body>`

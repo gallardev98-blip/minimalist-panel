@@ -1,3 +1,10 @@
+@php
+    $spaLoaderActivo = (bool) config('panel.layout.spa_loader', true);
+    $spaLoaderTimeoutMs = max(3000, (int) config('panel.layout.spa_loader_timeout_ms', 20000));
+    $spaLoaderEscape = (bool) config('panel.layout.spa_loader_escape', true);
+@endphp
+
+@if ($spaLoaderActivo)
 <script>
     (function () {
         function registerPanelSpaNavigation() {
@@ -13,10 +20,13 @@
             const AUTH_EXIT_MS = 200;
             const VISIBLE_CLASS = 'panel-spa-loader--visible';
             const PROGRESS_CAP = 92;
+            const WATCHDOG_MS = {{ $spaLoaderTimeoutMs }};
+            const ESCAPE_DISMISS = @json($spaLoaderEscape);
 
             let shownAt = 0;
             let hideTimer = null;
             let exitTimer = null;
+            let watchdogTimer = null;
             let progressFrame = null;
             let progressStartedAt = 0;
             let isVisible = false;
@@ -70,6 +80,23 @@
                     cancelAnimationFrame(progressFrame);
                     progressFrame = null;
                 }
+            }
+
+            function clearWatchdog() {
+                if (watchdogTimer !== null) {
+                    clearTimeout(watchdogTimer);
+                    watchdogTimer = null;
+                }
+            }
+
+            function startWatchdog() {
+                clearWatchdog();
+
+                watchdogTimer = setTimeout(() => {
+                    if (isVisible) {
+                        forceHideLoader();
+                    }
+                }, WATCHDOG_MS);
             }
 
             function setProgress(value) {
@@ -130,6 +157,28 @@
                 setProgress(100);
             }
 
+            function resetLoaderState(element, mainEl) {
+                clearWatchdog();
+                clearTimeout(hideTimer);
+                clearTimeout(exitTimer);
+                stopProgressAnimation();
+
+                element?.classList.remove(VISIBLE_CLASS);
+                element?.setAttribute('aria-busy', 'false');
+                element?.setAttribute('aria-hidden', 'true');
+                mainEl?.classList.remove('panel-navigating');
+                unlockScroll();
+                isVisible = false;
+                lockFullscreenLoader = false;
+                isAuthTransition = false;
+                syncLoaderFullscreen(element);
+                setProgress(0);
+            }
+
+            function forceHideLoader() {
+                resetLoaderState(loader(), main());
+            }
+
             function showLoader(options = {}) {
                 const element = loader();
                 const mainEl = main();
@@ -169,6 +218,8 @@
                 if (resetProgress) {
                     startProgress(isCached);
                 }
+
+                startWatchdog();
             }
 
             function hideLoader() {
@@ -176,9 +227,12 @@
                 const mainEl = main();
 
                 if (! element || ! isVisible) {
+                    clearWatchdog();
+
                     return;
                 }
 
+                clearWatchdog();
                 finishProgress();
 
                 const minVisible = isAuthTransition ? AUTH_MIN_VISIBLE_MS : MIN_VISIBLE_MS;
@@ -239,6 +293,10 @@
             }
 
             document.addEventListener('livewire:navigate', (event) => {
+                if (event.defaultPrevented) {
+                    return;
+                }
+
                 if (isPanelAuthPath(resolveNavigatePath(event.detail))) {
                     return;
                 }
@@ -254,6 +312,28 @@
                 cleanupLayoutArtifacts();
                 window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
             });
+
+            window.addEventListener('pageshow', () => {
+                if (isVisible) {
+                    forceHideLoader();
+                }
+            });
+
+            if (ESCAPE_DISMISS) {
+                document.addEventListener('keydown', (event) => {
+                    if (event.key !== 'Escape' || ! isVisible) {
+                        return;
+                    }
+
+                    event.preventDefault();
+                    forceHideLoader();
+                });
+            }
+
+            window.panelSpaLoader = {
+                ocultar: forceHideLoader,
+                estaVisible: () => isVisible,
+            };
         }
 
         if (window.Livewire) {
@@ -263,3 +343,4 @@
         }
     })();
 </script>
+@endif

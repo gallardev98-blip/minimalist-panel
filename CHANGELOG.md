@@ -4,6 +4,17 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.38.0] - 2026-06-25
+
+### Fixed
+
+- **Loader SPA pillado** — si `livewire:navigate` falla o tarda (red, 500, sesión/BD), el overlay ya no queda bloqueado: watchdog configurable, `Escape` para cerrar y API `window.panelSpaLoader.ocultar()`
+- Navegación cancelada (`defaultPrevented`) ya no muestra el loader
+
+### Added
+
+- `layout.spa_loader` (bool), `layout.spa_loader_timeout_ms` (default 20000), `layout.spa_loader_escape` (default true)
+
 ## [0.37.0] - 2026-06-23
 
 ### Added

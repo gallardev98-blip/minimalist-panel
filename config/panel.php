@@ -260,6 +260,9 @@ return [
         'title_suffix' => null,
         'per_page_options' => [15, 25, 50, 100],
         'footer_links' => [],
+        'spa_loader' => true,
+        'spa_loader_timeout_ms' => 20000,
+        'spa_loader_escape' => true,
     ],
 
     /*
