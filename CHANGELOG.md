@@ -4,6 +4,12 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.39.3] - 2026-06-25
+
+### Fixed
+
+- **Error pages — iconos via `x-panel::icon`** — eliminados los SVG inline de las 7 vistas de error; ahora usan `<x-panel::icon name="...">` igual que el resto del panel. Añadidos al componente `icon.blade.php` los iconos Lucide `clock`, `alert-circle`, `alert-triangle`, `zap` y `wrench` que faltaban
+
 ## [0.39.2] - 2026-06-25
 
 ### Fixed
