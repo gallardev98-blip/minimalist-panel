@@ -739,6 +739,7 @@ composer test
 - [x] panel-demo auth unificada + smoke import/suplantación (v0.35)
 - [x] Playground RelationManager + multi-panel (v0.36)
 - [x] Publicación Packagist + demo online (PUBLISHING, DEPLOY, render.yaml) (v0.37.0)
+- [x] Loader SPA — watchdog, Escape y `panelSpaLoader.ocultar()` (v0.38.0)
 
 ---
 
