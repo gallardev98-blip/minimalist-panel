@@ -1,8 +1,6 @@
 @extends('panel::layouts.error', ['titulo' => __('panel::panel.errors.429.title')])
 
 @section('contenido')
-    <x-panel::icon name="zap" class="panel-error-icon" />
-
     <p class="panel-error-code">429</p>
     <div class="panel-error-divider"></div>
 
@@ -11,7 +9,7 @@
 
     <div class="panel-error-actions">
         <button type="button" onclick="window.location.reload()" class="panel-error-btn panel-error-btn-primary">
-            {{ __('panel::panel.errors.429.action') }}
+            <x-panel::icon name="rotate-ccw" /> {{ __('panel::panel.errors.429.action') }}
         </button>
     </div>
 @endsection

@@ -6,7 +6,6 @@
     $font  = ThemeResolver::fontFamily();
     $fontsUrl = ThemeResolver::googleFontsUrl();
     $brandName = config('panel.brand.name', 'Panel');
-    $panelPath = config('panel.path', 'admin');
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -30,17 +29,13 @@
             @foreach ($light as $nombre => $valor)
             --{{ $nombre }}: {{ $valor }};
             @endforeach
-            --panel-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
-            --panel-shadow-lg: 0 10px 40px -10px rgb(0 0 0 / 0.12);
-            --panel-font: {{ $font }};
+            --panel-font: {!! $font !!};
         }
 
         .dark {
             @foreach ($dark as $nombre => $valor)
             --{{ $nombre }}: {{ $valor }};
             @endforeach
-            --panel-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.45);
-            --panel-shadow-lg: 0 10px 40px -10px rgb(0 0 0 / 0.35);
         }
 
         html {
@@ -48,21 +43,16 @@
             font-family: var(--panel-font);
             line-height: 1.5;
             -webkit-text-size-adjust: 100%;
-            tab-size: 4;
         }
 
         body {
             font-family: var(--panel-font);
-            font-feature-settings: normal;
-            font-variation-settings: normal;
             background-color: rgb(var(--panel-bg));
             color: rgb(var(--panel-text));
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             display: flex;
-            flex-direction: column;
             min-height: 100vh;
-            line-height: inherit;
         }
 
         .panel-error-page {
@@ -75,64 +65,20 @@
             text-align: center;
         }
 
-        .panel-error-brand {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 2.5rem;
-            text-decoration: none;
-            color: rgb(var(--panel-heading));
-        }
-
-        .panel-error-brand-mark {
-            width: 2rem;
-            height: 2rem;
-            border-radius: 0.5rem;
-            background: rgb(var(--panel-primary));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .panel-error-brand-mark svg {
-            width: 1rem;
-            height: 1rem;
-            color: rgb(var(--panel-primary-fg));
-        }
-
-        .panel-error-brand-name {
-            font-size: 0.9375rem;
-            font-weight: 600;
-            letter-spacing: -0.01em;
-            color: rgb(var(--panel-heading));
-        }
-
-        .panel-error-card {
-            background: rgb(var(--panel-card));
-            border: 1px solid rgb(var(--panel-border));
-            border-radius: var(--panel-radius);
-            box-shadow: var(--panel-shadow-lg);
-            padding: 3rem 2.5rem;
-            max-width: 30rem;
-            width: 100%;
-        }
-
         .panel-error-code {
-            font-size: 5rem;
+            font-size: 4rem;
             font-weight: 700;
             line-height: 1;
             letter-spacing: -0.04em;
             color: rgb(var(--panel-heading));
-            margin-bottom: 1rem;
         }
 
-        .panel-error-icon {
-            width: 3rem;
-            height: 3rem;
-            margin: 0 auto 1.25rem;
-            color: rgb(var(--panel-primary));
-            opacity: 0.7;
+        .panel-error-divider {
+            width: 2.5rem;
+            height: 2px;
+            background: rgb(var(--panel-border));
+            border-radius: 9999px;
+            margin: 1.25rem auto;
         }
 
         .panel-error-title {
@@ -146,7 +92,8 @@
             font-size: 0.875rem;
             color: rgb(var(--panel-muted));
             line-height: 1.6;
-            margin-bottom: 2rem;
+            max-width: 26rem;
+            margin: 0 auto 2rem;
         }
 
         .panel-error-actions {
@@ -159,8 +106,8 @@
         .panel-error-btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.375rem;
-            padding: 0.5rem 1.125rem;
+            gap: 0.5rem;
+            padding: 0.5625rem 1.25rem;
             border-radius: calc(var(--panel-radius) * 0.75);
             font-size: 0.875rem;
             font-weight: 500;
@@ -171,14 +118,14 @@
             font-family: var(--panel-font);
         }
 
+        .panel-error-btn svg { width: 1rem; height: 1rem; }
+
         .panel-error-btn-primary {
             background: rgb(var(--panel-primary));
             color: rgb(var(--panel-primary-fg));
         }
 
-        .panel-error-btn-primary:hover {
-            background: rgb(var(--panel-primary-hover));
-        }
+        .panel-error-btn-primary:hover { background: rgb(var(--panel-primary-hover)); }
 
         .panel-error-btn-ghost {
             background: transparent;
@@ -187,59 +134,36 @@
         }
 
         .panel-error-btn-ghost:hover {
-            background: rgb(var(--panel-elevated));
             color: rgb(var(--panel-heading));
-        }
-
-        .panel-error-footer {
-            margin-top: 3rem;
-            font-size: 0.75rem;
-            color: rgb(var(--panel-muted));
-        }
-
-        .panel-error-divider {
-            width: 2.5rem;
-            height: 2px;
-            background: rgb(var(--panel-primary) / 0.2);
-            border-radius: 9999px;
-            margin: 1.25rem auto;
+            border-color: rgb(var(--panel-primary) / 0.3);
         }
 
         .panel-error-theme-toggle {
             position: fixed;
-            top: 1rem;
-            right: 1rem;
+            top: 1.25rem;
+            right: 1.25rem;
             width: 2.25rem;
             height: 2.25rem;
-            border-radius: 50%;
+            border-radius: 0.5rem;
             border: 1px solid rgb(var(--panel-border));
-            background: rgb(var(--panel-surface));
+            background: transparent;
             color: rgb(var(--panel-muted));
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: background-color 0.15s, color 0.15s;
+            transition: color 0.15s, border-color 0.15s;
         }
 
         .panel-error-theme-toggle:hover {
-            background: rgb(var(--panel-elevated));
             color: rgb(var(--panel-heading));
+            border-color: rgb(var(--panel-primary) / 0.3);
         }
 
-        .panel-error-theme-toggle svg {
-            width: 1rem;
-            height: 1rem;
-        }
+        .panel-error-theme-toggle svg { width: 1rem; height: 1rem; }
 
         @@media (max-width: 480px) {
-            .panel-error-card {
-                padding: 2rem 1.5rem;
-            }
-
-            .panel-error-code {
-                font-size: 3.75rem;
-            }
+            .panel-error-code { font-size: 3.25rem; }
         }
     </style>
 </head>
@@ -250,12 +174,8 @@
         aria-label="{{ __('panel::panel.theme_toggle') }}"
         onclick="(function(){const d=document.documentElement;const t=d.classList.toggle('dark');localStorage.setItem('panel-theme',t?'dark':'light');})()"
     >
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="dark-icon" style="display:none">
-            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.22 1.78a1 1 0 011.42 1.42l-.71.7a1 1 0 11-1.41-1.41l.7-.71zM17 10a1 1 0 100 2h1a1 1 0 100-2h-1zM4.22 15.78a1 1 0 001.42-1.42l-.71-.7a1 1 0 10-1.41 1.41l.7.71zM10 15a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-5.78-.22a1 1 0 001.42 1.42l.7-.71a1 1 0 10-1.41-1.41l-.71.7zM4 10a1 1 0 100-2H3a1 1 0 000 2h1zm12.78-4.22a1 1 0 00-1.42-1.42l-.7.71a1 1 0 101.41 1.41l.71-.7zM10 6a4 4 0 100 8 4 4 0 000-8z"/>
-        </svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="light-icon">
-            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/>
-        </svg>
+        <span class="dark-icon" style="display:none"><x-panel::icon name="sun" /></span>
+        <span class="light-icon"><x-panel::icon name="moon" /></span>
     </button>
     <script>
         (function () {
@@ -273,33 +193,7 @@
     </script>
 
     <div class="panel-error-page">
-        <a href="/{{ $panelPath }}" class="panel-error-brand">
-            @php
-                $brandLogo = config('panel.brand.logo');
-                $logoUrl = null;
-                if (is_string($brandLogo) && $brandLogo !== '') {
-                    $logoUrl = str_starts_with($brandLogo, 'http') || str_starts_with($brandLogo, '/')
-                        ? $brandLogo
-                        : asset($brandLogo);
-                }
-            @endphp
-            <div class="panel-error-brand-mark">
-                @if ($logoUrl)
-                    <img src="{{ $logoUrl }}" alt="{{ $brandName }}" style="height:1.25rem;width:auto;display:block;">
-                @else
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1rem;height:1rem;color:rgb(var(--panel-primary-fg))">
-                        <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/>
-                    </svg>
-                @endif
-            </div>
-            <span class="panel-error-brand-name">{{ $brandName }}</span>
-        </a>
-
-        <div class="panel-error-card">
-            @yield('contenido')
-        </div>
-
-        <p class="panel-error-footer">{{ $brandName }} &mdash; {{ config('app.name') }}</p>
+        @yield('contenido')
     </div>
 </body>
 </html>

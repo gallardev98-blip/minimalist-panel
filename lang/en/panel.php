@@ -422,7 +422,7 @@ return [
         '500' => [
             'title' => 'Server error',
             'desc'  => 'An unexpected error occurred. We are working on it.',
-            'action_retry' => 'Retry',
+            'action' => 'Retry',
         ],
         '503' => [
             'title' => 'Service unavailable',

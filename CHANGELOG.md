@@ -4,6 +4,29 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.40.1] - 2026-06-25
+
+### Fixed
+
+- **Error pages — fuente rota** — `--panel-font` se emitía con entidades HTML (`&#039;`) porque Blade escapa `{{ }}` dentro de `<style>`; la fuente del panel nunca cargaba. Cambiado a `{!! $font !!}` (valor de config de servidor, sin riesgo XSS). Ahora `font-family: var(--panel-font)` resuelve correctamente a la fuente configurada
+
+## [0.40.0] - 2026-06-25
+
+### Changed
+
+- **Páginas de error — diseño minimalista** — `layouts/error.blade.php` simplificado al máximo: sin cabecera de marca (icono/nombre de la app), sin tarjeta, sin badge de icono y sin fondo decorativo. Solo código del error, título, descripción y botones, centrados sobre el fondo del panel, con la **misma fuente del panel** (`--panel-font` vía `ThemeResolver`)
+- **Iconos vía `x-panel::icon`** — el layout no usa SVGs sueltos: el toggle de tema usa `sun`/`moon` y los botones de acción llevan icono (`arrow-left`, `layout-dashboard`, `rotate-ccw`)
+
+## [0.39.4] - 2026-06-25
+
+### Fixed
+
+- **Error 500 — botón sin traducir** — la vista `errors/500.blade.php` usaba `panel::panel.errors.500.action` pero las traducciones definían `action_retry`; se mostraba la clave cruda al usuario. Renombrada la clave a `action` en `lang/es` y `lang/en`, coherente con 419/429/503
+
+### Added
+
+- **Tests de páginas de error** — `tests/Feature/ErrorPagesTest.php` cubre el render de las 7 vistas (403, 404, 419, 422, 429, 500, 503), que no queden claves sin traducir, que la 503 muestre el mensaje de mantenimiento y que la 500 no filtre el mensaje interno de la excepción
+
 ## [0.39.3] - 2026-06-25
 
 ### Fixed

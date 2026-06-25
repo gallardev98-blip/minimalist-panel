@@ -422,7 +422,7 @@ return [
         '500' => [
             'title' => 'Error del servidor',
             'desc'  => 'Se ha producido un error inesperado. Estamos trabajando en ello.',
-            'action_retry' => 'Reintentar',
+            'action' => 'Reintentar',
         ],
         '503' => [
             'title' => 'Servicio no disponible',

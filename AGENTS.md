@@ -447,13 +447,18 @@ Tab::make('General', [
 - SPA loader (`partials/spa-loader.blade.php` + `spa-navigation.blade.php`): porcentaje entero en el anillo (`0%`→`100%`); progreso simulado (Livewire no expone % real de fetch); si `event.detail.cached`, salta a `100%`
 - **Watchdog SPA:** `layout.spa_loader_timeout_ms` (default 20s) fuerza ocultar si `livewire:navigated` no llega; `Escape` o `window.panelSpaLoader.ocultar()`; desactivar con `layout.spa_loader => false`
 
+**v0.40.0** (2026-06-25): páginas de error con **diseño minimalista** — sin marca (icono/nombre app), sin tarjeta, sin badge ni fondo decorativo; solo código + título + descripción + botones, centrados, con la fuente del panel (`--panel-font`). Iconos vía `x-panel::icon`: toggle (`sun`/`moon`) y botones (`arrow-left`, `layout-dashboard`, `rotate-ccw`). Sin SVGs sueltos en el layout. Preview en `panel-demo`: ruta `GET /errores` (índice + `/errores/{codigo}`) muestra las 7 páginas sin depender de `APP_DEBUG`; vistas publicadas con `vendor:publish --tag=panel-errors`.
+
+**v0.39.4** (2026-06-25): fix error 500 — clave de traducción `action_retry` → `action` (se mostraba la clave cruda); `tests/Feature/ErrorPagesTest.php` cubre el render de las 7 vistas, claves traducidas, mensaje 503 y no-filtrado del mensaje interno en 500.
+
 ## Páginas de error con tema (v0.39.0)
 
-- **`resources/views/layouts/error.blade.php`** — layout standalone: sin Vite, sin Livewire; inyecta CSS vars de `ThemeResolver` en `<style>` inline; dark/light via `localStorage`; brand del panel; toggle tema fijo en esquina; responsive
+- **`resources/views/layouts/error.blade.php`** — layout standalone: sin Vite, sin Livewire; inyecta CSS vars de `ThemeResolver` en `<style>` inline; dark/light via `localStorage`; responsive. **Diseño minimalista**: sin marca, sin tarjeta, sin badge ni fondo decorativo; solo código + título + descripción + botones centrados, con la fuente del panel (`--panel-font`). Iconos vía `<x-panel::icon>` (toggle `sun`/`moon` + iconos de botón); sin SVGs sueltos
 - **`resources/views/errors/`** — `403, 404, 419, 422, 429, 500, 503`; usan `@extends('panel::layouts.error', ['titulo' => ...])` + `@section('contenido')`
 - **Traducciones** `panel::panel.errors.*` en `lang/es/panel.php` y `lang/en/panel.php`
 - **Publish:** `vendor:publish --tag=panel-errors` → copia a `resources/views/errors/`; el proyecto puede sobrescribir cualquier vista publicada
-- **Convención:** `$exception` puede ser `null` en 500/503 en producción → usar `?->getMessage() ?: __('...')`
+- **Convención:** `$exception` puede ser `null` en 500/503 en producción. Solo **503** muestra `$exception?->getMessage() ?: __('...')` (mensaje de mantenimiento definido por el admin); **500 NO** muestra el mensaje — evita filtrar detalles internos (seguridad) y usa siempre `__('panel::panel.errors.500.title')`
+- **Claves de acción:** botones de recarga usan `errors.{código}.action` (419, 429, 500, 503); deben existir en ambos idiomas o se renderiza la clave cruda
 - **Loader en auth:** `@persist('panel-spa-loader')` entre guest y app (un solo loader, sin reinicio al entrar); fullscreen vía JS + `body.panel-auth-body`; tiempos más cortos en transición login→panel
 - Livewire: mantener `navigate.show_progress_bar = true` en `config/livewire.php` — si es `false`, Livewire añade `data-no-progress-bar` y lanza `Alpine is not defined` al cargar; la barra NProgress se oculta vía CSS (`#nprogress` en theme-styles)
 - **`panelApp()` en `<head>`** del layout app — definir antes de `@livewireScripts` para que Alpine resuelva `x-data` en `<body>`
