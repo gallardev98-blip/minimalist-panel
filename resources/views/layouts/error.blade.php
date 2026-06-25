@@ -266,8 +266,23 @@
 
     <div class="panel-error-page">
         <a href="/{{ $panelPath }}" class="panel-error-brand">
+            @php
+                $brandLogo = config('panel.brand.logo');
+                $logoUrl = null;
+                if (is_string($brandLogo) && $brandLogo !== '') {
+                    $logoUrl = str_starts_with($brandLogo, 'http') || str_starts_with($brandLogo, '/')
+                        ? $brandLogo
+                        : asset($brandLogo);
+                }
+            @endphp
             <div class="panel-error-brand-mark">
-                @include('panel::partials.brand-mark')
+                @if ($logoUrl)
+                    <img src="{{ $logoUrl }}" alt="{{ $brandName }}" style="height:1.25rem;width:auto;display:block;">
+                @else
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="width:1rem;height:1rem;color:rgb(var(--panel-primary-fg))">
+                        <path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/>
+                    </svg>
+                @endif
             </div>
             <span class="panel-error-brand-name">{{ $brandName }}</span>
         </a>

@@ -4,6 +4,12 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.39.1] - 2026-06-25
+
+### Fixed
+
+- **Error layout — brand roto** — `@include('panel::partials.brand-mark')` usaba `panel-brand-mark` (CSS compilado) y `h-4 w-4` (Tailwind); sustituido por SVG inline propio; el layout ya no depende de ningún asset externo
+
 ## [0.39.0] - 2026-06-25
 
 ### Added
