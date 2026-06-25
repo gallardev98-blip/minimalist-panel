@@ -4,6 +4,15 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.39.0] - 2026-06-25
+
+### Added
+
+- **Páginas de error con estilo** — 7 vistas (`403, 404, 419, 422, 429, 500, 503`) con el tema del panel
+- `layouts/error.blade.php` — layout auto-contenido (sin Vite/Livewire), aplica CSS variables del tema y dark/light mode
+- Traducciones `errors.*` en ES y EN con títulos, descripciones y acciones por código
+- Publish group `panel-errors` → `php artisan vendor:publish --tag=panel-errors` copia las vistas a `resources/views/errors/`
+
 ## [0.38.0] - 2026-06-25
 
 ### Fixed

@@ -393,4 +393,41 @@ return [
         'required' => 'The :attribute field is required.',
         'email' => 'The :attribute field must be a valid email address.',
     ],
+
+    'errors' => [
+        'default_title' => 'Error',
+        'go_panel' => 'Go to panel',
+        '403' => [
+            'title' => 'Access denied',
+            'desc'  => 'You do not have permission to access this resource.',
+        ],
+        '404' => [
+            'title' => 'Page not found',
+            'desc'  => 'The address you entered does not exist or has been moved.',
+        ],
+        '419' => [
+            'title' => 'Session expired',
+            'desc'  => 'Your session has expired. Reload the page to continue.',
+            'action' => 'Reload',
+        ],
+        '422' => [
+            'title' => 'Unprocessable content',
+            'desc'  => 'The submitted data is invalid. Please check the form and try again.',
+        ],
+        '429' => [
+            'title' => 'Too many requests',
+            'desc'  => 'You have exceeded the request limit. Please wait a moment before trying again.',
+            'action' => 'Retry',
+        ],
+        '500' => [
+            'title' => 'Server error',
+            'desc'  => 'An unexpected error occurred. We are working on it.',
+            'action_retry' => 'Retry',
+        ],
+        '503' => [
+            'title' => 'Service unavailable',
+            'desc'  => 'The server is under maintenance. Please try again in a few minutes.',
+            'action' => 'Retry',
+        ],
+    ],
 ];

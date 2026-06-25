@@ -446,6 +446,14 @@ Tab::make('General', [
 - Sidebar `fixed` en móvil, `relative` en grid desktop
 - SPA loader (`partials/spa-loader.blade.php` + `spa-navigation.blade.php`): porcentaje entero en el anillo (`0%`→`100%`); progreso simulado (Livewire no expone % real de fetch); si `event.detail.cached`, salta a `100%`
 - **Watchdog SPA:** `layout.spa_loader_timeout_ms` (default 20s) fuerza ocultar si `livewire:navigated` no llega; `Escape` o `window.panelSpaLoader.ocultar()`; desactivar con `layout.spa_loader => false`
+
+## Páginas de error con tema (v0.39.0)
+
+- **`resources/views/layouts/error.blade.php`** — layout standalone: sin Vite, sin Livewire; inyecta CSS vars de `ThemeResolver` en `<style>` inline; dark/light via `localStorage`; brand del panel; toggle tema fijo en esquina; responsive
+- **`resources/views/errors/`** — `403, 404, 419, 422, 429, 500, 503`; usan `@extends('panel::layouts.error', ['titulo' => ...])` + `@section('contenido')`
+- **Traducciones** `panel::panel.errors.*` en `lang/es/panel.php` y `lang/en/panel.php`
+- **Publish:** `vendor:publish --tag=panel-errors` → copia a `resources/views/errors/`; el proyecto puede sobrescribir cualquier vista publicada
+- **Convención:** `$exception` puede ser `null` en 500/503 en producción → usar `?->getMessage() ?: __('...')`
 - **Loader en auth:** `@persist('panel-spa-loader')` entre guest y app (un solo loader, sin reinicio al entrar); fullscreen vía JS + `body.panel-auth-body`; tiempos más cortos en transición login→panel
 - Livewire: mantener `navigate.show_progress_bar = true` en `config/livewire.php` — si es `false`, Livewire añade `data-no-progress-bar` y lanza `Alpine is not defined` al cargar; la barra NProgress se oculta vía CSS (`#nprogress` en theme-styles)
 - **`panelApp()` en `<head>`** del layout app — definir antes de `@livewireScripts` para que Alpine resuelva `x-data` en `<body>`

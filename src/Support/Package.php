@@ -10,7 +10,7 @@ final class Package
 
     public const DISPLAY_NAME = 'Panel';
 
-    public const VERSION = '0.38.0';
+    public const VERSION = '0.39.0';
 
     public static function vendorPath(): string
     {

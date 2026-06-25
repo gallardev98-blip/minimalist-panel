@@ -131,6 +131,10 @@ final class PanelServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../stubs' => base_path('stubs/panel'),
         ], 'panel-stubs');
+
+        $this->publishes([
+            __DIR__ . '/../resources/views/errors' => resource_path('views/errors'),
+        ], 'panel-errors');
     }
 
     private function registerCommands(): void

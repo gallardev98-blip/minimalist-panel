@@ -393,4 +393,41 @@ return [
         'required' => 'El campo :attribute es obligatorio.',
         'email' => 'El campo :attribute debe ser un correo electrónico válido.',
     ],
+
+    'errors' => [
+        'default_title' => 'Error',
+        'go_panel' => 'Ir al panel',
+        '403' => [
+            'title' => 'Acceso denegado',
+            'desc'  => 'No tienes permiso para acceder a este recurso.',
+        ],
+        '404' => [
+            'title' => 'Página no encontrada',
+            'desc'  => 'La dirección que has escrito no existe o ha sido movida.',
+        ],
+        '419' => [
+            'title' => 'Sesión expirada',
+            'desc'  => 'Tu sesión ha caducado. Recarga la página para continuar.',
+            'action' => 'Recargar',
+        ],
+        '422' => [
+            'title' => 'Datos no procesables',
+            'desc'  => 'Los datos enviados no son válidos. Revisa el formulario e inténtalo de nuevo.',
+        ],
+        '429' => [
+            'title' => 'Demasiadas peticiones',
+            'desc'  => 'Has superado el límite de intentos. Espera un momento antes de volver a intentarlo.',
+            'action' => 'Reintentar',
+        ],
+        '500' => [
+            'title' => 'Error del servidor',
+            'desc'  => 'Se ha producido un error inesperado. Estamos trabajando en ello.',
+            'action_retry' => 'Reintentar',
+        ],
+        '503' => [
+            'title' => 'Servicio no disponible',
+            'desc'  => 'El servidor está en mantenimiento. Vuelve a intentarlo en unos minutos.',
+            'action' => 'Reintentar',
+        ],
+    ],
 ];
