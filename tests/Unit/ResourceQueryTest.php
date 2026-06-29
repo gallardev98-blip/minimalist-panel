@@ -76,4 +76,34 @@ final class ResourceQueryTest extends TestCase
 
         $this->assertSame(['A', 'B'], $query->pluck('title')->all());
     }
+
+    public function test_contar_devuelve_total_filtrado(): void
+    {
+        Article::query()->create(['title' => 'Laravel', 'published' => true]);
+        Article::query()->create(['title' => 'Other', 'published' => true]);
+
+        $total = (new ResourceQuery(ArticleResource::class))->contar(
+            columns: ArticleResource::table(),
+            filters: ArticleResource::filters(),
+            filterValues: ['published' => ''],
+            search: 'Laravel',
+        );
+
+        $this->assertSame(1, $total);
+    }
+
+    public function test_ids_devuelve_claves_con_limite(): void
+    {
+        Article::query()->create(['title' => 'A', 'published' => true]);
+        $b = Article::query()->create(['title' => 'B', 'published' => true]);
+
+        $ids = (new ResourceQuery(ArticleResource::class))->ids(
+            columns: ArticleResource::table(),
+            filters: ArticleResource::filters(),
+            filterValues: ['published' => ''],
+            limite: 1,
+        );
+
+        $this->assertSame([$b->id], $ids);
+    }
 }

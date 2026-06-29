@@ -6,6 +6,7 @@ namespace MyLaravelTools\Panel\Livewire\Concerns;
 
 use MyLaravelTools\Panel\Support\FieldPayload;
 use MyLaravelTools\Panel\Support\FormSchema;
+use MyLaravelTools\Panel\Support\PanelLayout;
 use Illuminate\Database\Eloquent\Model;
 
 trait ManagesResourceFormModal
@@ -56,6 +57,26 @@ trait ManagesResourceFormModal
         $this->resetFormModal();
     }
 
+    public function descartarBorradorFormulario(): void
+    {
+        if ($this->formRecordId !== null) {
+            return;
+        }
+
+        $this->form = FieldPayload::initialState(FormSchema::fields($this->resourceClass::form()));
+        $this->resetValidation();
+        $this->notificarBorradorLimpiado();
+    }
+
+    public function updatedForm(mixed $value, string $key): void
+    {
+        if (! PanelLayout::validacionInlineForm() || ! $this->showFormModal) {
+            return;
+        }
+
+        $this->validateOnly('form.'.$key);
+    }
+
     public function saveFormModal(): void
     {
         if (! $this->showFormModal) {
@@ -82,6 +103,7 @@ trait ManagesResourceFormModal
         }
 
         $this->toastSuccess($message);
+        $this->notificarBorradorLimpiado();
         $this->resetFormModal();
     }
 
@@ -123,6 +145,15 @@ trait ManagesResourceFormModal
         $this->formRecordId = null;
         $this->form = [];
         $this->resetValidation();
+    }
+
+    private function notificarBorradorLimpiado(): void
+    {
+        if (! PanelLayout::borradorFormulario()) {
+            return;
+        }
+
+        $this->dispatch('panel-borrador-limpiado', slug: $this->resource, esNuevo: $this->formRecordId === null);
     }
 
     private function resolveFormModalRecord(): ?Model

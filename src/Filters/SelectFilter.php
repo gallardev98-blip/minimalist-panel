@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MyLaravelTools\Panel\Filters;
 
+use MyLaravelTools\Panel\Support\PanelConsultas;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,10 +13,16 @@ final class SelectFilter extends Filter
     /** @var array<string|int, string> */
     protected array $options = [];
 
+    /** @var class-string<Model>|null */
+    protected ?string $modeloRelacion = null;
+
+    protected string $columnaTitulo = 'name';
+
     /** @param array<string|int, string> $options */
     public function options(array $options): static
     {
         $this->options = $options;
+        $this->modeloRelacion = null;
 
         return $this;
     }
@@ -23,10 +30,9 @@ final class SelectFilter extends Filter
     /** @param class-string<Model> $model */
     public function relationship(string $model, string $titleColumn = 'name'): static
     {
-        $this->options = $model::query()
-            ->orderBy($titleColumn)
-            ->pluck($titleColumn, 'id')
-            ->all();
+        $this->modeloRelacion = $model;
+        $this->columnaTitulo = $titleColumn;
+        $this->options = [];
 
         return $this;
     }
@@ -45,10 +51,24 @@ final class SelectFilter extends Filter
         return $query->where($this->name, $value);
     }
 
+    /** @return array<string|int, string> */
+    private function resolverOpciones(): array
+    {
+        if ($this->options !== []) {
+            return $this->options;
+        }
+
+        if ($this->modeloRelacion === null) {
+            return [];
+        }
+
+        return PanelConsultas::opcionesRelacion($this->modeloRelacion, $this->columnaTitulo);
+    }
+
     public function meta(): array
     {
         return [
-            'options' => ['' => __('panel::panel.all')] + $this->options,
+            'options' => ['' => __('panel::panel.all')] + $this->resolverOpciones(),
         ];
     }
 }

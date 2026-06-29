@@ -12,6 +12,7 @@ use MyLaravelTools\Panel\Filters\Filter;
 use MyLaravelTools\Panel\Relations\RelationManager;
 use MyLaravelTools\Panel\Support\FormSchema;
 use MyLaravelTools\Panel\Support\PanelAuth;
+use MyLaravelTools\Panel\Support\PanelConsultas;
 use MyLaravelTools\Panel\Support\PanelImpersonation;
 use MyLaravelTools\Panel\Support\ResourceAuthorizer;
 use Illuminate\Database\Eloquent\Model;
@@ -139,6 +140,12 @@ abstract class Resource
     public static function with(): array
     {
         return [];
+    }
+
+    /** @return array<int, string> */
+    public static function eagerLoadsForIndex(): array
+    {
+        return PanelConsultas::eagerLoadsParaIndice(static::table(), static::with());
     }
 
     public static function usesSoftDeletes(): bool

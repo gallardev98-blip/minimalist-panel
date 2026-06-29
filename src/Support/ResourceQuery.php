@@ -7,6 +7,7 @@ namespace MyLaravelTools\Panel\Support;
 use MyLaravelTools\Panel\Columns\Column;
 use MyLaravelTools\Panel\Filters\Filter;
 use MyLaravelTools\Panel\Resources\Resource;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -31,9 +32,13 @@ final class ResourceQuery
         string $sortColumn = '',
         string $sortDirection = 'asc',
         string $trashed = '',
+        bool $conRelaciones = true,
     ): Builder {
-        $query = $this->resourceClass::modelClass()::query()
-            ->with($this->resourceClass::with());
+        $query = $this->resourceClass::modelClass()::query();
+
+        if ($conRelaciones) {
+            $query->with($this->resourceClass::eagerLoadsForIndex());
+        }
 
         $this->applyTrashed($query, $trashed);
         $this->applySearch($query, $columns, $search);
@@ -57,11 +62,57 @@ final class ResourceQuery
         string $sortDirection = 'asc',
         string $trashed = '',
         ?int $perPage = null,
-    ): LengthAwarePaginator {
-        $porPagina = $perPage ?? (int) config('panel.per_page', 15);
+    ): LengthAwarePaginator|CursorPaginator {
+        $porPagina = max(1, $perPage ?? (int) config('panel.per_page', 15));
+        $consulta = $this->build($columns, $filters, $filterValues, $search, $sortColumn, $sortDirection, $trashed);
 
-        return $this->build($columns, $filters, $filterValues, $search, $sortColumn, $sortDirection, $trashed)
-            ->paginate(max(1, $porPagina));
+        if (PanelRendimiento::paginacionCursor()) {
+            return $consulta->cursorPaginate($porPagina);
+        }
+
+        return $consulta->paginate($porPagina);
+    }
+
+    /**
+     * @param array<int, Column> $columns
+     * @param array<int, Filter> $filters
+     * @param array<string, mixed> $filterValues
+     */
+    public function contar(
+        array $columns,
+        array $filters,
+        array $filterValues,
+        string $search = '',
+        string $sortColumn = '',
+        string $sortDirection = 'asc',
+        string $trashed = '',
+    ): int {
+        return $this->build($columns, $filters, $filterValues, $search, $sortColumn, $sortDirection, $trashed, false)->count();
+    }
+
+    /**
+     * @param array<int, Column> $columns
+     * @param array<int, Filter> $filters
+     * @param array<string, mixed> $filterValues
+     * @return list<int|string>
+     */
+    public function ids(
+        array $columns,
+        array $filters,
+        array $filterValues,
+        string $search = '',
+        string $sortColumn = '',
+        string $sortDirection = 'asc',
+        string $trashed = '',
+        ?int $limite = null,
+    ): array {
+        $consulta = $this->build($columns, $filters, $filterValues, $search, $sortColumn, $sortDirection, $trashed, false);
+
+        if ($limite !== null) {
+            $consulta->limit($limite);
+        }
+
+        return $consulta->pluck('id')->all();
     }
 
     private function applyTrashed(Builder $query, string $trashed): void

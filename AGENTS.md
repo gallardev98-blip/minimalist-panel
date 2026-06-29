@@ -225,7 +225,7 @@ Checklist antes de cerrar un PR de personalización:
 2. ¿Puede **copiar** código (`Tu código` o bloque PHP del gráfico)?
 3. ¿`PanelDocumentacion::clavesInteractivas()` incluye las claves nuevas?
 4. Tests en `PanelPlaygroundTest`, `PanelPlaygroundVistaTest`, `PanelPlaygroundGraficosTest`, `Feature/PlaygroundTest` si aplica.
-5. En `panel-demo`: `php artisan vendor:publish --tag=panel-views --force` si se tocaron vistas.
+5. En `panel-demo`: `php artisan vendor:publish --tag=panel-views --force` (+ `panel-errors` si aplica); `view:clear`; si cambia `theme.radius` u otras claves de tema, actualizar `panel-demo/config/panel.php` (el preset `corporate` trae `0.5rem` — sobrescribir con `radius => 1rem` para ver formularios redondeados).
 6. En cada release: `Package::VERSION`, entrada en `CHANGELOG.md`, roadmap en `README.md`, y esta sección si cambia el alcance del playground.
 
 ### Qué incluye hoy el playground
@@ -446,6 +446,152 @@ Tab::make('General', [
 - Sidebar `fixed` en móvil, `relative` en grid desktop
 - SPA loader (`partials/spa-loader.blade.php` + `spa-navigation.blade.php`): porcentaje entero en el anillo (`0%`→`100%`); progreso simulado (Livewire no expone % real de fetch); si `event.detail.cached`, salta a `100%`
 - **Watchdog SPA:** `layout.spa_loader_timeout_ms` (default 20s) fuerza ocultar si `livewire:navigated` no llega; `Escape` o `window.panelSpaLoader.ocultar()`; desactivar con `layout.spa_loader => false`
+
+## Guía UX del listado
+
+Referencia para `ResourceIndex` / `RelationPanel` (capas 1–4, v0.46–v0.52). Tras cambios en vistas del paquete: `php artisan vendor:publish --tag=panel-views --force` y `view:clear` en la app host.
+
+### Capas implementadas
+
+| Capa | Versión | Contenido |
+|------|---------|-----------|
+| 1 | v0.49 | Barra bulk fija, copiar enlace con filtros, teclado en tabla, RelationPanel alineado |
+| 2 | v0.50 | Columnas ocultables, vista rápida (drawer), presets filtros (`localStorage`), selección global |
+| 3 | v0.51 | Validación inline y borrador en modal, import con resumen, preview bulk con recuento |
+| 4 | v0.52 | Eager load desde columnas, caché opciones `relationship()`, paginación cursor opcional |
+
+### Estado en URL
+
+Livewire `#[Url]` en `ResourceIndex`: `q`, `filters`, `sort`, `dir`, `trashed`, `per_page`. El botón **Copiar enlace** comparte la URL actual con criterios aplicados.
+
+### Atajos de teclado
+
+| Atajo | Acción |
+|-------|--------|
+| `/` | Foco en buscador (si no hay input activo) |
+| `Ctrl+F` / `Cmd+F` | Igual que `/` |
+| `↑` / `↓` | Navegar filas de la tabla |
+| `Enter` | Abrir editar (si la fila es editable) |
+| `Shift+clic` en fila | Vista rápida (si `quick_view`) |
+| `Escape` | Cerrar modal de confirmación / formulario |
+
+### Config — `layout.filters`
+
+```php
+'filters' => [
+    'mode' => 'collapsible',      // inline | collapsible
+    'default_open' => false,
+    'remember_state' => true,       // localStorage panel-filtros-{slug}
+],
+```
+
+- Chips removibles: `CriteriosActivosIndex` + partial `active-filter-chips`
+- Presets: `layout.index.filter_presets` + Alpine `panelPresetsFiltros` (solo si hay filtros en el resource)
+
+### Config — `layout.index`
+
+```php
+'index' => [
+    'clickable_rows' => true,       // clic / Enter → editar
+    'mobile_cards' => true,         // tarjetas bajo md
+    'column_toggle' => true,        // menú Columnas + localStorage
+    'quick_view' => true,           // drawer + botón ojo
+    'filter_presets' => true,
+    'select_all_matching' => true,  // banner «seleccionar todos»
+    'bulk_preview' => true,         // confirmación con recuento
+],
+'bulk_select_all_max' => 500,
+```
+
+Helpers: `PanelLayout::filasClicables()`, `columnasOcultables()`, `vistaRapida()`, `seleccionGlobalActiva()`, `previewBulk()`.
+
+### Config — `performance` (percibido + backend)
+
+```php
+'performance' => [
+    // UX (PanelRendimiento)
+    'search_debounce_ms' => 200,
+    'skeleton_delay_ms' => 50,
+    'spa_loader_min_ms' => 120,
+    // Backend (PanelConsultas)
+    'eager_load_columns' => true,
+    'filter_options_cache' => true,
+    'filter_options_cache_ttl' => 300,
+    'cursor_pagination' => false,   // true = sin COUNT(*) en tablas enormes
+],
+```
+
+- Selects de filtro: sync Livewire al instante; animación en paralelo (`searchable-select`)
+- Busy inmediato + skeleton ~50 ms antes de ocultar tabla
+- `Resource::eagerLoadsForIndex()` = `with()` manual + relaciones de `BelongsToColumn`
+- `contar` / `ids` en `ResourceQuery` **sin** eager load
+
+### Config — `forms` e `import`
+
+```php
+'forms' => [
+    'validate_inline' => true,
+    'draft_autosave' => true,       // solo crear; localStorage panel-borrador-{slug}-nuevo
+    'focus_on_open' => true,
+],
+'import' => [
+    'guided_summary' => true,       // paso importing + resumen final en modal
+],
+```
+
+### Helpers PHP
+
+| Clase | Uso |
+|-------|-----|
+| `PanelListado` | `textoRango()`, `objetivosCarga()` para `wire:loading` |
+| `PanelRendimiento` | Debounces, skeleton, SPA loader, flags caché/cursor |
+| `CriteriosActivosIndex` | Chips de búsqueda y filtros activos |
+| `PanelConsultas` | Eager loads, caché opciones, `auditarRecurso()` |
+
+### Partials clave
+
+`filters-panel`, `bulk-bar`, `column-toggle`, `filter-presets`, `quick-view-drawer`, `index-listado-scripts`, `copy-list-link`, `skeleton-table`, `record-card`, `form-modal`, `import-modal`.
+
+### Comandos DX
+
+```bash
+php artisan panel:doctor              # incluye aviso rendimiento resources
+php artisan panel:audit-rendimiento   # N+1 + índices sugeridos en *_id
+php artisan vendor:publish --tag=panel-views --force
+```
+
+### Resource — evitar N+1
+
+```php
+public static function with(): array
+{
+    return ['category']; // manual
+}
+
+// En listado se usa eagerLoadsForIndex() = with() + BelongsToColumn detectadas
+```
+
+**v0.53.0** (2026-06-29): capa 5 DX — roadmap README actualizado (v0.46–v0.52), guía UX del listado en AGENTS.
+
+**v0.52.0** (2026-06-29): capa 4 rendimiento — `PanelConsultas`, eager load desde columnas, caché opciones filtros, paginación cursor opcional, `panel:audit-rendimiento`.
+
+**v0.51.0** (2026-06-29): capa 3 listados — validación inline y borrador en formulario modal, importación con resumen guiado, preview de acciones bulk con recuento.
+
+**v0.50.0** (2026-06-29): capa 2 listados — columnas ocultables, vista rápida (drawer), presets de filtros en localStorage, selección global de resultados; `ResourceQuery::contar/ids`.
+
+**v0.49.0** (2026-06-29): capa 1 listados — barra bulk fija, copiar enlace con filtros, teclado ↑↓+Enter, RelationPanel con misma UX de carga y filas; helper `PanelListado`.
+
+**v0.48.0** (2026-06-29): rendimiento percibido — `config/performance` + `PanelRendimiento`; selects sincronizan al instante; busy inmediato; skeleton 50ms; loader SPA 120ms; debounces más cortos.
+
+**v0.47.0** (2026-06-29): cabecera tabla sticky (`table_sticky_header`), filas clicables → editar (`index.clickable_rows`), tarjetas en móvil (`index.mobile_cards`), autoapertura de filtros al aplicar criterios.
+
+**v0.46.0** (2026-06-29): chips de criterios activos (búsqueda + filtros removibles), contador «Mostrando X–Y de Z», menú Exportar compacto, atajo `/` y `Ctrl+F` al buscador; helper `CriteriosActivosIndex`.
+
+**v0.43.0** (2026-06-29): filtros colapsables en listados — `layout.filters` (`mode`, `default_open`, `remember_state`); panel con badge, grid y animación; modo `inline` legacy.
+
+**v0.42.0** (2026-06-29): formularios modernos — `--panel-input-radius` / `--panel-form-radius`, radio default `1rem`, pestañas pill, secciones redondeadas, rich-text/repeater/file con estilos dedicados, Escape en modal de formulario.
+
+**v0.41.0** (2026-06-29): UX listados — estado vacío contextual (`empty-table`), botón limpiar búsqueda, cabecera tabla sticky, `focus-visible` en controles, animación modales y `Escape` en confirmación.
 
 **v0.40.0** (2026-06-25): páginas de error con **diseño minimalista** — sin marca (icono/nombre app), sin tarjeta, sin badge ni fondo decorativo; solo código + título + descripción + botones, centrados, con la fuente del panel (`--panel-font`). Iconos vía `x-panel::icon`: toggle (`sun`/`moon`) y botones (`arrow-left`, `layout-dashboard`, `rotate-ccw`). Sin SVGs sueltos en el layout. Preview en `panel-demo`: ruta `GET /errores` (índice + `/errores/{codigo}`) muestra las 7 páginas sin depender de `APP_DEBUG`; vistas publicadas con `vendor:publish --tag=panel-errors`.
 

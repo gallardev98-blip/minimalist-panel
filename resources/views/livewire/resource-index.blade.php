@@ -1,4 +1,74 @@
-<div>
+<div
+    @class(['panel-index-root', 'panel-index-root--bulk' => $selectedCount > 0 && $hasBulkActions])
+    x-data="{
+        filaActiva: null,
+        idsEditables: @js(array_map('strval', array_keys($idsRegistrosEditables ?? []))),
+        enfocarBusqueda() {
+            const campo = this.$refs.busquedaIndex ?? document.querySelector('[data-panel-index-search]');
+            campo?.focus();
+        },
+        activarFila(id, elemento) {
+            this.filaActiva = String(id);
+            elemento?.focus({ preventScroll: true });
+        },
+        manejarTeclaGlobal(e) {
+            const etiqueta = document.activeElement?.tagName ?? '';
+            const editable = document.activeElement?.isContentEditable;
+            const enDialogo = document.activeElement?.closest('[role=dialog]');
+            if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+                e.preventDefault();
+                this.enfocarBusqueda();
+                return;
+            }
+            if (e.key === '/' && ! ['INPUT', 'TEXTAREA', 'SELECT'].includes(etiqueta) && ! editable) {
+                e.preventDefault();
+                this.enfocarBusqueda();
+                return;
+            }
+            if (enDialogo || ['INPUT', 'TEXTAREA', 'SELECT'].includes(etiqueta) || editable) {
+                return;
+            }
+            const filas = [...(this.$refs.tablaCuerpo?.querySelectorAll('[data-fila-id]') ?? [])];
+            if (filas.length === 0) {
+                return;
+            }
+            const ids = filas.map((fila) => fila.dataset.filaId ?? '');
+            let indice = this.filaActiva ? ids.indexOf(this.filaActiva) : -1;
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                indice = Math.min(indice + 1, filas.length - 1);
+                this.activarFila(ids[indice], filas[indice]);
+                return;
+            }
+            if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                indice = indice < 0 ? 0 : Math.max(indice - 1, 0);
+                this.activarFila(ids[indice], filas[indice]);
+                return;
+            }
+            if (e.key === 'Enter' && this.filaActiva && this.idsEditables.includes(this.filaActiva)) {
+                e.preventDefault();
+                $wire.abrirRegistro(this.filaActiva);
+            }
+        },
+        manejarClicFila(evento, id, puedeAbrir, vistaRapida) {
+            if (evento.shiftKey && vistaRapida) {
+                evento.preventDefault();
+                evento.stopPropagation();
+                $wire.abrirVistaRapida(id);
+                return;
+            }
+            if (! puedeAbrir) {
+                return;
+            }
+            if (evento.target.closest('input,button,a,[data-panel-row-actions]')) {
+                return;
+            }
+            $wire.abrirRegistro(id);
+        }
+    }"
+    @keydown.window="manejarTeclaGlobal($event)"
+>
     @include('panel::partials.confirm-modal', [
         'showConfirm' => $showConfirm,
         'confirmMessage' => $confirmMessage,
@@ -9,6 +79,7 @@
             'showFormModal' => $showFormModal,
             'formRecordId' => $formRecordId,
             'resourceLabel' => $resourceLabel,
+            'resourceSlug' => $resourceSlug,
             'formSchema' => $formSchema,
             'hasTabs' => $hasTabs,
         ])
@@ -26,36 +97,17 @@
 
     <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-end">
         <div class="panel-toolbar">
-            @if ($selectedCount > 0)
-                <div class="panel-toolbar-group">
-                    <span class="panel-toolbar-selection">{{ __('panel::panel.selected', ['count' => $selectedCount]) }}</span>
-                    @foreach ($bulkActions as $action)
-                        @php
-                            $btnClass = match ($action->getColor()) {
-                                'rose' => 'panel-btn-danger',
-                                'emerald' => 'panel-btn-success',
-                                default => 'panel-btn-secondary',
-                            };
-                        @endphp
-                        <button
-                            type="button"
-                            wire:click="runBulkAction('{{ $action->getName() }}')"
-                            class="panel-btn {{ $btnClass }} panel-btn-compact"
-                        >
-                            {{ $action->getLabel() }}
-                        </button>
-                    @endforeach
-                </div>
-                <span class="panel-toolbar-divider" aria-hidden="true"></span>
-            @endif
-
             <div class="panel-toolbar-group">
                 @if ($usesSoftDeletes)
-                    <select wire:model.live="trashed" class="panel-input panel-input-inline text-sm">
-                        <option value="">{{ __('panel::panel.active') }}</option>
-                        <option value="only">{{ __('panel::panel.trashed') }}</option>
-                        <option value="with">{{ __('panel::panel.all') }}</option>
-                    </select>
+                    <x-panel::searchable-select
+                        wire:model.live="trashed"
+                        :options="[
+                            '' => __('panel::panel.active'),
+                            'only' => __('panel::panel.trashed'),
+                            'with' => __('panel::panel.all'),
+                        ]"
+                        class="panel-input-inline text-sm"
+                    />
                 @endif
 
                 @if ($canCreate && $trashed !== 'only')
@@ -88,61 +140,151 @@
                     </button>
                 @endif
 
-                <div class="panel-export-group" role="group" aria-label="{{ __('panel::panel.export_group') }}">
-                    @php
-                        $exportHint = $selectedCount > 0
-                            ? __('panel::panel.export_selection_hint', ['count' => $selectedCount])
-                            : __('panel::panel.export_all_hint');
-                    @endphp
-                    <button
-                        type="button"
-                        wire:click="exportCsv"
-                        class="panel-btn panel-btn-secondary panel-btn-compact panel-export-btn"
-                        title="{{ __('panel::panel.export_csv_short') }} — {{ $exportHint }}"
-                    >
-                        {{ __('panel::panel.export_csv_short') }}
-                    </button>
-                    <button
-                        type="button"
-                        wire:click="exportExcel"
-                        class="panel-btn panel-btn-secondary panel-btn-compact panel-export-btn"
-                        title="{{ __('panel::panel.export_excel_short') }} — {{ $exportHint }}"
-                    >
-                        {{ __('panel::panel.export_excel_short') }}
-                    </button>
-                    <button
-                        type="button"
-                        wire:click="exportPdf"
-                        class="panel-btn panel-btn-secondary panel-btn-compact panel-export-btn"
-                        title="{{ __('panel::panel.export_pdf_short') }} — {{ $exportHint }}"
-                    >
-                        {{ __('panel::panel.export_pdf_short') }}
-                    </button>
+                <div class="panel-export-dropdown" role="group" aria-label="{{ __('panel::panel.export_group') }}">
+                    @include('panel::partials.export-dropdown', ['selectedCount' => $selectedCount])
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="mb-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div class="panel-search">
-            <x-panel::icon name="search" class="panel-search-icon" />
-            <input
-                type="search"
-                wire:model.live.debounce.300ms="search"
-                placeholder="{{ __('panel::panel.search') }}"
-                class="panel-input panel-search-input"
-            >
+    @include('panel::partials.index-listado-scripts')
+
+    @if (count($filters) > 0)
+        @include('panel::partials.filters', [
+            'filters' => $filters,
+            'hasActiveFilters' => $hasActiveFilters,
+            'cantidadFiltrosActivos' => $cantidadFiltrosActivos ?? 0,
+            'search' => $search,
+            'chipsCriterios' => $chipsCriterios ?? [],
+            'textoRangoResultados' => $textoRangoResultados ?? '',
+            'presetsFiltros' => $presetsFiltros ?? false,
+            'resourceSlug' => $resourceSlug,
+        ])
+    @else
+        <div class="panel-index-tools mb-4">
+            <div class="panel-index-tools__search-row">
+                <div class="panel-index-tools__search">
+                    @include('panel::partials.index-search', ['search' => $search])
+                </div>
+                <div class="panel-index-meta-row">
+                    <p
+                        class="panel-index-meta"
+                        wire:loading.class="panel-index-meta--loading"
+                        wire:target="search,filterValues,resetFilters,quitarCriterio,trashed,sortBy,gotoPage,nextPage,previousPage,perPage"
+                    >
+                        {{ $textoRangoResultados ?? '' }}
+                    </p>
+                    @include('panel::partials.copy-list-link')
+                </div>
+            </div>
+            @include('panel::partials.active-filter-chips', ['chipsCriterios' => $chipsCriterios ?? []])
+        </div>
+    @endif
+
+    @php
+        use MyLaravelTools\Panel\Support\PanelListado;
+        use MyLaravelTools\Panel\Support\PanelRendimiento;
+
+        $retardoSkeleton = PanelRendimiento::retardoSkeletonMs();
+        $retardoOcultarTabla = PanelRendimiento::retardoOcultarTablaMs();
+        $objetivosCarga = PanelListado::objetivosCarga();
+    @endphp
+
+    <div class="panel-index-table" x-data="panelColumnas(@js($columnasMeta ?? []), @js($resourceSlug))">
+        <div class="panel-index-table__tools panel-column-toggle">
+            @include('panel::partials.column-toggle', [
+                'columnasOcultables' => $columnasOcultables ?? false,
+                'columnasMeta' => $columnasMeta ?? [],
+                'resourceSlug' => $resourceSlug,
+            ])
+        </div>
+        <div
+            @if ($retardoSkeleton > 0)
+                wire:loading.delay.{{ $retardoSkeleton }}ms.class.remove="hidden"
+            @else
+                wire:loading.class.remove="hidden"
+            @endif
+            wire:target="{{ $objetivosCarga }}"
+            class="hidden"
+            aria-hidden="true"
+        >
+            <div @class(['panel-only-desktop' => $tarjetasMovil ?? false])>
+                @include('panel::partials.skeleton-table', [
+                    'columns' => $columns,
+                    'hasBulkActions' => $hasBulkActions,
+                    'tableClasses' => $tableClasses ?? '',
+                    'perPage' => $perPage,
+                    'tienePerPage' => count($perPageOptions ?? []) > 1,
+                    'tienePaginacion' => $records->hasPages(),
+                ])
+            </div>
+            @if ($tarjetasMovil ?? false)
+                @include('panel::partials.skeleton-cards', ['perPage' => $perPage])
+            @endif
         </div>
 
-        @include('panel::partials.filters', ['filters' => $filters])
-    </div>
+        @if ($tarjetasMovil ?? false)
+            <div
+                class="panel-record-cards-wrap panel-only-mobile"
+                wire:loading.class="panel-record-cards-wrap--busy"
+                @if ($retardoOcultarTabla > 0)
+                    wire:loading.delay.{{ $retardoOcultarTabla }}ms.class="hidden"
+                @else
+                    wire:loading.class="hidden"
+                @endif
+                wire:target="{{ $objetivosCarga }}"
+            >
+                <div class="panel-record-cards">
+                    @forelse ($records as $record)
+                        @include('panel::partials.record-card', [
+                            'record' => $record,
+                            'columns' => $columns,
+                            'rowActions' => $rowActions,
+                            'resourceClass' => $resourceClass,
+                            'resourceSlug' => $resourceSlug,
+                            'formsInModal' => $formsInModal ?? false,
+                            'usesSoftDeletes' => $usesSoftDeletes,
+                            'filasClicables' => $filasClicables ?? false,
+                            'idsRegistrosEditables' => $idsRegistrosEditables ?? [],
+                        ])
+                    @empty
+                        <div class="panel-record-cards-empty">
+                            @include('panel::partials.empty-table', [
+                                'trashed' => $trashed,
+                                'hasActiveFilters' => $hasActiveFilters,
+                                'soloBusquedaActiva' => $soloBusquedaActiva,
+                                'search' => $search,
+                                'canCreate' => $canCreate,
+                                'formsInModal' => $formsInModal ?? false,
+                                'resourceLabel' => $resourceLabel,
+                                'resourceSlug' => $resourceSlug,
+                            ])
+                        </div>
+                    @endforelse
+                </div>
 
-    <div wire:loading.delay.class.remove="hidden" wire:target="search,filterValues,resetFilters,trashed,sortBy,gotoPage,nextPage,previousPage" class="hidden">
-        @include('panel::partials.skeleton-table')
-    </div>
+                @include('panel::partials.table-footer', [
+                    'paginator' => $records,
+                    'perPageOptions' => $perPageOptions ?? [],
+                ])
+            </div>
+        @endif
 
-    <div class="panel-table-wrap {{ $tableClasses ?? '' }}" wire:loading.delay.class="opacity-50" wire:target="search,filterValues,resetFilters,trashed,sortBy,gotoPage,nextPage,previousPage,perPage">
-        <div class="overflow-x-auto">
+        <div
+            @class([
+                'panel-table-wrap',
+                $tableClasses ?? null,
+                'panel-only-desktop' => $tarjetasMovil ?? false,
+            ])
+            wire:loading.class="panel-table-wrap--busy"
+            @if ($retardoOcultarTabla > 0)
+                wire:loading.delay.{{ $retardoOcultarTabla }}ms.class="hidden"
+            @else
+                wire:loading.class="hidden"
+            @endif
+            wire:target="{{ $objetivosCarga }}"
+        >
+        <div class="panel-table-scroll overflow-x-auto">
             <table class="panel-table {{ $tableClasses ?? '' }}">
                 <thead>
                     <tr>
@@ -152,7 +294,7 @@
                             </th>
                         @endif
                         @foreach ($columns as $column)
-                            <th>
+                            <th x-show="esVisible(@js($column->getName()))" x-cloak>
                                 @if ($column->isSortable())
                                     <button type="button" wire:click="sortBy('{{ $column->getName() }}')" class="panel-table-sort inline-flex items-center gap-1">
                                         {{ $column->getLabel() }}
@@ -171,11 +313,28 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody x-ref="tablaCuerpo">
                     @forelse ($records as $record)
-                        <tr class="{{ $usesSoftDeletes && method_exists($record, 'trashed') && $record->trashed() ? 'opacity-60' : '' }}" wire:key="record-{{ $record->getKey() }}">
+                        @php
+                            $puedeAbrir = ($filasClicables ?? false) && isset($idsRegistrosEditables[$record->getKey()]);
+                        @endphp
+                        <tr
+                            @class([
+                                'panel-table-row--clickable' => $puedeAbrir,
+                                'opacity-60' => $usesSoftDeletes && method_exists($record, 'trashed') && $record->trashed(),
+                            ])
+                            data-fila-id="{{ $record->getKey() }}"
+                            wire:key="record-{{ $record->getKey() }}"
+                            x-bind:class="{ 'panel-table-row--active': filaActiva == '{{ $record->getKey() }}' }"
+                            x-bind:tabindex="filaActiva == '{{ $record->getKey() }}' ? 0 : -1"
+                            @if ($puedeAbrir || ($vistaRapida ?? false))
+                                @click="manejarClicFila($event, '{{ $record->getKey() }}', @js($puedeAbrir), @js($vistaRapida ?? false))"
+                                role="link"
+                                wire:keydown.enter="abrirRegistro({{ $record->getKey() }})"
+                            @endif
+                        >
                             @if ($hasBulkActions)
-                                <td>
+                                <td wire:click.stop>
                                     <input
                                         type="checkbox"
                                         value="{{ $record->getKey() }}"
@@ -185,11 +344,22 @@
                                 </td>
                             @endif
                             @foreach ($columns as $column)
-                                <td>
+                                <td x-show="esVisible(@js($column->getName()))" x-cloak>
                                     @include('panel::partials.column-value', ['column' => $column, 'record' => $record])
                                 </td>
                             @endforeach
-                            <td class="panel-table-actions-col">
+                            <td class="panel-table-actions-col" wire:click.stop data-panel-row-actions>
+                                @if ($vistaRapida ?? false)
+                                    <button
+                                        type="button"
+                                        wire:click.stop="abrirVistaRapida({{ $record->getKey() }})"
+                                        class="panel-quick-view-btn"
+                                        title="{{ __('panel::panel.quick_view') }}"
+                                        aria-label="{{ __('panel::panel.quick_view') }}"
+                                    >
+                                        <x-panel::icon name="eye" class="h-4 w-4" />
+                                    </button>
+                                @endif
                                 @include('panel::partials.row-actions', [
                                     'rowActions' => $rowActions,
                                     'record' => $record,
@@ -201,9 +371,17 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ count($columns) + ($hasBulkActions ? 2 : 1) }}" class="py-12 text-center">
-                                <x-panel::icon name="archive" class="panel-muted mx-auto mb-2 h-8 w-8" />
-                                <p class="panel-muted text-sm">{{ __('panel::panel.no_records') }}</p>
+                            <td colspan="{{ count($columns) + ($hasBulkActions ? 2 : 1) }}" class="p-0">
+                                @include('panel::partials.empty-table', [
+                                    'trashed' => $trashed,
+                                    'hasActiveFilters' => $hasActiveFilters,
+                                    'soloBusquedaActiva' => $soloBusquedaActiva,
+                                    'search' => $search,
+                                    'canCreate' => $canCreate,
+                                    'formsInModal' => $formsInModal ?? false,
+                                    'resourceLabel' => $resourceLabel,
+                                    'resourceSlug' => $resourceSlug,
+                                ])
                             </td>
                         </tr>
                     @endforelse
@@ -211,24 +389,28 @@
             </table>
         </div>
 
-        @if ($records->hasPages() || count($perPageOptions ?? []) > 1)
-            <div class="panel-border flex flex-wrap items-center justify-between gap-3 border-t px-4 py-3">
-                @if (count($perPageOptions ?? []) > 1)
-                    <label class="panel-muted flex items-center gap-2 text-sm">
-                        <span>{{ __('panel::panel.per_page') }}</span>
-                        <select wire:model.live="perPage" class="panel-input !w-auto !py-1 text-sm">
-                            @foreach ($perPageOptions as $opcion)
-                                <option value="{{ $opcion }}">{{ $opcion }}</option>
-                            @endforeach
-                        </select>
-                    </label>
-                @else
-                    <span></span>
-                @endif
-                @if ($records->hasPages())
-                    {{ $records->links() }}
-                @endif
-            </div>
-        @endif
+        @include('panel::partials.table-footer', [
+            'paginator' => $records,
+            'perPageOptions' => $perPageOptions ?? [],
+        ])
+        </div>
     </div>
+
+    @include('panel::partials.quick-view-drawer', [
+        'showVistaRapida' => $showVistaRapida ?? false,
+        'vistaRapidaRegistro' => $vistaRapidaRegistro ?? null,
+        'columns' => $columns,
+        'resourceSlug' => $resourceSlug,
+        'formsInModal' => $formsInModal ?? false,
+        'idsRegistrosEditables' => $idsRegistrosEditables ?? [],
+    ])
+
+    @include('panel::partials.bulk-bar', [
+        'selectedCount' => $selectedCount,
+        'hasBulkActions' => $hasBulkActions,
+        'bulkActions' => $bulkActions,
+        'mostrarSeleccionarTodos' => $mostrarSeleccionarTodos ?? false,
+        'seleccionGlobal' => $seleccionGlobal ?? false,
+        'totalResultados' => $totalResultados ?? 0,
+    ])
 </div>

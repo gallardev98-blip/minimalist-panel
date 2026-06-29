@@ -4,6 +4,218 @@ All notable changes to `mylaraveltools/panel` are documented in this file.
 
 ## [Unreleased]
 
+## [0.53.0] - 2026-06-29
+
+### Added
+
+- **Guía UX del listado** en `AGENTS.md` — capas 1–4, config, atajos, helpers y comandos DX
+
+### Changed
+
+- **README** — roadmap actualizado (v0.46–v0.52), sección «UX del listado» con tabla de config y enlace a AGENTS
+
+## [0.52.0] - 2026-06-29
+
+### Added
+
+- **`PanelConsultas`** — eager load automático desde `BelongsToColumn`, caché de opciones `relationship()` y auditoría N+1/índices
+- **`Resource::eagerLoadsForIndex()`** — fusiona `with()` manual y relaciones detectadas en la tabla
+- **Caché de opciones** — filtros `SelectFilter`/`MultiSelectFilter` y `BelongsToField` (`filter_options_cache`, TTL configurable)
+- **Paginación cursor** — opcional para listados muy grandes (`cursor_pagination`, desactivada por defecto)
+- **Comando `panel:audit-rendimiento`** — informe de N+1 e índices sugeridos por resource
+
+### Changed
+
+- **`ResourceQuery`** — `contar`/`ids` sin eager load; `paginate` soporta cursor
+- **`panel:doctor`** — aviso si hay resources con posibles N+1
+- **`PanelListado`** — texto de rango adaptado a paginación cursor
+
+## [0.51.0] - 2026-06-29
+
+### Added
+
+- **Formularios en listado** — validación inline por campo (`forms.validate_inline`), borrador en `localStorage` (`forms.draft_autosave`), foco automático al abrir (`forms.focus_on_open`)
+- **Importación guiada** — paso de progreso y resumen post-import con estadísticas y errores (`import.guided_summary`)
+- **Preview acciones bulk** — confirmación con recuento «Vas a aplicar X sobre N registros» (`index.bulk_preview`)
+
+### Changed
+
+- **`ManagesResourceFormModal`** — `updatedForm`, `descartarBorradorFormulario`, evento `panel-borrador-limpiado`
+- **`PanelLayout`** — helpers para forms, import guiada y bulk preview
+
+## [0.50.0] - 2026-06-29
+
+### Added
+
+- **Columnas ocultables** — menú con persistencia en `localStorage` (`column-toggle`, `panelColumnas`)
+- **Vista rápida** — drawer lateral con Shift+clic o botón ojo (`quick-view-drawer`, `abrirVistaRapida`)
+- **Presets de filtros** — guardar/aplicar combinaciones en `localStorage` (`filter-presets`, `panelPresetsFiltros`)
+- **Selección global** — «Seleccionar todos los resultados» con límite configurable (`seleccionGlobal`, `bulk_select_all_max`)
+- **`ResourceQuery::contar()` / `ids()`** — totales e IDs para selección masiva global
+
+### Changed
+
+- **Barra bulk** — banner para seleccionar todos los resultados filtrados
+- **`PanelLayout`** — flags `column_toggle`, `quick_view`, `filter_presets`, `select_all_matching`
+
+## [0.49.0] - 2026-06-29
+
+### Added
+
+- **Barra bulk fija** — acciones masivas en barra inferior al seleccionar filas (`bulk-bar`, `limpiarSeleccion`)
+- **Copiar enlace** — comparte URL con filtros/búsqueda (`copy-list-link`)
+- **Teclado en tabla** — `↑`/`↓` navegan filas, `Enter` abre editar
+- **`PanelListado`** — helper de rango de resultados y objetivos de carga
+
+### Changed
+
+- **RelationPanel** — contador, skeleton/busy, filas clicables y teclado alineados con el listado principal
+
+## [0.48.0] - 2026-06-29
+
+### Added
+
+- **`config/performance`** — debounces, skeleton, loader SPA y animaciones ajustables (`PanelRendimiento`)
+
+### Changed
+
+- **Selects de filtro** — sincronizan con Livewire al instante (animación en paralelo, no después)
+- **Feedback de carga** — estado `busy` inmediato; skeleton a 50ms (antes 150ms sin feedback)
+- **Búsqueda** — debounce 200ms (antes 300ms); fechas 250ms (antes 400ms)
+- **Loader SPA** — mínimo 120ms (antes 280ms fijo); animaciones de filtros/select más cortas
+
+## [0.47.0] - 2026-06-29
+
+### Added
+
+- **Cabecera de tabla fija** — `layout.table_sticky_header` (scroll interno con `thead` sticky)
+- **Filas clicables** — clic o Enter abre editar (`layout.index.clickable_rows`, `abrirRegistro`)
+- **Vista móvil en tarjetas** — listado en cards bajo `md` (`layout.index.mobile_cards`)
+
+### Changed
+
+- **Filtros colapsables** — se abren al aplicar un filtro; con criterios en URL no se pisan por localStorage
+
+## [0.46.0] - 2026-06-29
+
+### Added
+
+- **Chips de criterios activos** — búsqueda y filtros como etiquetas removibles (`quitarCriterio`)
+- **Contador de resultados** — «Mostrando 1–15 de 142» junto al buscador
+- **Menú Exportar** — CSV, Excel y PDF en desplegable compacto
+- **Atajo de teclado** — `/` o `Ctrl+F` enfoca el buscador del listado
+
+### Changed
+
+- `CriteriosActivosIndex` — helper para etiquetas y valores de chips
+
+## [0.45.1] - 2026-06-29
+
+### Changed
+
+- **Skeleton de tabla** — réplica la tabla real: mismas columnas, filas según `perPage`, cabecera y pie de paginación
+
+## [0.45.0] - 2026-06-29
+
+### Changed
+
+- **Buscador + filtros unificados** — una sola tarjeta: búsqueda siempre visible arriba, filtros colapsables debajo
+
+## [0.44.6] - 2026-06-29
+
+### Fixed
+
+- **Cabecera filtros** — sin borde inferior cuadrado; esquinas superiores alineadas con la tarjeta
+- **Carga al filtrar** — skeleton visible en ~150ms al cambiar filtros; `wire:model.live` en selects
+
+## [0.44.5] - 2026-06-29
+
+### Fixed
+
+- **Select en filtros** — desplegable teleportado al `body` para no recortarse por el `overflow: hidden` de la animación del panel
+
+## [0.44.4] - 2026-06-29
+
+### Fixed
+
+- **Panel filtros** — apertura suave con animación CSS `grid` (sin saltos bruscos)
+- **Select filtro** — cierre animado completo antes de sincronizar con Livewire; sin flash de opciones
+- **Carga tabla** — skeleton y tabla mutuamente excluyentes; filtros solo atenúan la tabla
+
+## [0.44.3] - 2026-06-29
+
+### Fixed
+
+- **Filtros** — sin parpadeo al seleccionar: `wire:ignore` en panel y selects, debounce 300ms, sin skeleton al filtrar
+- **Desplegable** — la búsqueda ya no se limpia durante la animación de cierre (evita flash de todas las opciones)
+
+## [0.44.2] - 2026-06-29
+
+### Fixed
+
+- **Filtros** — desplegable anclado al campo (sin teleport), no mueve el layout; pequeño hueco bajo el trigger
+- **Tabla** — esquinas inferiores redondeadas (pie y última fila) alineadas con `--panel-form-radius`
+
+## [0.44.1] - 2026-06-29
+
+### Fixed
+
+- **Select buscable** — desplegable teleportado al `body` con posición fija (no se recorta dentro del panel de filtros)
+- Placeholder «Todos» en filtros; buscador y lista con mejor padding
+
+## [0.44.0] - 2026-06-29
+
+### Added
+
+- **Select buscable** — componente `<x-panel::searchable-select>` con búsqueda, teclado y opciones con padding/espaciado mejorado
+- Aplicado en filtros, formularios, papelera y selector «por página»
+
+## [0.43.1] - 2026-06-29
+
+### Fixed
+
+- **Panel de filtros** — tarjeta unificada al abrir (sin doble borde entre botón y cuerpo); grid más equilibrado
+- **Rango de fechas** — campos más anchos, separador visual y foco suavizado en `input[type="date"]`
+- Traducciones `date_from` / `date_to` (ES/EN)
+
+## [0.43.0] - 2026-06-29
+
+### Added
+
+- **Filtros colapsables en listados** — `layout.filters.mode` (`collapsible` | `inline`), `default_open`, `remember_state` (localStorage)
+- Panel plegable con badge de filtros activos, grid responsive y animación; modo `inline` conserva el diseño anterior
+- `PanelLayout::modoFiltros()`, `filtrosAbiertosPorDefecto()`, `recordarEstadoFiltros()`
+- Partials `filter-fields.blade.php` y `filters-panel.blade.php`; icono `sliders-horizontal`
+- Playground: opciones de filtros en pestaña Apariencia
+
+## [0.42.1] - 2026-06-29
+
+### Fixed
+
+- **Tabla — cabecera redondeada** — `border-collapse: separate` + esquinas superiores en `th` y `overflow: hidden` en el wrap; elimina el efecto de columnas cuadradas dentro de un contenedor redondeado
+- **Paginación en una línea** — nuevo `partials/table-footer.blade.php`: «Por página» + selector y controles de página en fila única (`flex-wrap: nowrap`); resumen «Mostrando…» oculto en el pie de tabla
+
+## [0.42.0] - 2026-06-29
+
+### Changed
+
+- **Formularios modernos** — bordes más redondeados vía `--panel-input-radius` y `--panel-form-radius`; radio por defecto `1rem` en `theme.radius`
+- Inputs, botones, checkboxes y auth usan el mismo sistema de redondeo configurable
+- Tarjeta de formulario (`panel-form-card`) y secciones con sombra suave y más espacio
+- Pestañas de formulario estilo *pill* (contenedor redondeado, tab activa elevada)
+- Rich-text, repeater y file upload con clases dedicadas (`panel-rich-text-*`, `panel-repeater-item`, `panel-file-input`)
+- Modal de formulario cierra con `Escape`
+
+## [0.41.0] - 2026-06-29
+
+### Changed
+
+- **Listados — estado vacío contextual** — `partials/empty-table.blade.php`: mensajes distintos para papelera, búsqueda sin resultados, filtros activos o lista vacía; CTA para crear o limpiar búsqueda/filtros
+- **Búsqueda** — botón «×» para limpiar el texto sin borrar otros filtros (`panel-search-clear`)
+- **Tablas** — cabecera `position: sticky` al hacer scroll; contenedor `panel-table-scroll` sin `overflow: hidden` en el wrap
+- **Accesibilidad** — anillos `focus-visible` en botones, inputs, navegación y acciones de fila
+- **Modales** — animación de entrada suave; modal de confirmación cierra con `Escape`
+
 ## [0.40.1] - 2026-06-25
 
 ### Fixed

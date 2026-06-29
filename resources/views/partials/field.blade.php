@@ -10,7 +10,7 @@
 @if ($vistaCampo)
     @include($vistaCampo, ['field' => $field, 'form' => $form])
 @else
-<div>
+<div class="panel-field">
     <label for="field-{{ $name }}" class="panel-label">
         {{ $field->getLabel() }}
         @if ($field->isRequired())
@@ -38,7 +38,7 @@
                 }"
                 wire:ignore
             >
-                <div class="mb-2 flex flex-wrap gap-1">
+                <div class="mb-2 panel-rich-text-toolbar">
                     <button type="button" class="panel-btn panel-btn-ghost !px-2 !py-1 text-xs font-bold" @click="exec('bold')">B</button>
                     <button type="button" class="panel-btn panel-btn-ghost !px-2 !py-1 text-xs italic" @click="exec('italic')">I</button>
                     <button type="button" class="panel-btn panel-btn-ghost !px-2 !py-1 text-xs underline" @click="exec('underline')">U</button>
@@ -49,7 +49,7 @@
                     contenteditable="true"
                     @input="sync()"
                     x-init="$refs.editor.innerHTML = @js($form[$name] ?? '')"
-                    class="panel-input min-h-[8rem] prose prose-sm max-w-none dark:prose-invert"
+                    class="panel-input panel-rich-text-editor prose prose-sm max-w-none dark:prose-invert"
                 ></div>
             </div>
             @break
@@ -69,33 +69,24 @@
 
         @case('select')
         @case('belongs-to')
-            <select
-                id="field-{{ $name }}"
+            <x-panel::searchable-select
+                :id="'field-' . $name"
                 wire:model="form.{{ $name }}"
-                @disabled($field->isDisabled())
-                class="panel-input"
-            >
-                <option value="">{{ __('panel::panel.select') }}</option>
-                @foreach (($meta['options'] ?? []) as $optionValue => $optionLabel)
-                    <option value="{{ $optionValue }}">{{ $optionLabel }}</option>
-                @endforeach
-            </select>
+                :options="['' => __('panel::panel.select')] + ($meta['options'] ?? [])"
+                :disabled="$field->isDisabled()"
+            />
             @break
 
         @case('multi-select')
         @case('roles')
         @case('permissions')
-            <select
-                id="field-{{ $name }}"
+            <x-panel::searchable-select
+                :id="'field-' . $name"
                 wire:model="form.{{ $name }}"
+                :options="$meta['options'] ?? []"
                 multiple
-                @disabled($field->isDisabled())
-                class="panel-input min-h-[6rem]"
-            >
-                @foreach (($meta['options'] ?? []) as $optionValue => $optionLabel)
-                    <option value="{{ $optionValue }}">{{ $optionLabel }}</option>
-                @endforeach
-            </select>
+                :disabled="$field->isDisabled()"
+            />
             @break
 
         @case('password')
@@ -126,7 +117,7 @@
                 wire:model="form.{{ $name }}"
                 accept="image/*"
                 @disabled($field->isDisabled())
-                class="block w-full text-sm text-[rgb(var(--panel-muted))] file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[rgb(var(--panel-primary))] file:px-4 file:py-2 file:text-sm file:font-medium file:text-[rgb(var(--panel-primary-fg))] hover:file:brightness-110"
+                class="panel-file-input"
             >
             <div wire:loading wire:target="form.{{ $name }}" class="panel-muted mt-2 text-sm">{{ __('panel::panel.uploading') }}</div>
             @break
@@ -150,7 +141,7 @@
                     accept="{{ collect($meta['acceptedMimes'])->map(fn ($m) => '.' . $m)->implode(',') }}"
                 @endif
                 @disabled($field->isDisabled())
-                class="block w-full text-sm text-[rgb(var(--panel-muted))] file:mr-4 file:cursor-pointer file:rounded-lg file:border-0 file:bg-[rgb(var(--panel-primary))] file:px-4 file:py-2 file:text-sm file:font-medium file:text-[rgb(var(--panel-primary-fg))] hover:file:brightness-110"
+                class="panel-file-input"
             >
             <div wire:loading wire:target="form.{{ $name }}" class="panel-muted mt-2 text-sm">{{ __('panel::panel.uploading') }}</div>
             @break
@@ -244,7 +235,7 @@
                 x-init="initFilas()"
             >
                 <template x-for="(fila, i) in filas" :key="i">
-                    <div class="panel-card rounded-lg p-3 space-y-2">
+                    <div class="panel-repeater-item space-y-2">
                         <div class="grid gap-2 sm:grid-cols-2">
                             <template x-for="(etiqueta, clave) in columnas" :key="clave">
                                 <div>
@@ -273,7 +264,7 @@
     @endswitch
 
     @error('form.' . $name)
-        <p class="mt-1 text-sm text-[rgb(var(--panel-danger))]">{{ $message }}</p>
+        <p class="panel-field-error mt-1 text-sm">{{ $message }}</p>
     @enderror
 </div>
 @endif

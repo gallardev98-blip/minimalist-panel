@@ -55,4 +55,51 @@ final class PanelLayoutTest extends TestCase
 
         $this->assertSame([], PanelLayout::enlacesFooter());
     }
+
+    public function test_modo_filtros_collapsible_por_defecto(): void
+    {
+        config()->set('panel.layout.filters', [
+            'mode' => 'collapsible',
+            'default_open' => true,
+            'remember_state' => false,
+        ]);
+
+        $this->assertSame('collapsible', PanelLayout::modoFiltros());
+        $this->assertTrue(PanelLayout::filtrosAbiertosPorDefecto());
+        $this->assertFalse(PanelLayout::recordarEstadoFiltros());
+    }
+
+    public function test_modo_filtros_inline(): void
+    {
+        config()->set('panel.layout.filters.mode', 'inline');
+
+        $this->assertSame('inline', PanelLayout::modoFiltros());
+    }
+
+    public function test_opciones_index_y_tabla(): void
+    {
+        config()->set('panel.layout.table_sticky_header', false);
+        config()->set('panel.layout.index', [
+            'clickable_rows' => false,
+            'mobile_cards' => false,
+        ]);
+
+        $this->assertFalse(PanelLayout::tablaCabeceraFija());
+        $this->assertFalse(PanelLayout::filasClicables());
+        $this->assertFalse(PanelLayout::tarjetasMovil());
+        $this->assertStringNotContainsString('panel-table-sticky-header', PanelLayout::clasesTabla());
+    }
+
+    public function test_opciones_capa_3(): void
+    {
+        config()->set('panel.forms.validate_inline', false);
+        config()->set('panel.layout.index.bulk_preview', false);
+        config()->set('panel.import.guided_summary', false);
+
+        $this->assertFalse(PanelLayout::validacionInlineForm());
+        $this->assertFalse(PanelLayout::previewBulk());
+        $this->assertFalse(PanelLayout::importacionGuiada());
+        $this->assertTrue(PanelLayout::borradorFormulario());
+        $this->assertTrue(PanelLayout::focoFormulario());
+    }
 }

@@ -11,7 +11,7 @@
                     <p class="panel-form-section-description">{{ $item->getDescription() }}</p>
                 @endif
             </div>
-            <div class="panel-form-section-body space-y-5">
+            <div class="panel-form-section-body panel-form-fields">
                 @foreach ($item->getFields() as $field)
                     @include('panel::partials.field', ['field' => $field])
                 @endforeach

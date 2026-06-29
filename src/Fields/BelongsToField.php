@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MyLaravelTools\Panel\Fields;
 
+use MyLaravelTools\Panel\Support\PanelConsultas;
 use Illuminate\Database\Eloquent\Model;
 
 final class BelongsToField extends Field
@@ -36,10 +37,7 @@ final class BelongsToField extends Field
             throw new \InvalidArgumentException('BelongsToField requires ->relationship(Model::class) configuration.');
         }
 
-        return $this->relatedModel::query()
-            ->orderBy($this->titleColumn)
-            ->pluck($this->titleColumn, 'id')
-            ->all();
+        return PanelConsultas::opcionesRelacion($this->relatedModel, $this->titleColumn);
     }
 
     /** @return array<int, string> */

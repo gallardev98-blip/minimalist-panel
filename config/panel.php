@@ -251,6 +251,7 @@ return [
         'sidebar_collapsed_width' => '4.5rem',
         'table_striped' => false,
         'table_compact' => false,
+        'table_sticky_header' => true,
         'global_search' => true,
         'global_search_shortcut' => true,
         'show_version' => true,
@@ -260,6 +261,26 @@ return [
         'title_suffix' => null,
         'per_page_options' => [15, 25, 50, 100],
         'footer_links' => [],
+        /*
+        | Filtros en listados (resource-index):
+        | mode — inline (siempre visibles) | collapsible (panel plegable)
+        | default_open — abierto al cargar si no hay estado guardado
+        | remember_state — persistir abierto/cerrado en localStorage
+        */
+        'filters' => [
+            'mode' => 'collapsible',
+            'default_open' => false,
+            'remember_state' => true,
+        ],
+        'index' => [
+            'clickable_rows' => true,
+            'mobile_cards' => true,
+            'column_toggle' => true,
+            'quick_view' => true,
+            'filter_presets' => true,
+            'select_all_matching' => true,
+            'bulk_preview' => true,
+        ],
         'spa_loader' => true,
         'spa_loader_timeout_ms' => 20000,
         'spa_loader_escape' => true,
@@ -317,6 +338,29 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Rendimiento percibido (UX)
+    |--------------------------------------------------------------------------
+    */
+
+    'performance' => [
+        'search_debounce_ms' => 200,
+        'filter_date_debounce_ms' => 250,
+        'filter_multiselect_debounce_ms' => 150,
+        'skeleton_delay_ms' => 50,
+        'table_hide_delay_ms' => 80,
+        'select_close_ms' => 100,
+        'spa_loader_min_ms' => 120,
+        'spa_loader_exit_ms' => 160,
+        'filter_expand_ms' => 220,
+        'reduce_animations' => false,
+        'eager_load_columns' => true,
+        'filter_options_cache' => true,
+        'filter_options_cache_ttl' => 300,
+        'cursor_pagination' => false,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Versión mostrada en el sidebar
     |--------------------------------------------------------------------------
     |
@@ -329,6 +373,8 @@ return [
 
     'per_page' => 15,
 
+    'bulk_select_all_max' => 500,
+
     /*
     |--------------------------------------------------------------------------
     | Formularios en modal
@@ -338,6 +384,12 @@ return [
     | false — rutas de página completa (panel.resources.create/edit).
     |
     */
+
+    'forms' => [
+        'validate_inline' => true,
+        'draft_autosave' => true,
+        'focus_on_open' => true,
+    ],
 
     'forms_in_modal' => true,
 
@@ -354,6 +406,7 @@ return [
     'import' => [
         'enabled' => true,
         'preview' => true,
+        'guided_summary' => true,
         'upsert' => false,
         'upsert_key' => null,
     ],
@@ -391,7 +444,7 @@ return [
         'presets_file' => null,
         'default' => 'dark',
         'font' => 'Plus Jakarta Sans',
-        'radius' => '0.75rem',
+        'radius' => '1rem',
         'sidebar_width' => '16rem',
         'colors' => [
             'primary' => '#000000',

@@ -4,6 +4,8 @@
         role="dialog"
         aria-modal="true"
         aria-labelledby="panel-confirm-title"
+        x-data
+        @keydown.escape.window="$wire.cancelConfirm()"
     >
         <div class="panel-modal-backdrop" wire:click="cancelConfirm"></div>
 

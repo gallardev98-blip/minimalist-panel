@@ -11,13 +11,18 @@ use MyLaravelTools\Panel\Livewire\Concerns\DispatchesPanelToasts;
 use MyLaravelTools\Panel\Livewire\Concerns\InteractsWithPanelResource;
 use MyLaravelTools\Panel\Livewire\Concerns\ManagesResourceFormModal;
 use MyLaravelTools\Panel\Resources\Resource;
+use MyLaravelTools\Panel\Support\CriteriosActivosIndex;
 use MyLaravelTools\Panel\Support\CsvExporter;
 use MyLaravelTools\Panel\Support\ExcelExporter;
 use MyLaravelTools\Panel\Support\FormSchema;
 use MyLaravelTools\Panel\Support\ImportTemplateExporter;
+use MyLaravelTools\Panel\Support\PanelLayout;
+use MyLaravelTools\Panel\Support\PanelListado;
+use MyLaravelTools\Panel\Support\PanelRendimiento;
 use MyLaravelTools\Panel\Support\PdfExporter;
 use MyLaravelTools\Panel\Support\PanelImpersonation;
 use MyLaravelTools\Panel\Support\ResourceQuery;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Layout;
@@ -58,12 +63,21 @@ final class ResourceIndex extends Component
     /** @var array<int, int|string> */
     public array $selected = [];
 
+    public bool $seleccionGlobal = false;
+
+    public bool $showVistaRapida = false;
+
+    public int|string|null $vistaRapidaId = null;
+
     public bool $showImportModal = false;
 
     public string $importStep = 'upload';
 
     /** @var array<string, mixed>|null */
     public ?array $importPreview = null;
+
+    /** @var array{imported: int, updated: int, failed: int, errors: list<string>, ok: bool}|null */
+    public ?array $importResumen = null;
 
     /** @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile|null */
     public $importFile = null;
@@ -95,12 +109,17 @@ final class ResourceIndex extends Component
     public function updatedFilterValues(): void
     {
         $this->resetPage();
+        $this->dispatch(
+            'panel-filtros-actualizados',
+            filtros: $this->contarFiltrosDeColumnas(),
+            hasActive: $this->hasActiveFilters(),
+        );
     }
 
     public function updatedTrashed(): void
     {
         $this->resetPage();
-        $this->selected = [];
+        $this->limpiarSeleccion();
     }
 
     public function resetFilters(): void
@@ -109,41 +128,195 @@ final class ResourceIndex extends Component
         $this->search = '';
         $this->initializeFilterDefaults();
         $this->resetPage();
+        $this->limpiarSeleccion();
+        $this->dispatch(
+            'panel-filtros-actualizados',
+            filtros: 0,
+            hasActive: false,
+        );
+    }
+
+    /** @return list<array{nombre: string, etiqueta: string, valor: string}> */
+    public function chipsCriteriosActivos(): array
+    {
+        return CriteriosActivosIndex::chips($this->search, $this->filterValues, $this->resourceClass);
+    }
+
+    public function quitarCriterio(string $nombre): void
+    {
+        if ($nombre === 'search') {
+            $this->search = '';
+        } else {
+            foreach ($this->resourceClass::filters() as $filtro) {
+                if ($filtro->getName() !== $nombre) {
+                    continue;
+                }
+
+                $this->restablecerFiltro($filtro);
+                break;
+            }
+        }
+
+        $this->resetPage();
+        $this->dispatch(
+            'panel-filtros-actualizados',
+            filtros: $this->contarFiltrosDeColumnas(),
+            hasActive: $this->hasActiveFilters(),
+        );
+    }
+
+    public function abrirRegistro(int|string $id): void
+    {
+        if (! PanelLayout::filasClicables()) {
+            return;
+        }
+
+        $registro = $this->resourceClass::findRecord($id, $this->trashed === 'only');
+        $accion = $this->findRowAction('edit');
+
+        if ($accion === null || ! $accion->isVisible($registro, $this->resourceClass)) {
+            return;
+        }
+
+        if ($this->formsInModal()) {
+            $this->openEditFormModal($id);
+
+            return;
+        }
+
+        $url = $accion->resolveUrl($registro, $this->resource);
+
+        if ($url !== null) {
+            $this->redirect($url, navigate: true);
+        }
+    }
+
+    public function limpiarSeleccion(): void
+    {
         $this->selected = [];
+        $this->seleccionGlobal = false;
+    }
+
+    public function updatedSelected(): void
+    {
+        $this->seleccionGlobal = false;
+    }
+
+    public function seleccionarTodosLosResultados(): void
+    {
+        if (! PanelLayout::seleccionGlobalActiva()) {
+            return;
+        }
+
+        $total = $this->contarRegistrosFiltrados();
+        $maximo = PanelLayout::maximoSeleccionGlobal();
+
+        if ($total > $maximo) {
+            $this->toastError(__('panel::panel.select_all_limit', ['max' => $maximo, 'total' => $total]));
+
+            return;
+        }
+
+        if ($total < 1) {
+            return;
+        }
+
+        $this->seleccionGlobal = true;
+    }
+
+    public function abrirVistaRapida(int|string $id): void
+    {
+        if (! PanelLayout::vistaRapida()) {
+            return;
+        }
+
+        $registro = $this->resourceClass::findRecord($id, $this->trashed === 'only');
+
+        abort_unless($this->resourceClass::authorize('view', $registro), 403);
+
+        $this->vistaRapidaId = $id;
+        $this->showVistaRapida = true;
+    }
+
+    public function cerrarVistaRapida(): void
+    {
+        $this->showVistaRapida = false;
+        $this->vistaRapidaId = null;
+    }
+
+    public function contarSeleccion(mixed $paginador): int
+    {
+        if ($this->seleccionGlobal) {
+            return $this->totalRegistros($paginador);
+        }
+
+        return count($this->selected);
+    }
+
+    public function mostrarSeleccionarTodos(mixed $paginador): bool
+    {
+        if (! PanelLayout::seleccionGlobalActiva() || $this->seleccionGlobal) {
+            return false;
+        }
+
+        if ($paginador instanceof CursorPaginator) {
+            return false;
+        }
+
+        if ($this->totalRegistros($paginador) <= $paginador->count()) {
+            return false;
+        }
+
+        return $this->paginaCompletamenteSeleccionada($paginador);
+    }
+
+    public function textoRangoResultados(mixed $paginador): string
+    {
+        return PanelListado::textoRango($paginador);
+    }
+
+    public function soloBusquedaActiva(): bool
+    {
+        return $this->search !== '' && ! $this->tieneFiltrosDeColumnas();
+    }
+
+    public function contarFiltrosDeColumnas(): int
+    {
+        $total = 0;
+
+        foreach ($this->resourceClass::filters() as $filter) {
+            if ($this->filtroColumnaTieneValor($filter)) {
+                $total++;
+            }
+        }
+
+        return $total;
     }
 
     public function hasActiveFilters(): bool
     {
-        if ($this->search !== '') {
-            return true;
+        return $this->search !== '' || $this->contarFiltrosDeColumnas() > 0;
+    }
+
+    private function tieneFiltrosDeColumnas(): bool
+    {
+        return $this->contarFiltrosDeColumnas() > 0;
+    }
+
+    private function filtroColumnaTieneValor(\MyLaravelTools\Panel\Filters\Filter $filter): bool
+    {
+        $name = $filter->getName();
+        $value = $this->filterValues[$name] ?? null;
+
+        if ($filter->getType() === 'date-range') {
+            return ($value['from'] ?? '') !== '' || ($value['to'] ?? '') !== '';
         }
 
-        foreach ($this->resourceClass::filters() as $filter) {
-            $name = $filter->getName();
-            $value = $this->filterValues[$name] ?? null;
-
-            if ($filter->getType() === 'date-range') {
-                if (($value['from'] ?? '') !== '' || ($value['to'] ?? '') !== '') {
-                    return true;
-                }
-
-                continue;
-            }
-
-            if ($filter->getType() === 'multi-select') {
-                if (is_array($value) && $value !== []) {
-                    return true;
-                }
-
-                continue;
-            }
-
-            if ($value !== null && $value !== '') {
-                return true;
-            }
+        if ($filter->getType() === 'multi-select') {
+            return is_array($value) && $value !== [];
         }
 
-        return false;
+        return $value !== null && $value !== '';
     }
 
     public function sortBy(string $column): void
@@ -248,6 +421,7 @@ final class ResourceIndex extends Component
 
     public function toggleSelectAll(): void
     {
+        $this->seleccionGlobal = false;
         $records = $this->paginateRecords();
         $ids = $records->pluck('id')->all();
 
@@ -265,7 +439,7 @@ final class ResourceIndex extends Component
         }
 
         if ($action->getConfirmation() !== null) {
-            $this->askConfirm($action->getConfirmation(), 'bulk', bulkAction: $actionName);
+            $this->askConfirm($this->mensajeConfirmacionBulk($action), 'bulk', bulkAction: $actionName);
 
             return null;
         }
@@ -318,7 +492,7 @@ final class ResourceIndex extends Component
         }
 
         $action->run($records);
-        $this->selected = [];
+        $this->limpiarSeleccion();
         $this->toastSuccess(__('panel::panel.action_completed'));
 
         return null;
@@ -419,6 +593,7 @@ final class ResourceIndex extends Component
         $this->importFile = null;
         $this->importStep = 'upload';
         $this->importPreview = null;
+        $this->importResumen = null;
         $this->resetValidation();
         $this->showImportModal = true;
     }
@@ -429,6 +604,7 @@ final class ResourceIndex extends Component
         $this->importFile = null;
         $this->importStep = 'upload';
         $this->importPreview = null;
+        $this->importResumen = null;
         $this->resetValidation();
     }
 
@@ -513,7 +689,18 @@ final class ResourceIndex extends Component
             return;
         }
 
+        if (PanelLayout::importacionGuiada()) {
+            $this->importStep = 'importing';
+        }
+
         $result = app(ResourceImporter::class)->importPayloads($this->resourceClass, $payloads);
+
+        if (PanelLayout::importacionGuiada()) {
+            $this->finalizarImportacionGuiada($result);
+
+            return;
+        }
+
         $this->closeImportModal();
         $this->finishImportResult($result);
     }
@@ -528,6 +715,10 @@ final class ResourceIndex extends Component
             'importFile' => __('panel::panel.import.file'),
         ]);
 
+        if (PanelLayout::importacionGuiada()) {
+            $this->importStep = 'importing';
+        }
+
         $extension = strtolower($this->importFile->getClientOriginalExtension());
         $result = app(ResourceImporter::class)->fromPath(
             $this->resourceClass,
@@ -535,8 +726,34 @@ final class ResourceIndex extends Component
             $extension,
         );
 
+        if (PanelLayout::importacionGuiada()) {
+            $this->finalizarImportacionGuiada($result);
+
+            return;
+        }
+
         $this->closeImportModal();
         $this->finishImportResult($result);
+    }
+
+    /** @param array{imported: int, updated?: int, failed: int, errors: list<string>} $result */
+    private function finalizarImportacionGuiada(array $result): void
+    {
+        $actualizados = (int) ($result['updated'] ?? 0);
+        $importados = (int) $result['imported'];
+        $fallidos = (int) $result['failed'];
+
+        $this->importResumen = [
+            'imported' => $importados,
+            'updated' => $actualizados,
+            'failed' => $fallidos,
+            'errors' => array_slice($result['errors'], 0, 10),
+            'ok' => $fallidos === 0 && ($importados > 0 || $actualizados > 0),
+        ];
+        $this->importStep = 'summary';
+        $this->importFile = null;
+        $this->importPreview = null;
+        $this->resetPage();
     }
 
     /** @param array{imported: int, updated?: int, failed: int, errors: list<string>} $result */
@@ -587,13 +804,35 @@ final class ResourceIndex extends Component
             'columns' => $resourceClass::table(),
             'filters' => $resourceClass::filters(),
             'hasActiveFilters' => $this->hasActiveFilters(),
+            'cantidadFiltrosActivos' => $this->contarFiltrosDeColumnas(),
+            'soloBusquedaActiva' => $this->soloBusquedaActiva(),
+            'search' => $this->search,
             'rowActions' => $resourceClass::rowActions(),
             'bulkActions' => $this->visibleBulkActions(),
             'tableClasses' => \MyLaravelTools\Panel\Support\PanelLayout::clasesTabla(),
             'perPageOptions' => $this->perPageOptions(),
-            'records' => $this->paginateRecords(),
+            'records' => $records = $this->paginateRecords(),
+            'chipsCriterios' => $this->chipsCriteriosActivos(),
+            'textoRangoResultados' => $this->textoRangoResultados($records),
+            'idsRegistrosEditables' => $this->idsRegistrosEditables($records),
+            'filasClicables' => PanelLayout::filasClicables(),
+            'tarjetasMovil' => PanelLayout::tarjetasMovil(),
+            'columnasOcultables' => PanelLayout::columnasOcultables(),
+            'vistaRapida' => PanelLayout::vistaRapida(),
+            'presetsFiltros' => PanelLayout::presetsFiltros() && count($resourceClass::filters()) > 0,
+            'columnasMeta' => array_map(
+                static fn ($columna): array => ['nombre' => $columna->getName(), 'etiqueta' => $columna->getLabel()],
+                $resourceClass::table(),
+            ),
             'hasBulkActions' => $this->visibleBulkActions() !== [],
-            'selectedCount' => count($this->selected),
+            'selectedCount' => $this->contarSeleccion($records),
+            'seleccionGlobal' => $this->seleccionGlobal,
+            'mostrarSeleccionarTodos' => $this->mostrarSeleccionarTodos($records),
+            'totalResultados' => $this->totalRegistros($records),
+            'showVistaRapida' => $this->showVistaRapida,
+            'vistaRapidaRegistro' => $this->vistaRapidaId !== null
+                ? $this->resourceClass::findRecord($this->vistaRapidaId, $this->trashed === 'only')
+                : null,
             'formsInModal' => $this->formsInModal(),
             'showFormModal' => $this->showFormModal,
             'formRecordId' => $this->formRecordId,
@@ -605,6 +844,8 @@ final class ResourceIndex extends Component
             'showImportModal' => $this->showImportModal,
             'importStep' => $this->importStep,
             'importPreview' => $this->importPreview,
+            'importResumen' => $this->importResumen,
+            'importacionGuiada' => PanelLayout::importacionGuiada(),
         ]))->title($resourceClass::label());
     }
 
@@ -663,6 +904,41 @@ final class ResourceIndex extends Component
         }
     }
 
+    private function restablecerFiltro(\MyLaravelTools\Panel\Filters\Filter $filtro): void
+    {
+        $nombre = $filtro->getName();
+
+        match ($filtro->getType()) {
+            'date-range' => $this->filterValues[$nombre] = ['from' => '', 'to' => ''],
+            'multi-select' => $this->filterValues[$nombre] = [],
+            default => $this->filterValues[$nombre] = '',
+        };
+    }
+
+    /** @return array<int|string, true> */
+    private function idsRegistrosEditables(mixed $paginador): array
+    {
+        if (! PanelLayout::filasClicables()) {
+            return [];
+        }
+
+        $accion = $this->findRowAction('edit');
+
+        if ($accion === null) {
+            return [];
+        }
+
+        $ids = [];
+
+        foreach ($paginador as $registro) {
+            if ($accion->isVisible($registro, $this->resourceClass)) {
+                $ids[$registro->getKey()] = true;
+            }
+        }
+
+        return $ids;
+    }
+
     /** @return array<int, BulkAction> */
     private function visibleBulkActions(): array
     {
@@ -701,6 +977,22 @@ final class ResourceIndex extends Component
     /** @return Collection<int, Model> */
     private function selectedRecords(): Collection
     {
+        if ($this->seleccionGlobal) {
+            $ids = $this->idsRegistrosFiltrados();
+
+            if ($ids === []) {
+                return new Collection();
+            }
+
+            $consulta = $this->resourceClass::modelClass()::query()->whereIn('id', $ids);
+
+            if ($this->trashed === 'only' && $this->resourceClass::usesSoftDeletes()) {
+                $consulta->onlyTrashed();
+            }
+
+            return $consulta->get();
+        }
+
         if ($this->selected === []) {
             return new Collection();
         }
@@ -713,6 +1005,72 @@ final class ResourceIndex extends Component
         }
 
         return $query->get();
+    }
+
+    private function contarRegistrosFiltrados(): int
+    {
+        return (new ResourceQuery($this->resourceClass))->contar(
+            columns: $this->resourceClass::table(),
+            filters: $this->resourceClass::filters(),
+            filterValues: $this->filterValues,
+            search: $this->search,
+            sortColumn: $this->sortColumn,
+            sortDirection: $this->sortDirection,
+            trashed: $this->trashed,
+        );
+    }
+
+    /** @return list<int|string> */
+    private function idsRegistrosFiltrados(): array
+    {
+        return (new ResourceQuery($this->resourceClass))->ids(
+            columns: $this->resourceClass::table(),
+            filters: $this->resourceClass::filters(),
+            filterValues: $this->filterValues,
+            search: $this->search,
+            sortColumn: $this->sortColumn,
+            sortDirection: $this->sortDirection,
+            trashed: $this->trashed,
+            limite: PanelLayout::maximoSeleccionGlobal(),
+        );
+    }
+
+    private function paginaCompletamenteSeleccionada(mixed $paginador): bool
+    {
+        if ($paginador->count() === 0 || $this->selected === []) {
+            return false;
+        }
+
+        foreach ($paginador as $registro) {
+            if (! in_array($registro->getKey(), $this->selected, false)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function mensajeConfirmacionBulk(\MyLaravelTools\Panel\Actions\BulkAction $accion): string
+    {
+        $mensaje = $accion->getConfirmation() ?? __('panel::panel.confirm_bulk_action');
+
+        if (! PanelLayout::previewBulk()) {
+            return $mensaje;
+        }
+
+        return __('panel::panel.confirm_bulk_preview', [
+            'count' => $this->contarSeleccion($this->paginateRecords()),
+            'action' => $accion->getLabel(),
+        ]);
+    }
+
+    private function totalRegistros(mixed $paginador): int
+    {
+        if ($paginador instanceof CursorPaginator) {
+            return $this->contarRegistrosFiltrados();
+        }
+
+        return (int) $paginador->total();
     }
 
     /** @return Collection<int, Model> */

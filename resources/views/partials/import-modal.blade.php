@@ -10,23 +10,74 @@
         <div class="panel-card panel-modal-dialog panel-modal-dialog--wide">
             <div class="panel-modal-header">
                 <h2 id="panel-import-title" class="panel-heading text-lg font-semibold">
-                    @if (($importStep ?? 'upload') === 'preview')
+                    @if (($importStep ?? 'upload') === 'summary')
+                        {{ __('panel::panel.import.summary_title') }}
+                    @elseif (($importStep ?? 'upload') === 'importing')
+                        {{ __('panel::panel.import.importing_title') }}
+                    @elseif (($importStep ?? 'upload') === 'preview')
                         {{ __('panel::panel.import.preview_title') }}
                     @else
                         {{ __('panel::panel.import.title', ['label' => $resourceLabel]) }}
                     @endif
                 </h2>
-                <button
-                    type="button"
-                    wire:click="closeImportModal"
-                    class="panel-btn panel-btn-ghost !p-2"
-                    aria-label="{{ __('panel::panel.cancel') }}"
-                >
-                    <x-panel::icon name="x" class="h-4 w-4" />
-                </button>
+                @if (($importStep ?? 'upload') !== 'importing')
+                    <button
+                        type="button"
+                        wire:click="closeImportModal"
+                        class="panel-btn panel-btn-ghost !p-2"
+                        aria-label="{{ __('panel::panel.cancel') }}"
+                    >
+                        <x-panel::icon name="x" class="h-4 w-4" />
+                    </button>
+                @endif
             </div>
 
-            @if (($importStep ?? 'upload') === 'preview' && ($importPreview ?? null))
+            @if (($importStep ?? 'upload') === 'importing')
+                <div class="panel-modal-body panel-import-progress">
+                    <p class="panel-muted mb-4 text-sm">{{ __('panel::panel.import.importing_hint') }}</p>
+                    <div class="panel-import-progress__bar" role="progressbar" aria-busy="true">
+                        <span class="panel-import-progress__fill"></span>
+                    </div>
+                    <p class="panel-muted mt-4 text-center text-sm">{{ __('panel::panel.loading') }}</p>
+                </div>
+            @elseif (($importStep ?? 'upload') === 'summary' && ($importResumen ?? null))
+                <div class="panel-modal-body">
+                    <div @class([
+                        'panel-import-summary',
+                        'panel-import-summary--ok' => $importResumen['ok'] ?? false,
+                        'panel-import-summary--error' => ! ($importResumen['ok'] ?? false),
+                    ])>
+                        @if ($importResumen['ok'] ?? false)
+                            <x-panel::icon name="check-circle" class="panel-import-summary__icon h-8 w-8" />
+                            <p class="panel-import-summary__title">{{ __('panel::panel.import.summary_ok') }}</p>
+                        @else
+                            <x-panel::icon name="alert-circle" class="panel-import-summary__icon h-8 w-8" />
+                            <p class="panel-import-summary__title">{{ __('panel::panel.import.summary_partial') }}</p>
+                        @endif
+                        <ul class="panel-import-summary__stats">
+                            <li>{{ __('panel::panel.import.summary_imported', ['count' => $importResumen['imported'] ?? 0]) }}</li>
+                            @if (($importResumen['updated'] ?? 0) > 0)
+                                <li>{{ __('panel::panel.import.summary_updated', ['count' => $importResumen['updated']]) }}</li>
+                            @endif
+                            @if (($importResumen['failed'] ?? 0) > 0)
+                                <li>{{ __('panel::panel.import.summary_failed', ['count' => $importResumen['failed']]) }}</li>
+                            @endif
+                        </ul>
+                    </div>
+                    @if (($importResumen['errors'] ?? []) !== [])
+                        <ul class="panel-import-summary__errors">
+                            @foreach ($importResumen['errors'] as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
+                <div class="panel-modal-footer">
+                    <button type="button" wire:click="closeImportModal" class="panel-btn panel-btn-primary">
+                        {{ __('panel::panel.import.summary_close') }}
+                    </button>
+                </div>
+            @elseif (($importStep ?? 'upload') === 'preview' && ($importPreview ?? null))
                 <div class="panel-modal-body">
                     <p class="panel-muted mb-4 text-sm">
                         {{ __('panel::panel.import.preview_summary', [
@@ -83,7 +134,8 @@
                         wire:target="confirmImport"
                         @disabled(($importPreview['summary']['valid'] ?? 0) === 0)
                     >
-                        {{ __('panel::panel.import.preview_confirm', ['count' => $importPreview['summary']['valid'] ?? 0]) }}
+                        <span wire:loading.remove wire:target="confirmImport">{{ __('panel::panel.import.preview_confirm', ['count' => $importPreview['summary']['valid'] ?? 0]) }}</span>
+                        <span wire:loading wire:target="confirmImport">{{ __('panel::panel.import.importing_title') }}</span>
                     </button>
                 </div>
             @else

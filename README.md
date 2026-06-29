@@ -184,7 +184,10 @@ Toda la configuración vive en este archivo (compatible con `config:cache`). No 
 | `permissions` | Spatie/Gate | `disabled` |
 | `navigation` | Menú lateral (`null` = auto) | `null` |
 | `widgets` | Dashboard | `[]` |
-| `import` | Import CSV/Excel | `enabled` + `preview` |
+| `import` | Import CSV/Excel | `enabled` + `preview` + `guided_summary` |
+| `forms` | Modal: validación inline, borrador, foco | ver [UX del listado](#ux-del-listado) |
+| `performance` | Debounces, skeleton, caché filtros, cursor | ver [AGENTS.md](AGENTS.md#guía-ux-del-listado) |
+| `layout.index` | Filas clicables, columnas, vista rápida, bulk | ver [UX del listado](#ux-del-listado) |
 | `impersonation` | Suplantar usuarios | `disabled` |
 | `theme.preset` | Preset visual (`minimal`, `corporate`, `contrast`, `ocean`) | `minimal` |
 | `extensions` | Vistas custom de campos/columnas y widgets | `[]` |
@@ -210,6 +213,25 @@ Toda la configuración vive en este archivo (compatible con `config:cache`). No 
 ```
 
 Variables CSS: `--panel-primary`, `--panel-bg`, etc. Toggle claro/oscuro en el footer del sidebar (persiste en `localStorage`).
+
+### UX del listado
+
+Listados (`ResourceIndex`) con filtros en URL, carga optimista, selección masiva y atajos de teclado. Guía completa para agentes y desarrolladores: **[AGENTS.md — Guía UX del listado](AGENTS.md#guía-ux-del-listado)**.
+
+Resumen de `config/panel.php`:
+
+| Área | Claves principales | Default |
+|------|-------------------|---------|
+| Filtros | `layout.filters.mode`, `default_open`, `remember_state` | `collapsible` |
+| Tabla | `layout.index.clickable_rows`, `mobile_cards`, `column_toggle`, `quick_view` | `true` |
+| Bulk | `layout.index.bulk_preview`, `bulk_select_all_max` | preview on, máx. 500 |
+| Rendimiento UX | `performance.skeleton_delay_ms`, `search_debounce_ms` | 50 ms / 200 ms |
+| Rendimiento DB | `performance.eager_load_columns`, `filter_options_cache` | `true` |
+| Formulario modal | `forms.validate_inline`, `draft_autosave`, `focus_on_open` | `true` |
+
+Atajos: `/` o `Ctrl+F` → buscador; `↑`/`↓` + `Enter` → filas; `Shift+clic` → vista rápida.
+
+Auditoría: `php artisan panel:audit-rendimiento` (N+1 e índices sugeridos).
 
 ### Multi-panel (varios paneles en la misma app)
 
@@ -631,6 +653,7 @@ public static function relations(): array
 | `php artisan panel:make-policy Name` | Crear Policy |
 | `php artisan panel:make-widget Name --type=chart` | Crear clase widget para el dashboard |
 | `php artisan panel:doctor` | Diagnosticar instalación del panel |
+| `php artisan panel:audit-rendimiento` | Auditar N+1 e índices sugeridos en resources |
 | `php artisan panel:upgrade-config` | Fusionar config con claves nuevas del paquete |
 | `php artisan panel:upgrade-views` | Actualizar vistas publicadas |
 | `php artisan vendor:publish --tag=panel-config` | Publicar config |
@@ -741,6 +764,17 @@ composer test
 - [x] Publicación Packagist + demo online (PUBLISHING, DEPLOY, render.yaml) (v0.37.0)
 - [x] Loader SPA — watchdog, Escape y `panelSpaLoader.ocultar()` (v0.38.0)
 - [x] Páginas de error con tema — 403, 404, 419, 422, 429, 500, 503; diseño alineado con el panel e iconos `x-panel::icon` (v0.40.1)
+- [x] UX listados — estado vacío contextual, limpiar búsqueda, cabecera sticky, focus-visible, Escape en confirmación (v0.41.0)
+- [x] Formularios modernos — bordes redondeados, pestañas pill, secciones y file upload (v0.42.0)
+- [x] Filtros colapsables en listados — panel plegable, badge activos, grid ordenado (v0.43.0)
+- [x] UX listados v2 — chips, contador, export compacto, atajos `/` y `Ctrl+F` (v0.46.0)
+- [x] Tabla sticky, filas clicables, tarjetas móvil, filtros inteligentes (v0.47.0)
+- [x] Rendimiento percibido — `PanelRendimiento`, skeleton 50 ms, loader SPA 120 ms (v0.48.0)
+- [x] Capa 1 listados — barra bulk fija, copiar enlace, teclado ↑↓+Enter, RelationPanel alineado (v0.49.0)
+- [x] Capa 2 listados — columnas ocultables, vista rápida, presets filtros, selección global (v0.50.0)
+- [x] Capa 3 listados — formulario inline/borrador, import guiado, preview bulk (v0.51.0)
+- [x] Capa 4 rendimiento — `PanelConsultas`, caché opciones, cursor opcional, `panel:audit-rendimiento` (v0.52.0)
+- [x] Capa 5 DX — roadmap actualizado, guía UX del listado en AGENTS (v0.53.0)
 
 ---
 

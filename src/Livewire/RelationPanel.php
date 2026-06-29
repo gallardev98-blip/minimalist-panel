@@ -18,7 +18,9 @@ use MyLaravelTools\Panel\Relations\RelationManager;
 use MyLaravelTools\Panel\Resources\Resource;
 
 use MyLaravelTools\Panel\Support\FieldPayload;
-
+use MyLaravelTools\Panel\Support\PanelLayout;
+use MyLaravelTools\Panel\Support\PanelListado;
+use MyLaravelTools\Panel\Support\PanelRendimiento;
 use MyLaravelTools\Panel\Support\ResourceRegistry;
 
 use Illuminate\Database\Eloquent\Model;
@@ -164,6 +166,21 @@ final class RelationPanel extends Component
 
     }
 
+    public function abrirRegistro(int $recordId): void
+    {
+        if (! PanelLayout::filasClicables()) {
+            return;
+        }
+
+        $registro = $this->childResourceClass::findRecord($recordId);
+
+        if (! $this->childResourceClass::authorize('update', $registro)) {
+            return;
+        }
+
+        $this->openEditForm($recordId);
+    }
+
 
 
     public function cancelForm(): void
@@ -297,12 +314,20 @@ final class RelationPanel extends Component
 
             'records' => $records,
 
+            'textoRangoResultados' => PanelListado::textoRango($records),
+
             'childResourceClass' => $this->childResourceClass,
 
             'canCreate' => $this->childResourceClass::authorize('create'),
 
             'isPivotRelation' => $this->manager->isPivotRelation(),
             'isHasOne' => $this->manager->isHasOne(),
+
+            'filasClicables' => PanelLayout::filasClicables(),
+
+            'idsRegistrosEditables' => $this->idsRegistrosEditables($records),
+
+            'tableClasses' => PanelLayout::clasesTabla(),
 
             'showConfirm' => $this->showConfirm,
 
@@ -436,6 +461,24 @@ final class RelationPanel extends Component
 
         return $this->childResourceClass::findRecord($this->editingId);
 
+    }
+
+    /** @return array<int|string, true> */
+    private function idsRegistrosEditables(mixed $paginador): array
+    {
+        if (! PanelLayout::filasClicables()) {
+            return [];
+        }
+
+        $ids = [];
+
+        foreach ($paginador as $registro) {
+            if ($this->childResourceClass::authorize('update', $registro)) {
+                $ids[$registro->getKey()] = true;
+            }
+        }
+
+        return $ids;
     }
 
 }

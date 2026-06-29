@@ -1,6 +1,6 @@
 @if ($paginator->hasPages())
-    <nav role="navigation" aria-label="{{ __('panel::panel.pagination') }}" class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p class="panel-muted text-sm">
+    <nav role="navigation" aria-label="{{ __('panel::panel.pagination') }}" class="panel-pagination">
+        <p class="panel-pagination__range panel-muted text-xs">
             {{ __('panel::panel.showing') }}
             <span class="panel-heading font-medium">{{ $paginator->firstItem() }}</span>
             –
@@ -9,7 +9,7 @@
             <span class="panel-heading font-medium">{{ $paginator->total() }}</span>
         </p>
 
-        <div class="flex items-center gap-1">
+        <div class="panel-pagination__controls flex items-center gap-0.5">
             @if ($paginator->onFirstPage())
                 <span class="panel-pagination-btn" aria-disabled="true">{{ __('panel::panel.previous') }}</span>
             @else

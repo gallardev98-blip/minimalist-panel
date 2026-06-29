@@ -1,7 +1,11 @@
 @php
+    use MyLaravelTools\Panel\Support\PanelRendimiento;
+
     $spaLoaderActivo = (bool) config('panel.layout.spa_loader', true);
     $spaLoaderTimeoutMs = max(3000, (int) config('panel.layout.spa_loader_timeout_ms', 20000));
     $spaLoaderEscape = (bool) config('panel.layout.spa_loader_escape', true);
+    $spaLoaderMinMs = PanelRendimiento::spaLoaderMinMs();
+    $spaLoaderExitMs = PanelRendimiento::spaLoaderExitMs();
 @endphp
 
 @if ($spaLoaderActivo)
@@ -14,10 +18,10 @@
 
             window.__panelSpaNavigationInitialized = true;
 
-            const MIN_VISIBLE_MS = 280;
-            const AUTH_MIN_VISIBLE_MS = 120;
-            const EXIT_MS = 280;
-            const AUTH_EXIT_MS = 200;
+            const MIN_VISIBLE_MS = {{ $spaLoaderMinMs }};
+            const AUTH_MIN_VISIBLE_MS = Math.min({{ $spaLoaderMinMs }}, 80);
+            const EXIT_MS = {{ $spaLoaderExitMs }};
+            const AUTH_EXIT_MS = Math.min({{ $spaLoaderExitMs }}, 120);
             const VISIBLE_CLASS = 'panel-spa-loader--visible';
             const PROGRESS_CAP = 92;
             const WATCHDOG_MS = {{ $spaLoaderTimeoutMs }};

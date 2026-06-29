@@ -92,14 +92,14 @@ final class PanelLayout
     {
         $compacto = self::densidad() === 'compact';
 
-        return [
+        return array_merge([
             'panel-density-padding' => $compacto ? '1rem' : '1.5rem',
             'panel-density-gap' => $compacto ? '0.5rem' : '0.75rem',
             'panel-content-max-width' => self::anchoContenido() === 'boxed' ? '80rem' : 'none',
             'panel-sidebar-collapsed-width' => self::anchoSidebarColapsado(),
             'panel-brand-logo-height' => (string) self::marca('logo_height', '2rem'),
             'panel-header-height' => '4rem',
-        ];
+        ], PanelRendimiento::variablesCss());
     }
 
     public static function urlFondoAuth(): ?string
@@ -163,6 +163,71 @@ final class PanelLayout
         return (bool) config('panel.layout.table_compact', false);
     }
 
+    public static function tablaCabeceraFija(): bool
+    {
+        return (bool) config('panel.layout.table_sticky_header', true);
+    }
+
+    public static function filasClicables(): bool
+    {
+        return (bool) config('panel.layout.index.clickable_rows', true);
+    }
+
+    public static function tarjetasMovil(): bool
+    {
+        return (bool) config('panel.layout.index.mobile_cards', true);
+    }
+
+    public static function columnasOcultables(): bool
+    {
+        return (bool) config('panel.layout.index.column_toggle', true);
+    }
+
+    public static function vistaRapida(): bool
+    {
+        return (bool) config('panel.layout.index.quick_view', true);
+    }
+
+    public static function presetsFiltros(): bool
+    {
+        return (bool) config('panel.layout.index.filter_presets', true);
+    }
+
+    public static function seleccionGlobalActiva(): bool
+    {
+        return (bool) config('panel.layout.index.select_all_matching', true);
+    }
+
+    public static function maximoSeleccionGlobal(): int
+    {
+        return max(1, (int) config('panel.bulk_select_all_max', 500));
+    }
+
+    public static function previewBulk(): bool
+    {
+        return (bool) config('panel.layout.index.bulk_preview', true);
+    }
+
+    public static function validacionInlineForm(): bool
+    {
+        return (bool) config('panel.forms.validate_inline', true);
+    }
+
+    public static function borradorFormulario(): bool
+    {
+        return (bool) config('panel.forms.draft_autosave', true);
+    }
+
+    public static function focoFormulario(): bool
+    {
+        return (bool) config('panel.forms.focus_on_open', true);
+    }
+
+    public static function importacionGuiada(): bool
+    {
+        return (bool) config('panel.import.guided_summary', true);
+    }
+
     public static function busquedaGlobal(): bool
     {
         return (bool) config('panel.layout.global_search', true);
@@ -221,7 +286,28 @@ final class PanelLayout
             $clases[] = 'panel-table-compact';
         }
 
+        if (self::tablaCabeceraFija()) {
+            $clases[] = 'panel-table-sticky-header';
+        }
+
         return implode(' ', $clases);
+    }
+
+    public static function modoFiltros(): string
+    {
+        $modo = (string) config('panel.layout.filters.mode', 'collapsible');
+
+        return in_array($modo, ['inline', 'collapsible'], true) ? $modo : 'collapsible';
+    }
+
+    public static function filtrosAbiertosPorDefecto(): bool
+    {
+        return (bool) config('panel.layout.filters.default_open', false);
+    }
+
+    public static function recordarEstadoFiltros(): bool
+    {
+        return (bool) config('panel.layout.filters.remember_state', true);
     }
 
     public static function tituloPagina(?string $titulo = null): string

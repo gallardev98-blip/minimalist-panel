@@ -1,9 +1,22 @@
+@php
+    use MyLaravelTools\Panel\Support\PanelLayout;
+@endphp
+
 @if ($showFormModal ?? false)
+    @include('panel::partials.form-modal-scripts')
+
     <div
         class="panel-modal-root"
         role="dialog"
         aria-modal="true"
         aria-labelledby="panel-form-modal-title"
+        x-data="panelFormularioModal(
+            @js($resourceSlug ?? 'form'),
+            @js($formRecordId),
+            @js(PanelLayout::borradorFormulario()),
+            @js(PanelLayout::focoFormulario())
+        )"
+        @keydown.escape.window="$wire.cancelFormModal()"
     >
         <div class="panel-modal-backdrop" wire:click="cancelFormModal"></div>
 
@@ -22,6 +35,18 @@
                     <x-panel::icon name="x" class="h-4 w-4" />
                 </button>
             </div>
+
+            <p
+                x-show="avisoBorrador && ! @js($formRecordId)"
+                x-cloak
+                class="panel-form-draft-hint"
+            >
+                <x-panel::icon name="bookmark" class="h-3.5 w-3.5 shrink-0" />
+                <span>{{ __('panel::panel.form_draft_saved') }}</span>
+                <button type="button" class="panel-form-draft-hint__discard" wire:click="descartarBorradorFormulario" @click="avisoBorrador = false">
+                    {{ __('panel::panel.form_draft_discard') }}
+                </button>
+            </p>
 
             <form wire:submit="saveFormModal" class="panel-modal-form">
                 <div class="panel-modal-body">

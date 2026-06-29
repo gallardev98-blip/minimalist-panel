@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MyLaravelTools\Panel\Support;
 
 use MyLaravelTools\Panel\Support\PanelManager;
+use MyLaravelTools\Panel\Support\PanelConsultas;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\Finder\Finder;
@@ -26,6 +27,7 @@ final class PanelDoctor
         $resultados[] = self::comprobarPermisos();
         $resultados[] = self::comprobarVistasPublicadas();
         $resultados[] = self::comprobarAlertas();
+        $resultados[] = self::comprobarRendimientoRecursos();
 
         return $resultados;
     }
@@ -258,5 +260,32 @@ final class PanelDoctor
         }
 
         return ['nivel' => 'ok', 'mensaje' => 'mylaraveltools/alertas detectado'];
+    }
+
+    /** @return array{nivel: string, mensaje: string} */
+    private static function comprobarRendimientoRecursos(): array
+    {
+        $recursos = config('panel.resources', []);
+
+        if (! is_array($recursos) || $recursos === []) {
+            return ['nivel' => 'ok', 'mensaje' => 'Auditoría rendimiento: sin resources'];
+        }
+
+        $avisos = 0;
+
+        foreach (PanelConsultas::auditarRecursosRegistrados() as $fila) {
+            if ($fila['nivel'] === 'warn') {
+                $avisos++;
+            }
+        }
+
+        if ($avisos > 0) {
+            return [
+                'nivel' => 'warn',
+                'mensaje' => "{$avisos} aviso(s) de rendimiento en resources — panel:audit-rendimiento",
+            ];
+        }
+
+        return ['nivel' => 'ok', 'mensaje' => 'Resources sin avisos N+1 obvios'];
     }
 }

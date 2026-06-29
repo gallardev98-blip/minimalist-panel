@@ -6,6 +6,7 @@ namespace MyLaravelTools\Panel;
 
 use MyLaravelTools\Panel\Commands\MakeScaffoldCommand;
 use MyLaravelTools\Panel\Commands\InstallPanelCommand;
+use MyLaravelTools\Panel\Commands\AuditRendimientoCommand;
 use MyLaravelTools\Panel\Commands\DoctorPanelCommand;
 use MyLaravelTools\Panel\Commands\MakePageCommand;
 use MyLaravelTools\Panel\Commands\MakeWidgetCommand;
@@ -153,6 +154,7 @@ final class PanelServiceProvider extends ServiceProvider
             UpgradeViewsCommand::class,
             UpgradeConfigCommand::class,
             DoctorPanelCommand::class,
+            AuditRendimientoCommand::class,
         ]);
     }
 

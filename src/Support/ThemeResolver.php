@@ -36,7 +36,7 @@ final class ThemeResolver
             'panel-success' => self::toRgb((string) ($colors['success'] ?? '#16a34a')),
             'panel-danger' => self::toRgb((string) ($colors['danger'] ?? '#dc2626')),
             'panel-warning' => self::toRgb((string) ($colors['warning'] ?? '#ca8a04')),
-            'panel-radius' => (string) ($theme['radius'] ?? '0.75rem'),
+            'panel-radius' => (string) ($theme['radius'] ?? '1rem'),
             'panel-sidebar-width' => (string) ($theme['sidebar_width'] ?? '16rem'),
             'livewire-progress-bar-color' => $primary,
         ];

@@ -166,6 +166,9 @@ final class PanelDocumentacion
                 self::texto('layout.title_prefix', 'Prefijo <title>', '', 'Texto antes del título HTML.', false),
                 self::texto('layout.title_suffix', 'Sufijo <title>', '', 'Texto después del título HTML.', false),
                 self::listaNumeros('layout.per_page_options', 'Opciones por página', [15, 25, 50, 100], 'Valores del selector en listados.', false),
+                self::select('layout.filters.mode', 'Filtros en listados', ['collapsible' => 'Panel plegable', 'inline' => 'Siempre visibles'], 'collapsible', 'Cómo se muestran los filtros del resource-index.', true),
+                self::booleano('layout.filters.default_open', 'Filtros abiertos', false, 'Panel desplegado al cargar (sin estado guardado).', true),
+                self::booleano('layout.filters.remember_state', 'Recordar filtros', true, 'Guarda abierto/cerrado en localStorage.', true),
                 self::referencia('layout.footer_links', 'Enlaces footer', 'array', '[["label"=>"Ayuda","route"=>"panel.dashboard"]]', 'Enlaces bajo el perfil en sidebar.'),
             ],
         ];
@@ -199,7 +202,7 @@ final class PanelDocumentacion
                 self::select('theme.preset', 'Preset', self::mapaPresets(), 'minimal', 'Base antes de overrides en config/panel.php.', true),
                 self::select('theme.default', 'Tema por defecto', ['dark' => 'Oscuro', 'light' => 'Claro'], 'dark', 'Al cargar sin preferencia guardada.', true),
                 self::texto('theme.font', 'Fuente Google', 'Plus Jakarta Sans', 'Nombre para Google Fonts.', true),
-                self::texto('theme.radius', 'Border radius', '0.75rem', 'Redondeo global (--panel-radius).', true),
+                self::texto('theme.radius', 'Border radius', '1rem', 'Redondeo global (--panel-radius).', true),
                 self::texto('theme.sidebar_width', 'Ancho sidebar', '16rem', 'Ancho del menú lateral.', true),
                 self::color('theme.colors.primary', 'Color primario', '#000000', 'Botones, enlaces activos.', true),
                 self::color('theme.colors.accent', 'Color acento', '#525252', 'Detalles secundarios.', true),

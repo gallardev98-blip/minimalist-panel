@@ -20,6 +20,11 @@ final class BelongsToColumn extends Column
         return $this;
     }
 
+    public function nombreRelacion(): ?string
+    {
+        return $this->relationship;
+    }
+
     public function getType(): string
     {
         return 'belongs-to';

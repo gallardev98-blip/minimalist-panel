@@ -117,6 +117,8 @@
         <livewire:panel.global-search />
     @endif
 
+    @include('panel::partials.searchable-select-script')
+
     @livewireScripts
 
     @stack('panel-scripts')

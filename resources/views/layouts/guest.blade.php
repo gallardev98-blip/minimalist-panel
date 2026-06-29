@@ -135,6 +135,8 @@
 
     @include('panel::partials.integrations.alertas')
 
+    @include('panel::partials.searchable-select-script')
+
     @livewireScripts
 
     @include('panel::partials.spa-navigation')
